@@ -1,7 +1,9 @@
 using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+[assembly: InternalsVisibleTo("EuNet.Unity")]
 namespace EuNet.Core
 {
     public class NetDataReader

@@ -1,7 +1,9 @@
 ﻿using EuNet.Core;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("EuNet.Unity")]
 namespace EuNet.Client
 {
     //! 클라이언트에서의 P2P 그룹. 여기에 자기 자신도 포함된다
