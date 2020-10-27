@@ -1,0 +1,71 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Work out the path to ClientGenerator.exe -->
+  <Choose>
+    <!-- Using NuGet packages -->
+    <When Condition="Exists('$(MSBuildThisFileDirectory)..\..\Tools\CodeGenerator')">
+      <PropertyGroup>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\..\Tools\CodeGenerator</EuNetRpcCodeGenToolExeDir>
+      </PropertyGroup>
+    </When>
+    <!-- Internal build  -->
+    <When Condition="'$(Configuration)'=='Debug' AND Exists('$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator')">
+      <PropertyGroup>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Debug\netcoreapp3.0</EuNetRpcCodeGenToolExeDir>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(Configuration)'=='Release' AND Exists('$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator')">
+      <PropertyGroup>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Release\netcoreapp3.0</EuNetRpcCodeGenToolExeDir>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="HasTrailingSlash('$(EuNetRpcCodeGenToolExeDir)')">
+      <PropertyGroup>
+        <EuNetRpcCodeGenToolExe>$(EuNetRpcCodeGenToolExeDir)EuNet.CodeGenerator.exe</EuNetRpcCodeGenToolExe>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <EuNetRpcCodeGenToolExe>$(EuNetRpcCodeGenToolExeDir)\EuNet.CodeGenerator.exe</EuNetRpcCodeGenToolExe>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+    <EuNetResolverNamespace>$(MSBuildProjectName).Resolvers</EuNetResolverNamespace>
+  </PropertyGroup>
+  
+  <!-- Code Generation Task -->
+  <Target Name="EuNetRpcPreprocessing"
+          AfterTargets="BeforeCompile;ResolveReferences"
+          BeforeTargets="CoreCompile"
+          Inputs="@(Compile);@(ReferencePath)"
+          Outputs="$(ProjectDir)$(IntermediateOutputPath)$(TargetName)$(TargetExt)">
+    
+    <Message Text="[EuNetRpcPreprocessing] - Project=$(ProjectName)" Importance="high"/>
+    <PropertyGroup>
+      <ArgsFile>$(IntermediateOutputPath)$(TargetName).EuNet.Rpc.CodeGen.Args.txt</ArgsFile>
+      <SourceFiles>@(Compile->'%(Identity)', ';')</SourceFiles>
+      <ReferenceFiles>@(ReferencePath->'%(Identity)', ';')</ReferenceFiles>
+    </PropertyGroup>
+    <Message Text="[EuNetRpcPreprocessing] - Code-gen args file=$(ArgsFile)"  Importance="high"/>
+    <WriteLinesToFile Overwrite="true" File="$(ArgsFile)" Lines=""/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--path=$(ProjectDir)"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--source=$([MSBuild]::Escape($(SourceFiles)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--reference=$([MSBuild]::Escape($(ReferenceFiles)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--define=$([MSBuild]::Escape($(DefineConstants)))"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--target=$(EuNetRpcTarget)" Condition="$(EuNetRpcTarget) != ''"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--namespace=$(EuNetResolverNamespace)" Condition="$(EuNetResolverNamespace) != ''"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--include=$(EuNetRpcSourceInclude)" Condition="$(EuNetRpcSourceInclude) != ''"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--exclude=$(EuNetRpcSourceExclude)" Condition="$(EuNetRpcSourceExclude) != ''"/>
+    <Message Text="Compiler : $(EuNetRpcCodeGenToolExe)"  Importance="high"/>
+    <Message Text="$(EuNetRpcCodeGenToolExeDir)"  Importance="high"/>
+    <Message Text="$(ArgsFile)"  Importance="high"/>
+    <Message Text="Target : $(EuNetRpcTarget)"  Importance="high"/>
+    <Exec Command='"$(EuNetRpcCodeGenToolExe)" "@$(ArgsFile)"' />
+    
+  </Target>
+
+</Project>

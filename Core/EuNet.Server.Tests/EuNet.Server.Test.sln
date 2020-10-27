@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EuNet.Server.Test", "EuNet.Server.Test.csproj", "{7DCD4DCE-F7D5-4D7C-8E90-8C47405DC927}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DCD4DCE-F7D5-4D7C-8E90-8C47405DC927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DCD4DCE-F7D5-4D7C-8E90-8C47405DC927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DCD4DCE-F7D5-4D7C-8E90-8C47405DC927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DCD4DCE-F7D5-4D7C-8E90-8C47405DC927}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F18651D5-C7E5-4A72-ADB4-7C105C3E541C}
+	EndGlobalSection
+EndGlobal

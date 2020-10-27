@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  
+  <Import Project="$(SolutionDir)Core\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('$(SolutionDir)Core\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\..\..\Core\EuNet.Rpc\EuNet.Rpc.csproj" />
+  </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\SampleGameClient\Assets\Scripts\SampleGameCommon\" />
+  </Target>
+  
+</Project>

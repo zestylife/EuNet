@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EuNet.Client\EuNet.Client.csproj" />
+    <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\EuNet.Rpc.Test.Interface\EuNet.Rpc.Test.Interface.csproj" />
+    <ProjectReference Include="..\EuNet.Rpc\EuNet.Rpc.csproj" />
+    <ProjectReference Include="..\EuNet.Server\EuNet.Server.csproj" />
+  </ItemGroup>
+
+</Project>
