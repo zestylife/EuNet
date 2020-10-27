@@ -1,10 +1,14 @@
 # EuNet C# (.NET, .NET Core, Unity)
 
-Easy Unity Network(EuNet)은 멀티플레이 게임을 위한 네트워크 솔루션입니다.   
-TCP, UDP, RUDP 프로토콜을 이용하여 Server-Client, Peer to Peer 통신을 지원합니다.
-P2P(Peer to Peer)의 경우에는 홀펀칭(Hole Punching)을 지원하여 최대한 직접 통신을 시도하며, 불가능할 경우 자동으로 서버를 통해 Relay 되어 잘 무사히 전달됩니다.   
-Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어 League of Legends, Among Us, Kart Rider, Diablo 등) 을 개발하는데 적합합니다.   
-.Net Standard 2.0 을 기반으로 제작되었으므로 멀티플랫폼(Windows, Linux, Android, iOS 등)이 지원되며, .Net Core 기반의 서버와 Unity3D 기반 클라이언트에 최적화되어 개발되었습니다.
+Easy Unity Network (EuNet) is a network solution for multiplayer games.
+
+Supports Server-Client, Peer to Peer communication using TCP, UDP, and RUDP protocols.
+
+In the case of P2P (Peer to Peer), supports hole punching and tries to communicate directly as much as possible, and if it is impossible, automatically relayed through the server.
+
+Great for developing Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (e.g. League of Legends, Among Us, Kart Rider, Diablo, etc.).
+
+Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, Android, iOS, etc.), and is optimized for .Net Core-based servers and Unity3D-based clients.
 
 ## Table of Contents
 
@@ -23,45 +27,43 @@ Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어
 
 ## Features
   
-* 가볍고 빠른 네트워크 기능
-  * 멀티스레드를 이용한 고속 통신
-  * 풀링 버퍼를 통한 고속 할당
-* 지원되는 채널
+* Fast network communication
+  * High speed communication using multi-thread
+  * Fast allocation using pooling buffer
+* Supported channels
   * TCP
   * Unreliable UDP
-    * 가장 빠르고 가볍지만 소실되며 중복이 되거나 순서가 보장되지 않는  채널
   * Reliable Ordered UDP
-    * 신뢰성있고 중복되지 않으며 순서가 보장되는 채널
   * Reliable Unordered UDP
-    * 신뢰성있고 중복되지 않으며 순서가 보장되지 않는 채널
   * Reliable Sequenced UDP
-    * 마지막 패킷만 소실되지 않고 순서가 보장되며 중복되지 않는 채널
   * Sequenced UDP
-    * 소실되지만 순서가 보장되며 중복되지 않는 채널
-* 지원되는 통신
+* Supported communication
   * Client to Server
   * Peer to Peer
     * Hole Punching
     * Relay (Auto Switching)
 * RPC (Remote Procedure Call)
-  * 간편하게 원격지의 함수를 호출하는 기능 
-* 고속 패킷 시리얼라이저 (MessagePack for C#)
-* 고속 Serialize 및 RPC 를 위한 컴파일러 내장
-* 자동으로 MTU 체크
-* MTU보다 큰 UDP 패킷의 자동 분해 및 조립
-* 작은 UDP 패킷을 모아서 부하를 줄임
-* Unity3D 지원 (.Net Standard 2.0 기반)
+* Fast packet serializer (Partial using MessagePack for C#)
+* Custom Compiler(EuNetCodeGenerator) for fast serializing and RPC
+* Automatic MTU detection
+* Automatic fragmentation of large UDP packets
+* Automatic merging small packets 
+* Unity3D support
+* Supported platforms
+  * Windows / Mac / Linux (.Net Core)
+  * Android (Unity)
+  * iOS (Unity)
 
 ## Channels
 
-|          채널          |             전송보장              |      중복안됨      |      순서보장      |
-| :--------------------: | :-------------------------------: | :----------------: | :----------------: |
-|          TCP           |        :heavy_check_mark:         | :heavy_check_mark: | :heavy_check_mark: |
-|     Unreliable UDP     |                :x:                |        :x:         |        :x:         |
-|  Reliable Ordered UDP  |        :heavy_check_mark:         | :heavy_check_mark: | :heavy_check_mark: |
-| Reliable Unordered UDP |        :heavy_check_mark:         | :heavy_check_mark: |        :x:         |
-| Reliable Sequenced UDP | :heavy_check_mark:(마지막 패킷만) | :heavy_check_mark: | :heavy_check_mark: |
-|     Sequenced UDP      |                :x:                | :heavy_check_mark: | :heavy_check_mark: |
+|        Channels        |     Transmission guarantee     |   Not duplicate    |  Order guarantee   |
+| :--------------------: | :----------------------------: | :----------------: | :----------------: |
+|          TCP           |       :heavy_check_mark:       | :heavy_check_mark: | :heavy_check_mark: |
+|     Unreliable UDP     |              :x:               |        :x:         |        :x:         |
+|  Reliable Ordered UDP  |       :heavy_check_mark:       | :heavy_check_mark: | :heavy_check_mark: |
+| Reliable Unordered UDP |       :heavy_check_mark:       | :heavy_check_mark: |        :x:         |
+| Reliable Sequenced UDP | :heavy_check_mark:(Last order) | :heavy_check_mark: | :heavy_check_mark: |
+|     Sequenced UDP      |              :x:               | :heavy_check_mark: | :heavy_check_mark: |
 
 ***
 
@@ -73,32 +75,32 @@ Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어
 
 ## Rpc Sample
 
-프로젝트는 총 3개가 필요합니다
-* 유저 Rpc 라이브러리 프로젝트 (.Net Standard 2.0)
-  * 서버, 클라이언트 공통사용
-  * EuNetCodeGenerator 를 사용하여 코드를 생성
-* 서버 프로젝트 (.Net Core)
-* 클라이언트 프로젝트 (Unity3D)
+We need 3 projects
+* User Rpc library project (.Net Standard 2.0)
+  * Server, Client common use
+  * Generate code using EuNetCodeGenerator
+* Server project (.Net Core)
+* Client project (Unity3D)
 
 ### User Rpc library project
 ```csharp
-// 로그인관련 Rpc 인터페이스를 선언
+// Declaring login rpc interface
 public interface ILoginRpc : IRpc
 {
     Task<int> Login(string id, ISession session);
     Task<UserInfo> GetUserInfo();
 }
-// 이 프로젝트를 EuNetCodeGenerator를 통해서 Rpc 코드를 생성하여 서버와 클라이언트에서 공통적으로 사용함
+// Generate Rpc code using EuNetCodeGenerator and use it in server and client
 ```
 
 ### .Net Core Server using Rpc
 ```csharp
-// 유저세션 클래스에서 Rpc Interface (ILoginRpc)를 상속
+// User session class inherits Rpc Interface (ILoginRpc)
 public partial class UserSession : ILoginRpc
 {
     private UserInfo _userInfo = new UserInfo();
     
-    // 클라이언트가 호출할 수 있는 Rpc Method를 구현해줌
+    // Implement Rpc Method that client calls
     public Task<int> Login(string id, ISession session)
     {
         if (id == "AuthedId")
@@ -107,10 +109,10 @@ public partial class UserSession : ILoginRpc
         return Task<int>.FromResult(1);
     }
 
-    // 클라이언트가 호출할 수 있는 Rpc Method를 구현해줌
+    // Implement Rpc Method that client calls
     public Task<UserInfo> GetUserInfo()
     {
-        // 유저정보를 입력 (추후 DB를 통해서 가져오면 됩니다)
+        // Set user information
         _userInfo.Name = "abc";
 
         return Task<UserInfo>.FromResult(_userInfo);
@@ -122,29 +124,29 @@ public partial class UserSession : ILoginRpc
 ```csharp
 private async UniTaskVoid ConnectAsync()
 {
-    // 접속을 시도함. 타임아웃은 10초
+    // Trying to connect. Timeout is 10 seconds.
     var result = await NetP2pUnity.Instance.ConnectAsync(TimeSpan.FromSeconds(10));
 
     if(result == true)
     {
-        // 로그인 Rpc 호출을 위한 객체를 생성
+        // Create an object for calling login Rpc
         LoginRpc loginRpc = new LoginRpc(NetP2pUnity.Instance.Client);
 
-        // 서버의 로그인 함수(UserSession.Login)를 호출함
+        // Call the server's login function (UserSession.Login)
         var loginResult = await loginRpc.Login("AuthedId", null);
 
         Debug.Log($"Login Result : {loginResult}");
         if (loginResult != 0)
             return;
         
-        // 서버의 유저정보(UserSession.GetUserInfo)를 가져옴
+        // Call the server's get user information function (UserSession.GetUserInfo)
         var userInfo = await loginRpc.GetUserInfo();
         Debug.Log($"UserName : {userInfo.Name}");
         // UserName : abc
     }
     else
     {
-        // 접속 실패
+        // Fail to connect
         Debug.LogError("Fail to connect server");
     }
 }
