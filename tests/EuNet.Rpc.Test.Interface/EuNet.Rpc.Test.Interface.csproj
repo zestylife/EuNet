@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
+  </ItemGroup>
+
+</Project>

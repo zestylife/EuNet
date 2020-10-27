@@ -77,7 +77,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\Sample\SampleGame\SampleGameClient\Assets\EuNet\Core\EuNet.Core\&#xD;&#xA;xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\EuNet\Core\EuNet.Core\" />
+    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\samples\SampleGame\SampleGameClient\Assets\EuNet\Core\EuNet.Core\&#xD;&#xA;xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\EuNet\Core\EuNet.Core\" />
   </Target>
 
 </Project>

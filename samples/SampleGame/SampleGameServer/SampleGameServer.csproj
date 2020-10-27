@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\EuNet.Server\EuNet.Server.csproj" />
+    <ProjectReference Include="..\..\..\src\EuNet.Server\EuNet.Server.csproj" />
     <ProjectReference Include="..\SampleGameCommon\SampleGameCommon.csproj" />
   </ItemGroup>
 

@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EuNet.Client\EuNet.Client.csproj" />
-    <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Client\EuNet.Client.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Core\EuNet.Core.csproj" />
     <ProjectReference Include="..\EuNet.Rpc.Test.Interface\EuNet.Rpc.Test.Interface.csproj" />
-    <ProjectReference Include="..\EuNet.Rpc\EuNet.Rpc.csproj" />
-    <ProjectReference Include="..\EuNet.Server\EuNet.Server.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Server\EuNet.Server.csproj" />
   </ItemGroup>
 
 </Project>

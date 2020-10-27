@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EuNet.Client\EuNet.Client.csproj" />
-    <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
-    <ProjectReference Include="..\EuNet.Server\EuNet.Server.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.Core\EuNet.Core.csproj" />
   </ItemGroup>
 
 </Project>

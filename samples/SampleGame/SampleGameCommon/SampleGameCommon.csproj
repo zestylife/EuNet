@@ -4,11 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   
-  <Import Project="$(SolutionDir)Core\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('$(SolutionDir)Core\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
+  <Import Project="$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\EuNet.Core\EuNet.Core.csproj" />
-    <ProjectReference Include="..\..\..\Core\EuNet.Rpc\EuNet.Rpc.csproj" />
+    <ProjectReference Include="..\..\..\src\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
   </ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
