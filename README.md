@@ -1,13 +1,9 @@
 # EuNet C# (.NET, .NET Core, Unity)
 
-Easy Unity Network(EuNet)은 멀티플레이 게임을 위한 네트워크 솔루션입니다.
-
+Easy Unity Network(EuNet)은 멀티플레이 게임을 위한 네트워크 솔루션입니다.   
 TCP, UDP, RUDP 프로토콜을 이용하여 Server-Client, Peer to Peer 통신을 지원합니다.
-
-P2P(Peer to Peer)의 경우에는 홀펀칭(Hole Punching)을 지원하여 최대한 직접 통신을 시도하며, 불가능할 경우 자동으로 서버를 통해 Relay 되어 잘 무사히 전달됩니다.
-
-Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어 League of Legends, Among Us, Kart Rider, Diablo 등) 을 개발하는데 적합합니다.
-
+P2P(Peer to Peer)의 경우에는 홀펀칭(Hole Punching)을 지원하여 최대한 직접 통신을 시도하며, 불가능할 경우 자동으로 서버를 통해 Relay 되어 잘 무사히 전달됩니다.   
+Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어 League of Legends, Among Us, Kart Rider, Diablo 등) 을 개발하는데 적합합니다.   
 .Net Standard 2.0 을 기반으로 제작되었으므로 멀티플랫폼(Windows, Linux, Android, iOS 등)이 지원되며, .Net Core 기반의 서버와 Unity3D 기반 클라이언트에 최적화되어 개발되었습니다.
 
 ## Table of Contents
@@ -19,9 +15,11 @@ Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어
   - [Installation](#installation)
     - [NuGet packages](#nuget-packages)
     - [Unity](#unity)
+  - [Rpc Sample](#rpc-sample)
+    - [User Rpc library project](#user-rpc-library-project)
+    - [.Net Core Server using Rpc](#net-core-server-using-rpc)
+    - [Unity Client using Rpc](#unity-client-using-rpc)
   - [Quick Start](#quick-start)
-    - [.Net Core Server using RPC](#net-core-server-using-rpc)
-    - [Unity Client using RPC](#unity-client-using-rpc)
 
 ## Features
   
@@ -65,7 +63,7 @@ Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어
 | Reliable Sequenced UDP | :heavy_check_mark:(마지막 패킷만) | :heavy_check_mark: | :heavy_check_mark: |
 |     Sequenced UDP      |                :x:                | :heavy_check_mark: | :heavy_check_mark: |
 
-.
+***
 
 ## Installation
 
@@ -73,15 +71,34 @@ Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplayer Game (예를 들어
 
 ### Unity
 
-## Quick Start
+## Rpc Sample
 
-### .Net Core Server using RPC
+프로젝트는 총 3개가 필요합니다
+* 유저 Rpc 라이브러리 프로젝트 (.Net Standard 2.0)
+  * 서버, 클라이언트 공통사용
+  * EuNetCodeGenerator 를 사용하여 코드를 생성
+* 서버 프로젝트 (.Net Core)
+* 클라이언트 프로젝트 (Unity3D)
+
+### User Rpc library project
+```csharp
+// 로그인관련 Rpc 인터페이스를 선언
+public interface ILoginRpc : IRpc
+{
+    Task<int> Login(string id, ISession session);
+    Task<UserInfo> GetUserInfo();
+}
+// 이 프로젝트를 EuNetCodeGenerator를 통해서 Rpc 코드를 생성하여 서버와 클라이언트에서 공통적으로 사용함
+```
+
+### .Net Core Server using Rpc
 ```csharp
 // 유저세션 클래스에서 Rpc Interface (ILoginRpc)를 상속
 public partial class UserSession : ILoginRpc
 {
     private UserInfo _userInfo = new UserInfo();
     
+    // 클라이언트가 호출할 수 있는 Rpc Method를 구현해줌
     public Task<int> Login(string id, ISession session)
     {
         if (id == "AuthedId")
@@ -90,6 +107,7 @@ public partial class UserSession : ILoginRpc
         return Task<int>.FromResult(1);
     }
 
+    // 클라이언트가 호출할 수 있는 Rpc Method를 구현해줌
     public Task<UserInfo> GetUserInfo()
     {
         // 유저정보를 입력 (추후 DB를 통해서 가져오면 됩니다)
@@ -100,7 +118,7 @@ public partial class UserSession : ILoginRpc
 }
 ```
 
-### Unity Client using RPC
+### Unity Client using Rpc
 ```csharp
 private async UniTaskVoid ConnectAsync()
 {
@@ -109,19 +127,20 @@ private async UniTaskVoid ConnectAsync()
 
     if(result == true)
     {
-        // 로그인 Rpc 객체를 생성
+        // 로그인 Rpc 호출을 위한 객체를 생성
         LoginRpc loginRpc = new LoginRpc(NetP2pUnity.Instance.Client);
 
-        // 서버의 로그인 함수를 호출함
+        // 서버의 로그인 함수(UserSession.Login)를 호출함
         var loginResult = await loginRpc.Login("AuthedId", null);
 
         Debug.Log($"Login Result : {loginResult}");
         if (loginResult != 0)
             return;
         
-        // 서버의 유저정보를 가져옴
+        // 서버의 유저정보(UserSession.GetUserInfo)를 가져옴
         var userInfo = await loginRpc.GetUserInfo();
         Debug.Log($"UserName : {userInfo.Name}");
+        // UserName : abc
     }
     else
     {
@@ -130,3 +149,5 @@ private async UniTaskVoid ConnectAsync()
     }
 }
 ```
+
+## Quick Start
