@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.Rpc.Test.Interface", 
 		{53A086FA-169E-474B-9B46-BEAD211C1749} = {53A086FA-169E-474B-9B46-BEAD211C1749}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleGame", "SampleGame", "{D35FB2A3-C764-4AC5-B048-19280188898C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC79A810-8A8C-4563-B4F4-44D1991E1FCF} = {D35FB2A3-C764-4AC5-B048-19280188898C}
+		{58F6702D-8195-4748-A42E-F9630B22A677} = {D35FB2A3-C764-4AC5-B048-19280188898C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {19BE38F2-38B8-4DDF-B41F-02E119381EAA}

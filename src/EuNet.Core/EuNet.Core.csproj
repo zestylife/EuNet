@@ -2,6 +2,15 @@
   
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>zestylife</Authors>
+    <Company></Company>
+    <Version>0.0.1</Version>
+    <Copyright>MIT</Copyright>
+    <PackageProjectUrl>https://github.com/zestylife/EuNet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/zestylife/EuNet</RepositoryUrl>
+    <PackageTags>C#,TCP,P2P,UDP,Network,Unity,RPC,HolePunching,Relay</PackageTags>
+    <Product>EuNet</Product>
   </PropertyGroup>
 
   <ItemGroup>
