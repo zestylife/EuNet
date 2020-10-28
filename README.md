@@ -17,12 +17,13 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
   - [Features](#features)
   - [Channels](#channels)
   - [Installation](#installation)
-    - [NuGet packages](#nuget-packages)
-    - [Unity](#unity)
+    - [Common project](#common-project)
+    - [Server project (.net core)](#server-project-net-core)
+    - [Client project (Unity3D)](#client-project-unity3d)
   - [Rpc Sample](#rpc-sample)
-    - [User Rpc library project](#user-rpc-library-project)
-    - [.Net Core Server using Rpc](#net-core-server-using-rpc)
-    - [Unity Client using Rpc](#unity-client-using-rpc)
+    - [Common project](#common-project-1)
+    - [Server project (.Net Core)](#server-project-net-core-1)
+    - [Client project (Unity3D)](#client-project-unity3d-1)
   - [Quick Start](#quick-start)
   - [Unity3D](#unity3d)
   - [IL2CPP issue (AOT)](#il2cpp-issue-aot)
@@ -71,20 +72,46 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
 
 ## Installation
 
-### NuGet packages
-
-### Unity
-
-## Rpc Sample
-
-We need 3 projects
-* User Rpc library project (.Net Standard 2.0)
+We need three projects
+* Common project (.Net Standard 2.0)
   * Server, Client common use
   * Generate code using EuNetCodeGenerator
 * Server project (.Net Core)
 * Client project (Unity3D)
 
-### User Rpc library project
+See [EuNet-Starter](https://github.com/zestylife/EuNet-Starter) for an example
+
+### Common project
+
+* Create .Net Standard 2.0 based project.
+* Install nuget package.
+
+```
+PM> Install-Package EuNet.CodeGenerator.Templates
+```
+* Rebuild project.
+* If you look at the project, `CodeGen/EuNet.Rpc.CodeGen.cs` file was created.
+
+### Server project (.net core)
+
+* First install the nuget package.
+```
+PM> Install-Package EuNet
+```
+* Add common project to reference
+```
+Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Common project]
+```
+* Write server code. [Server Code Sample]()
+* Write session code. [Session Code Sample]()
+
+### Client project (Unity3D)
+
+* First install the unity-package. [Download here]()
+
+## Rpc Sample
+
+### Common project
 ```csharp
 // Declaring login rpc interface
 public interface ILoginRpc : IRpc
@@ -95,7 +122,7 @@ public interface ILoginRpc : IRpc
 // Generate Rpc code using EuNetCodeGenerator and use it in server and client
 ```
 
-### .Net Core Server using Rpc
+### Server project (.Net Core)
 ```csharp
 // User session class inherits Rpc Interface (ILoginRpc)
 public partial class UserSession : ILoginRpc
@@ -122,7 +149,7 @@ public partial class UserSession : ILoginRpc
 }
 ```
 
-### Unity Client using Rpc
+### Client project (Unity3D)
 ```csharp
 private async UniTaskVoid ConnectAsync()
 {
