@@ -4,17 +4,17 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>zestylife</Authors>
     <Company></Company>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/zestylife/EuNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zestylife/EuNet</RepositoryUrl>
     <PackageTags>C#,TCP,P2P,UDP,Network,Unity,RPC,HolePunching,Relay</PackageTags>
     <Product>EuNet</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>../../nupkg</PackageOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EuNet.Client\EuNet.Client.csproj" />
-    <ProjectReference Include="..\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.csproj" />
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
     <ProjectReference Include="..\EuNet.Rpc\EuNet.Rpc.csproj" />
     <ProjectReference Include="..\EuNet.Server\EuNet.Server.csproj" />

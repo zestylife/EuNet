@@ -277,4 +277,4 @@ nuget/unity*
 
 # BenchmarkDotNet results
 BenchmarkDotNet.Artifacts/
-/nuget
+/nupkg
