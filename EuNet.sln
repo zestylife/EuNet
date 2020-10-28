@@ -37,8 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleGame", "SampleGame", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet", "src\EuNet\EuNet.csproj", "{5C16FD89-B87C-4187-94CB-DE51A1ABD974}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.Common", "src\EuNet.Common\EuNet.Common.csproj", "{52A0391A-D432-4428-95EE-E09FB2444CB7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F65366DD-9356-430A-B30E-98460B3FB8DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{7C6A08F4-2550-4FB8-949B-439D303A4BB9}"
@@ -105,10 +103,6 @@ Global
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52A0391A-D432-4428-95EE-E09FB2444CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52A0391A-D432-4428-95EE-E09FB2444CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52A0391A-D432-4428-95EE-E09FB2444CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52A0391A-D432-4428-95EE-E09FB2444CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
