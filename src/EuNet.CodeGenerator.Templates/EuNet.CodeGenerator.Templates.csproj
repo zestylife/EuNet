@@ -3,14 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Authors>zestylife</Authors>
-    <Company></Company>
-    <Version>1.0.1</Version>
-    <Copyright></Copyright>
-    <PackageProjectUrl>https://github.com/zestylife/EuNet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/zestylife/EuNet</RepositoryUrl>
-    <PackageTags>C#,TCP,P2P,UDP,Network,Unity,RPC,HolePunching,Relay</PackageTags>
-    <Product>EuNet</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
     <NuspecFile>EuNet.CodeGenerator.Templates.nuspec</NuspecFile>
@@ -20,7 +12,6 @@
     <Compile Remove="Templates\**" />
     <EmbeddedResource Remove="Templates\**" />
     <None Remove="Templates\**" />
-    <!-- <None Include="../EuNet.CodeGenerator/bin/Release/netcoreapp3.0/**" Pack="true" PackagePath="tools"/> -->
   </ItemGroup>
   
 </Project>
