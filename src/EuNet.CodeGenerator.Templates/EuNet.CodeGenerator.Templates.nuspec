@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>EuNet.CodeGenerator.Templates</id>
     <title>EuNet.CodeGenerator.Templates</title>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <authors>zestylife</authors>
     <owners>zestylife</owners>
     <description>EuNet.CodeGenerator.Templates</description>
