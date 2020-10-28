@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.Rpc.Test.Interface", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleGame", "SampleGame", "{D35FB2A3-C764-4AC5-B048-19280188898C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet", "src\EuNet\EuNet.csproj", "{5C16FD89-B87C-4187-94CB-DE51A1ABD974}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{BD331FAA-C592-4E55-80C8-A22D6EDD820B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD331FAA-C592-4E55-80C8-A22D6EDD820B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD331FAA-C592-4E55-80C8-A22D6EDD820B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -13,17 +12,11 @@
     <Product>EuNet</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
+    <ProjectReference Include="..\EuNet.Client\EuNet.Client.csproj" />
+    <ProjectReference Include="..\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.csproj" />
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\EuNet.Rpc\EuNet.Rpc.csproj" />
+    <ProjectReference Include="..\EuNet.Server\EuNet.Server.csproj" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\samples\SampleGame\SampleGameClient\Assets\EuNet\Core\EuNet.Client\&#xD;&#xA;xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\EuNet\Core\EuNet.Client\" />
-  </Target>
-
 </Project>
