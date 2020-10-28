@@ -13,12 +13,14 @@
     <Product>EuNet</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
+    <NuspecFile>EuNet.CodeGenerator.Templates.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Templates\**" />
     <EmbeddedResource Remove="Templates\**" />
     <None Remove="Templates\**" />
+    <!-- <None Include="../EuNet.CodeGenerator/bin/Release/netcoreapp3.0/**" Pack="true" PackagePath="tools"/> -->
   </ItemGroup>
   
 </Project>

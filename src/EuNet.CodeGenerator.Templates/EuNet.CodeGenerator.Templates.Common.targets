@@ -3,9 +3,9 @@
   <!-- Work out the path to ClientGenerator.exe -->
   <Choose>
     <!-- Using NuGet packages -->
-    <When Condition="Exists('$(MSBuildThisFileDirectory)..\..\tools\CodeGenerator')">
+    <When Condition="Exists('$(MSBuildThisFileDirectory)..\tools')">
       <PropertyGroup>
-        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\..\tools\CodeGenerator</EuNetRpcCodeGenToolExeDir>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\tools</EuNetRpcCodeGenToolExeDir>
       </PropertyGroup>
     </When>
     <!-- Internal build  -->
