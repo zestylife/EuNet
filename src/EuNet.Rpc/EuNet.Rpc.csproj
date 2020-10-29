@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\samples\SampleGame\SampleGameClient\Assets\EuNet\Core\EuNet.Rpc\&#xD;&#xA;xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\EuNet\Core\EuNet.Rpc\" />
+    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\samples\SampleGame\SampleGameClient\Assets\EuNet\Core\EuNet.Rpc\&#xD;&#xA;xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\Plugins\EuNet\Runtime\EuNet.Rpc\" />
   </Target>
 
 </Project>

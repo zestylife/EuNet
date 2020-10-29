@@ -245,7 +245,7 @@ namespace EuNet.Unity
             }
         }
 
-        internal T FindRpcHandler<T>() where T : class
+        public T FindRpcHandler<T>() where T : class
         {
             object viewRpc;
             if (_typeRpcMap.TryGetValue(typeof(T), out viewRpc))

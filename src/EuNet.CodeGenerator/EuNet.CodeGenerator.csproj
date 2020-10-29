@@ -23,4 +23,9 @@
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="ping -n 3 127.0.0.1 > nul"/>
+  </Target>
+
+  
 </Project>
