@@ -1,4 +1,5 @@
-﻿using EuNet.Unity;
+﻿#if UNITY_EDITOR
+using EuNet.Unity;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -152,3 +153,4 @@ public class NetViewHandler : EditorWindow
         Debug.Log("Corrected scene views where needed.");
     }
 }
+#endif

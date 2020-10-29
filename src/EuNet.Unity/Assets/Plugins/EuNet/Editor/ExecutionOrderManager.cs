@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using UnityEditor;
 using EuNet.Unity;
 
@@ -24,3 +25,4 @@ public class ExecutionOrderManager
         }
     }
 }
+#endif
