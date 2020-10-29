@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>EuNet.CodeGenerator.Templates</id>
     <title>EuNet.CodeGenerator.Templates</title>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <authors>zestylife</authors>
     <owners>zestylife</owners>
     <description>EuNet.CodeGenerator.Templates</description>
@@ -13,8 +13,8 @@
     <releaseNotes>EuNet.CodeGenerator.Templates</releaseNotes>
     <tags>C# TCP P2P UDP Network Unity RPC HolePunching Relay</tags>
     <dependencies>
-      <dependency id="EuNet.Core" version="1.0.7" />
-      <dependency id="EuNet.Rpc" version="1.0.7" />
+      <dependency id="EuNet.Core" version="1.0.8" />
+      <dependency id="EuNet.Rpc" version="1.0.8" />
     </dependencies>
     <references>
     </references>

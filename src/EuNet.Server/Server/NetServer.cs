@@ -311,6 +311,7 @@ namespace EuNet.Server
                 {
                     case PacketProperty.UserData:
                     case PacketProperty.Ack:
+                    case PacketProperty.ViewRequest:
                         {
                             // P2p 데이터를 릴레이하자
                             try

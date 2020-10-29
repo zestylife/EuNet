@@ -75,6 +75,9 @@ namespace EuNet.Client
 
         private void SendHolePunchingStart()
         {
+            if (P2pGroup.NetClient.ClientOption.IsForceRelay)
+                return;
+
             IPEndPoint ep = null;
 
             switch (_holePunchingStartCount % 3)

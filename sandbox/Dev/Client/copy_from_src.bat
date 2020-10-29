@@ -1,0 +1,1 @@
+xcopy /s /e /y .\..\..\..\src\EuNet.Unity\Assets\Plugins\EuNet\** .\Assets\Plugins\EuNet\
