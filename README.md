@@ -20,6 +20,8 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
     - [Common project](#common-project)
     - [Server project (.net core)](#server-project-net-core)
     - [Client project (Unity3D)](#client-project-unity3d)
+    - [Install via git URL](#install-via-git-url)
+    - [Install via package file](#install-via-package-file)
   - [Rpc Sample](#rpc-sample)
     - [Common project](#common-project-1)
     - [Server project (.Net Core)](#server-project-net-core-1)
@@ -107,7 +109,13 @@ Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Commo
 
 ### Client project (Unity3D)
 
-* First install the unity-package. [Download here]()
+### Install via git URL
+
+After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package.   
+You can add `https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet` to Package Manager
+
+### Install via package file
+* Install the unity-package. [Download here](https://github.com/zestylife/EuNet/releases)
 
 ## Rpc Sample
 
