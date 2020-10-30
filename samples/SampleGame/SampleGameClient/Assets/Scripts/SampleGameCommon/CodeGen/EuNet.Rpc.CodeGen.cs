@@ -216,8 +216,8 @@ namespace SampleGameCommon
     {
         public override Type InterfaceType => typeof(IPlayerViewRpc);
 
-        public PlayerViewRpc(NetView view, DeliveryMethod deliveryMethod, TimeSpan? timeout = null)
-            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view, deliveryMethod), timeout)
+        public PlayerViewRpc(NetView view, TimeSpan? timeout = null)
+            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
         }
 

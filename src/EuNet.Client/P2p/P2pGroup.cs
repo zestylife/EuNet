@@ -115,7 +115,7 @@ namespace EuNet.Client
                 if (member.IsMine() == true)
                     continue;
 
-                member.Session?.SessionRequest.ViewNotification(data, offset, length, viewId, deliveryMethod);
+                member.ViewNotification(data, offset, length, viewId, deliveryMethod);
             }
         }
 
@@ -124,6 +124,11 @@ namespace EuNet.Client
             Logger.LogInformation($"Change p2p master {_masterSessionId} to {masterSessionId}");
 
             _masterSessionId = masterSessionId;
+        }
+
+        public P2pMember GetMasterMember()
+        {
+            return Find(_masterSessionId);
         }
 
         public bool Contains(ushort sessionId)

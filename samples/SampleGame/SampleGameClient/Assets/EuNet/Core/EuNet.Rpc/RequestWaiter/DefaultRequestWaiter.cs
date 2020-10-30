@@ -8,14 +8,14 @@ namespace EuNet.Rpc
     {
         public static IRequestWaiter Instance = new DefaultRequestWaiter();
 
-        void IRequestWaiter.SendRequest(ISession session, NetDataWriter writer)
+        void IRequestWaiter.SendRequest(ISession session, NetDataWriter writer, DeliveryMethod deliveryMethod, DeliveryTarget deliveryTarget, int extra)
         {
-            session.SessionRequest.Notification(writer.Data, 0, writer.Length, DeliveryMethod.Tcp);
+            session.SessionRequest.Notification(writer.Data, 0, writer.Length, deliveryMethod);
         }
 
-        Task IRequestWaiter.SendRequestAndWait(ISession session, NetDataWriter writer, TimeSpan? timeout)
+        Task IRequestWaiter.SendRequestAndWait(ISession session, NetDataWriter writer, TimeSpan? timeout, DeliveryMethod deliveryMethod, int extra)
         {
-            var task = session.SessionRequest.RequestAsync(writer.Data, 0, writer.Length, DeliveryMethod.Tcp, timeout);
+            var task = session.SessionRequest.RequestAsync(writer.Data, 0, writer.Length, deliveryMethod, timeout);
 
             try
             {
@@ -27,9 +27,9 @@ namespace EuNet.Rpc
             }
         }
 
-        Task<NetDataBufferReader> IRequestWaiter.SendRequestAndReceive(ISession session, NetDataWriter writer, TimeSpan? timeout)
+        Task<NetDataBufferReader> IRequestWaiter.SendRequestAndReceive(ISession session, NetDataWriter writer, TimeSpan? timeout, DeliveryMethod deliveryMethod, int extra)
         {
-            var task = session.SessionRequest.RequestAsync(writer.Data, 0, writer.Length, DeliveryMethod.Tcp, timeout);
+            var task = session.SessionRequest.RequestAsync(writer.Data, 0, writer.Length, deliveryMethod, timeout);
 
             try
             {

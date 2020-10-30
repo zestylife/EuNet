@@ -11,4 +11,8 @@
     <ProjectReference Include="..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\..\src\EuNet.Unity\Assets\Scripts\Rpc\&#xD;&#xA;" />
+  </Target>
+
 </Project>

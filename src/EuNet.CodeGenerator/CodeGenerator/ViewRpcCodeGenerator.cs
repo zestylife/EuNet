@@ -94,8 +94,8 @@ namespace CodeGenerator
 
                 // Constructors
 
-                using (w.B($"public {rpcClassName}(NetView view, DeliveryMethod deliveryMethod, TimeSpan? timeout = null)",
-                    "\t: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view, deliveryMethod), timeout)"))
+                using (w.B($"public {rpcClassName}(NetView view, TimeSpan? timeout = null)",
+                    "\t: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)"))
                 {
                 }
                 

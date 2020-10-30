@@ -25,19 +25,19 @@ namespace EuNet.Rpc
             Timeout = timeout;
         }
 
-        protected void SendRequest(NetDataWriter writer)
+        protected void SendRequest(NetDataWriter writer, DeliveryMethod deliveryMethod = DeliveryMethod.Tcp)
         {
-            RequestWaiter.SendRequest(Target, writer);
+            RequestWaiter.SendRequest(Target, writer, deliveryMethod, DeliveryTarget.Target, 0);
         }
 
-        protected Task SendRequestAndWait(NetDataWriter writer)
+        protected Task SendRequestAndWait(NetDataWriter writer, DeliveryMethod deliveryMethod = DeliveryMethod.Tcp)
         {
-            return RequestWaiter.SendRequestAndWait(Target, writer, Timeout);
+            return RequestWaiter.SendRequestAndWait(Target, writer, Timeout, deliveryMethod, 0);
         }
 
-        protected Task<NetDataBufferReader> SendRequestAndReceive(NetDataWriter writer)
+        protected Task<NetDataBufferReader> SendRequestAndReceive(NetDataWriter writer, DeliveryMethod deliveryMethod = DeliveryMethod.Tcp)
         {
-            return RequestWaiter.SendRequestAndReceive(Target, writer, Timeout);
+            return RequestWaiter.SendRequestAndReceive(Target, writer, Timeout, deliveryMethod, 0);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using EuNet.Core;
+using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace EuNet.Client
 {
@@ -138,6 +140,22 @@ namespace EuNet.Client
                 return true;
 
             return false;
+        }
+
+        internal void ViewNotification(byte[] data, int offset, int length, int viewId, DeliveryMethod deliveryMethod)
+        {
+            if (deliveryMethod == DeliveryMethod.Tcp)
+                throw new Exception("Not support p2p tcp delivery");
+
+            Session?.SessionRequest.ViewNotification(data, offset, length, viewId, deliveryMethod);
+        }
+
+        internal Task<NetDataBufferReader> ViewRequestAsync(byte[] data, int offset, int length, int viewId, DeliveryMethod deliveryMethod, TimeSpan? timeout)
+        {
+            if (deliveryMethod == DeliveryMethod.Tcp)
+                throw new Exception("Not support p2p tcp delivery");
+
+            return Session?.SessionRequest.ViewRequestAsync(data, offset, length, viewId, deliveryMethod, timeout);
         }
     }
 }
