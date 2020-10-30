@@ -50,7 +50,7 @@ namespace EuNet.Server
             _serverOption = serverOption;
             //_serverOptions.PacketFilter = _serverOptions.PacketFilter ?? new XorPacketFilter();
 
-            _loggerFactory = loggerFactory ?? new ConsoleLoggerFactory();
+            _loggerFactory = loggerFactory ?? DefaultLoggerFactory.Create(builder => { builder.AddConsoleLogger(); });
             _logger = _loggerFactory.CreateLogger("Server");
 
             _statistic = statistics ?? new NetStatistic();

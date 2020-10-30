@@ -31,7 +31,14 @@ namespace SampleGameServer
                 MaxSession = 100,
             };
 
-            var loggerFactory = new ConsoleLoggerFactory();
+            var loggerFactory = DefaultLoggerFactory.Create(
+                builder =>
+                {
+                    builder.SetMinimumLevel(LogLevel.Information);
+                    builder.AddConsoleLogger();
+                }
+            );
+
             var statistics = new NetStatistic();
             var sessionFactory = new DefaultSessionFactory(
                 serverOption,

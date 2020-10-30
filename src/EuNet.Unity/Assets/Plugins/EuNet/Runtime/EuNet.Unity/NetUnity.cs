@@ -9,10 +9,13 @@ namespace EuNet.Unity
     [ExecutionOrder(-1000)]
     public class NetUnity : MonoBehaviour
     {
+        [Header("Log Level")]
+        public LogLevel LogLevel = LogLevel.Information;
+
         [Header("Network Infomation")]
         public string ServerAddress = "192.168.0.4";
         public int TcpServerPort = 12000;
-        
+
         protected ClientOption _clientOption = new ClientOption();
         protected NetClient _client;
         public NetClient Client => _client;
@@ -22,7 +25,13 @@ namespace EuNet.Unity
             _clientOption.TcpServerAddress = ServerAddress;
             _clientOption.TcpServerPort = TcpServerPort;
             
-            _client = new NetClient(_clientOption, new UnityDebugLoggerFactory());
+            _client = new NetClient(
+                _clientOption,
+                DefaultLoggerFactory.Create(builder => 
+                {
+                    builder.SetMinimumLevel(LogLevel);
+                    builder.AddUnityDebugLogger();
+                }));
 
             //_client.OnReceived += OnReceive;
             _client.OnErrored += OnError;

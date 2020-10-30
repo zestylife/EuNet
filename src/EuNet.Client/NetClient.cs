@@ -73,7 +73,7 @@ namespace EuNet.Client
             _clientOption = clientOption;
             //_clientOptions.PacketFilter = _clientOptions.PacketFilter ?? new XorPacketFilter();
 
-            _loggerFactory = loggerFactory ?? new ConsoleLoggerFactory();
+            _loggerFactory = loggerFactory ?? DefaultLoggerFactory.Create(builder => { builder.AddConsoleLogger(); });
 
             _logger = _loggerFactory.CreateLogger(nameof(NetClient));
             _receivedPacketQueue = new ConcurrentQueue<NetPacket>();
