@@ -511,12 +511,12 @@ namespace EuNet.Client
                         break;
                     case PacketProperty.Request:
                         {
-                            _request.OnReceive(poolingPacket.Property, reader, OnRequestReceive).Wait();
+                            _request.OnReceive(poolingPacket.Property, poolingPacket.DeliveryMethod, reader, OnRequestReceive).Wait();
                         }
                         break;
                     case PacketProperty.ViewRequest:
                         {
-                            _request.OnReceive(poolingPacket.Property, reader, OnViewRequestReceive).Wait();
+                            _request.OnReceive(poolingPacket.Property, poolingPacket.DeliveryMethod, reader, OnViewRequestReceive).Wait();
                         }
                         break;
                     default:

@@ -10,7 +10,7 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
 
     private NetView _view;
     public  NetView View => _view;
-    private IActorViewRpc_NoReply _moveRpc;
+    private ActorViewRpc _actorRpc;
     private CharacterController _moveController;
     private Vector3 _moveDirection;
     private Vector3? _netSyncPosition;
@@ -19,7 +19,7 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
     private void Awake()
     {
         _view = GetComponent<NetView>();
-        _moveRpc = new ActorViewRpc(_view, DeliveryMethod.Unreliable).WithNoReply();
+        _actorRpc = new ActorViewRpc(_view);
         _moveController = GetComponent<CharacterController>();
     }
 
@@ -51,7 +51,10 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
 
     public void SetMoveDirection(float x, float y)
     {
-        _moveRpc.OnSetMoveDirection(x, y);
+        _actorRpc
+            .ToOthers(DeliveryMethod.Unreliable)
+            .OnSetMoveDirection(x, y);
+
         OnSetMoveDirection(x, y);
     }
 

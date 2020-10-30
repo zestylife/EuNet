@@ -263,7 +263,7 @@ namespace EuNet.Core
                         {
                             case PacketProperty.Request:
                                 {
-                                    await _request.OnReceive(packet.Property, reader, OnRequestReceived);
+                                    await _request.OnReceive(packet.Property, packet.DeliveryMethod, reader, OnRequestReceived);
                                 }
                                 break;
                             case PacketProperty.ViewRequest:

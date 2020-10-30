@@ -165,11 +165,11 @@ namespace EuNet.Client
 
                         if(packet.Property == PacketProperty.Request)
                         {
-                            _request.OnReceive(packet.Property, _packetReader, _netClient.OnRequestReceive).Wait();
+                            _request.OnReceive(packet.Property, packet.DeliveryMethod, _packetReader, _netClient.OnRequestReceive).Wait();
                         }
                         else if (packet.Property == PacketProperty.ViewRequest)
                         {
-                            _request.OnReceive(packet.Property, _packetReader, OnViewRequestReceived).Wait();
+                            _request.OnReceive(packet.Property, packet.DeliveryMethod, _packetReader, OnViewRequestReceived).Wait();
                         }
                         else
                         {

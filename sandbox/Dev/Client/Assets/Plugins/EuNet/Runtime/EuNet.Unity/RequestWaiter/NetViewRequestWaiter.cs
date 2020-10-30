@@ -9,33 +9,66 @@ namespace EuNet.Unity
     public class NetViewRequestWaiter : IRequestWaiter
     {
         public readonly NetView View;
-        public readonly DeliveryMethod DeliveryMethod;
 
-        public NetViewRequestWaiter(NetView view, DeliveryMethod deliveryMethod)
+        public NetViewRequestWaiter(NetView view)
         {
             View = view;
-            DeliveryMethod = deliveryMethod;
         }
 
-        void IRequestWaiter.SendRequest(ISession session, NetDataWriter writer)
+        void IRequestWaiter.SendRequest(ISession session, NetDataWriter writer, DeliveryMethod deliveryMethod, DeliveryTarget deliveryTarget, int extra)
         {
             NetClient client = session as NetClient;
-            if (client != null)
-                client.P2pGroup.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, DeliveryMethod);
-            else session.SessionRequest.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, DeliveryMethod);
+            if (client == null)
+                throw new Exception($"Session must be NetClient instance");
+            
+            switch(deliveryTarget)
+            {
+                case DeliveryTarget.All:
+                    {
+                        // 다른사람들 보냄
+                        client.P2pGroup.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                        // 나를 호출함
+                    }
+                    break;
+                case DeliveryTarget.Others:
+                    {
+                        // 다른사람들 보냄
+                        client.P2pGroup.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                    }
+                    break;
+                case DeliveryTarget.Master:
+                    {
+                        var target = client.P2pGroup.GetMasterMember();
+                        if (target == null)
+                            return;
+
+                        target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                    }
+                    break;
+                case DeliveryTarget.Target:
+                    {
+                        var target = client.P2pGroup.Find((ushort)extra);
+                        if (target == null)
+                            return;
+
+                        target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                    }
+                    break;
+            }
         }
 
-        Task IRequestWaiter.SendRequestAndWait(ISession session, NetDataWriter writer, TimeSpan? timeout)
+        Task IRequestWaiter.SendRequestAndWait(ISession session, NetDataWriter writer, TimeSpan? timeout, DeliveryMethod deliveryMethod, int extra)
         {
-            if (DeliveryMethod != DeliveryMethod.ReliableOrdered &&
-                DeliveryMethod != DeliveryMethod.ReliableUnordered)
-                throw new Exception($"Not support {DeliveryMethod} in SendRequestAndWait");
+            if (deliveryMethod != DeliveryMethod.ReliableOrdered &&
+                deliveryMethod != DeliveryMethod.ReliableUnordered)
+                throw new Exception($"Not support {deliveryMethod} in SendRequestAndWait");
 
-            // 그룹의 여러 인원에게 보내고 결과를 받을 수 없으므로 지원되지 않음
-            if ((session is P2pSession) == false)
-                throw new Exception("Not support P2pSession in SendRequestAndWait");
+            NetClient client = session as NetClient;
+            if (client == null)
+                throw new Exception($"Session must be NetClient instance");
 
-            var task = session.SessionRequest.ViewRequestAsync(writer.Data, 0, writer.Length, View.ViewId, DeliveryMethod, timeout);
+            var target = client.P2pGroup.Find((ushort)extra);
+            var task = target.ViewRequestAsync(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod, timeout);
 
             try
             {
@@ -47,17 +80,18 @@ namespace EuNet.Unity
             }
         }
 
-        Task<NetDataBufferReader> IRequestWaiter.SendRequestAndReceive(ISession session, NetDataWriter writer, TimeSpan? timeout)
+        Task<NetDataBufferReader> IRequestWaiter.SendRequestAndReceive(ISession session, NetDataWriter writer, TimeSpan? timeout, DeliveryMethod deliveryMethod, int extra)
         {
-            if (DeliveryMethod != DeliveryMethod.ReliableOrdered &&
-                DeliveryMethod != DeliveryMethod.ReliableUnordered)
-                throw new Exception($"Not support {DeliveryMethod} in SendRequestAndWait");
+            if (deliveryMethod != DeliveryMethod.ReliableOrdered &&
+                deliveryMethod != DeliveryMethod.ReliableUnordered)
+                throw new Exception($"Not support {deliveryMethod} in SendRequestAndWait");
 
-            // 그룹의 여러 인원에게 보내고 결과를 받을 수 없으므로 지원되지 않음
-            if ((session is P2pSession) == false)
-                throw new Exception("Not support P2pSession in SendRequestAndReceive");
+            NetClient client = session as NetClient;
+            if (client == null)
+                throw new Exception($"Session must be NetClient instance");
 
-            var task = session.SessionRequest.ViewRequestAsync(writer.Data, 0, writer.Length, View.ViewId, DeliveryMethod, timeout);
+            var target = client.P2pGroup.Find((ushort)extra);
+            var task = target.ViewRequestAsync(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod, timeout);
 
             try
             {

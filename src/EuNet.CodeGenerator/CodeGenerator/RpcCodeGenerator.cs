@@ -94,14 +94,17 @@ namespace CodeGenerator
 
                 using (w.B($"public {rpcClassName}() : base(null)"))
                 {
+                    w._("DeliveryMethod = DeliveryMethod.Tcp;");
                 }
 
                 using (w.B($"public {rpcClassName}(ISession target) : base(target)"))
                 {
+                    w._("DeliveryMethod = DeliveryMethod.Tcp;");
                 }
 
                 using (w.B($"public {rpcClassName}(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)"))
                 {
+                    w._("DeliveryMethod = DeliveryMethod.Tcp;");
                 }
 
                 // With Helpers

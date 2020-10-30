@@ -3,12 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="EuNet.CodeGenerator.Templates" Version="1.0.6" />
-  </ItemGroup>
 
+  <Import Project="..\..\..\src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('..\..\..\src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
+  
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\Client\Assets\Shared\Common\" />
   </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
+  </ItemGroup>
 </Project>

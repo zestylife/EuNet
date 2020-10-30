@@ -9,6 +9,9 @@ namespace EuNet.Rpc
         public ISession Target { get; protected internal set; }
         public TimeSpan? Timeout { get; protected internal set; }
         public IRequestWaiter RequestWaiter { get; protected internal set; }
+        public DeliveryMethod DeliveryMethod { get; protected internal set; }
+        public DeliveryTarget DeliveryTarget { get; protected internal set; }
+        public int Extra { get; protected internal set; }
 
         abstract public Type InterfaceType { get; }
 
@@ -25,19 +28,20 @@ namespace EuNet.Rpc
             Timeout = timeout;
         }
 
-        protected void SendRequest(NetDataWriter writer)
+        protected void SendRequest(
+            NetDataWriter writer)
         {
-            RequestWaiter.SendRequest(Target, writer);
+            RequestWaiter.SendRequest(Target, writer, DeliveryMethod, DeliveryTarget, Extra);
         }
 
         protected Task SendRequestAndWait(NetDataWriter writer)
         {
-            return RequestWaiter.SendRequestAndWait(Target, writer, Timeout);
+            return RequestWaiter.SendRequestAndWait(Target, writer, Timeout, DeliveryMethod, Extra);
         }
 
         protected Task<NetDataBufferReader> SendRequestAndReceive(NetDataWriter writer)
         {
-            return RequestWaiter.SendRequestAndReceive(Target, writer, Timeout);
+            return RequestWaiter.SendRequestAndReceive(Target, writer, Timeout, DeliveryMethod, Extra);
         }
     }
 }

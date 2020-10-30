@@ -41,14 +41,17 @@ namespace SampleGameCommon
 
         public LoginRpc() : base(null)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public LoginRpc(ISession target) : base(target)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public LoginRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public ILoginRpc_NoReply WithNoReply()
@@ -219,10 +222,43 @@ namespace SampleGameCommon
         public PlayerViewRpc(NetView view, TimeSpan? timeout = null)
             	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
         }
 
         public PlayerViewRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
+        }
+
+        public PlayerViewRpc ToTarget(DeliveryMethod deliveryMethod, ushort sessionId)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Target;
+            Extra = sessionId;
+            return this;
+        }
+
+        public PlayerViewRpc ToMaster(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Master;
+            return this;
+        }
+
+        public IPlayerViewRpc_NoReply ToOthers(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Others;
+            return this;
+        }
+
+        public IPlayerViewRpc_NoReply ToAll(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.All;
+            return this;
         }
 
         public IPlayerViewRpc_NoReply WithNoReply()

@@ -97,13 +97,46 @@ namespace CodeGenerator
                 using (w.B($"public {rpcClassName}(NetView view, TimeSpan? timeout = null)",
                     "\t: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)"))
                 {
+                    w._("DeliveryMethod = DeliveryMethod.Unreliable;");
+                    w._("DeliveryTarget = DeliveryTarget.Others;");
                 }
                 
                 using (w.B($"public {rpcClassName}(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)"))
                 {
+                    w._("DeliveryMethod = DeliveryMethod.Unreliable;");
+                    w._("DeliveryTarget = DeliveryTarget.Others;");
                 }
 
                 // With Helpers
+
+                using (w.B($"public {rpcClassGenericName} ToTarget(DeliveryMethod deliveryMethod, ushort sessionId)"))
+                {
+                    w._("DeliveryMethod = deliveryMethod;");
+                    w._("DeliveryTarget = DeliveryTarget.Target;");
+                    w._("Extra = sessionId;");
+                    w._("return this;");
+                }
+
+                using (w.B($"public {rpcClassGenericName} ToMaster(DeliveryMethod deliveryMethod)"))
+                {
+                    w._("DeliveryMethod = deliveryMethod;");
+                    w._("DeliveryTarget = DeliveryTarget.Master;");
+                    w._("return this;");
+                }
+
+                using (w.B($"public {noReplyInterfaceGenericName} ToOthers(DeliveryMethod deliveryMethod)"))
+                {
+                    w._("DeliveryMethod = deliveryMethod;");
+                    w._("DeliveryTarget = DeliveryTarget.Others;");
+                    w._("return this;");
+                }
+
+                using (w.B($"public {noReplyInterfaceGenericName} ToAll(DeliveryMethod deliveryMethod)"))
+                {
+                    w._("DeliveryMethod = deliveryMethod;");
+                    w._("DeliveryTarget = DeliveryTarget.All;");
+                    w._("return this;");
+                }
 
                 using (w.B($"public {noReplyInterfaceGenericName} WithNoReply()"))
                 {

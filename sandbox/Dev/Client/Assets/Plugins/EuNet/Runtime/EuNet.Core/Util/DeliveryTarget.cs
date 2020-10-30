@@ -1,4 +1,4 @@
-﻿namespace EuNet.Unity
+﻿namespace EuNet.Core
 {
     public enum DeliveryTarget
     {
@@ -10,7 +10,7 @@
 
         //! 마스터만 호출한다
         Master,
-        
+
         //! 특정 세션 타겟
         Target,
     }

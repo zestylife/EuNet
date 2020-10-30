@@ -181,7 +181,11 @@ namespace EuNet.Core
             }
         }
 
-        public async Task OnReceive(PacketProperty packetProperty, NetDataReader reader, Func<ISession, NetDataReader, NetDataWriter, Task> onRequestReceive)
+        public async Task OnReceive(
+            PacketProperty packetProperty,
+            DeliveryMethod deliveryMethod,
+            NetDataReader reader,
+            Func<ISession, NetDataReader, NetDataWriter, Task> onRequestReceive)
         {
             var requestType = (RequestType)reader.ReadByte();
             int requestId = reader.ReadInt32();
@@ -224,7 +228,7 @@ namespace EuNet.Core
                             }
 
                             NetPacket packet = NetPool.PacketPool.Alloc(packetProperty, writer);
-                            packet.DeliveryMethod = DeliveryMethod.Tcp;
+                            packet.DeliveryMethod = deliveryMethod;
 
                             _session.SendRawAsync(packet, packet.DeliveryMethod);
                         }

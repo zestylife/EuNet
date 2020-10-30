@@ -45,14 +45,17 @@ namespace Rpc.Test.Interface
 
         public GreeterRpc() : base(null)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public GreeterRpc(ISession target) : base(target)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public GreeterRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public IGreeterRpc_NoReply WithNoReply()
@@ -317,10 +320,43 @@ namespace EuNet.Rpc.Test.Interface
         public GreeterViewRpc(NetView view, TimeSpan? timeout = null)
             	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
         }
 
         public GreeterViewRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
+        }
+
+        public GreeterViewRpc ToTarget(DeliveryMethod deliveryMethod, ushort sessionId)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Target;
+            Extra = sessionId;
+            return this;
+        }
+
+        public GreeterViewRpc ToMaster(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Master;
+            return this;
+        }
+
+        public IGreeterViewRpc_NoReply ToOthers(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Others;
+            return this;
+        }
+
+        public IGreeterViewRpc_NoReply ToAll(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.All;
+            return this;
         }
 
         public IGreeterViewRpc_NoReply WithNoReply()

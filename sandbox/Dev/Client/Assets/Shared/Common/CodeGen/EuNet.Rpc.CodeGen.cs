@@ -43,14 +43,17 @@ namespace Common
 
         public LoginRpc() : base(null)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public LoginRpc(ISession target) : base(target)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public LoginRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public ILoginRpc_NoReply WithNoReply()
@@ -257,14 +260,17 @@ namespace Common
 
         public ShopRpc() : base(null)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public ShopRpc(ISession target) : base(target)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public ShopRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Tcp;
         }
 
         public IShopRpc_NoReply WithNoReply()
@@ -382,13 +388,46 @@ namespace Common
     {
         public override Type InterfaceType => typeof(IActorViewRpc);
 
-        public ActorViewRpc(NetView view, DeliveryMethod deliveryMethod, TimeSpan? timeout = null)
-            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view, deliveryMethod), timeout)
+        public ActorViewRpc(NetView view, TimeSpan? timeout = null)
+            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
         }
 
         public ActorViewRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
         {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
+        }
+
+        public ActorViewRpc ToTarget(DeliveryMethod deliveryMethod, ushort sessionId)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Target;
+            Extra = sessionId;
+            return this;
+        }
+
+        public ActorViewRpc ToMaster(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Master;
+            return this;
+        }
+
+        public IActorViewRpc_NoReply ToOthers(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Others;
+            return this;
+        }
+
+        public IActorViewRpc_NoReply ToAll(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.All;
+            return this;
         }
 
         public IActorViewRpc_NoReply WithNoReply()
