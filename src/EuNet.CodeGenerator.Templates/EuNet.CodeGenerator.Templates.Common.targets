@@ -34,7 +34,7 @@
   </Choose>
 
   <PropertyGroup>
-    <EuNetResolverNamespace>$(MSBuildProjectName).Resolvers</EuNetResolverNamespace>
+    <EuNetNamespace>$(MSBuildProjectName)</EuNetNamespace>
   </PropertyGroup>
   
   <!-- Code Generation Task -->
@@ -57,7 +57,7 @@
     <WriteLinesToFile File="$(ArgsFile)" Lines="--reference=$([MSBuild]::Escape($(ReferenceFiles)))"/>
     <WriteLinesToFile File="$(ArgsFile)" Lines="--define=$([MSBuild]::Escape($(DefineConstants)))"/>
     <WriteLinesToFile File="$(ArgsFile)" Lines="--target=$(EuNetRpcTarget)" Condition="$(EuNetRpcTarget) != ''"/>
-    <WriteLinesToFile File="$(ArgsFile)" Lines="--namespace=$(EuNetResolverNamespace)" Condition="$(EuNetResolverNamespace) != ''"/>
+    <WriteLinesToFile File="$(ArgsFile)" Lines="--namespace=$(EuNetNamespace)" Condition="$(EuNetNamespace) != ''"/>
     <WriteLinesToFile File="$(ArgsFile)" Lines="--include=$(EuNetRpcSourceInclude)" Condition="$(EuNetRpcSourceInclude) != ''"/>
     <WriteLinesToFile File="$(ArgsFile)" Lines="--exclude=$(EuNetRpcSourceExclude)" Condition="$(EuNetRpcSourceExclude) != ''"/>
     <Message Text="Compiler : $(EuNetRpcCodeGenToolExe)"  Importance="high"/>

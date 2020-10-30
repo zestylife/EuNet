@@ -527,6 +527,29 @@ namespace Common
 
 #endif
 #endregion
+#region Common
+
+namespace Common
+{
+    public static class RpcEnumHelper
+    {
+        public static string GetEnumName(int rpcNameHash)
+        {
+            switch(rpcNameHash)
+            {
+                case -1155460313: return "ILoginRpc.GetUserInfo";
+                case -1471800254: return "ILoginRpc.Join";
+                case -1327137735: return "ILoginRpc.Login";
+                case -1585425401: return "IShopRpc.PurchaseItem";
+                case -2049226282: return "IActorViewRpc.OnSetMoveDirection";
+            }
+
+            return string.Empty;
+        }
+    }
+}
+
+#endregion
 #region Common.UserInfo
 
 namespace Common

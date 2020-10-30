@@ -393,6 +393,28 @@ namespace SampleGameCommon
 
 #endif
 #endregion
+#region SampleGameCommon
+
+namespace SampleGameCommon
+{
+    public static class RpcEnumHelper
+    {
+        public static string GetEnumName(int rpcNameHash)
+        {
+            switch(rpcNameHash)
+            {
+                case -1155460313: return "ILoginRpc.GetUserInfo";
+                case -1327137735: return "ILoginRpc.Login";
+                case -1308402450: return "IPlayerViewRpc.OnAttack";
+                case -1297090073: return "IPlayerViewRpc.OnSkill";
+            }
+
+            return string.Empty;
+        }
+    }
+}
+
+#endregion
 #region SampleGameCommon.GenericClass<T>
 
 namespace SampleGameCommon

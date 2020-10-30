@@ -457,6 +457,29 @@ namespace EuNet.Rpc.Test.Interface
 
 #endif
 #endregion
+#region EuNet.Rpc.Test.Interface
+
+namespace EuNet.Rpc.Test.Interface
+{
+    public static class RpcEnumHelper
+    {
+        public static string GetEnumName(int rpcNameHash)
+        {
+            switch(rpcNameHash)
+            {
+                case -567773818: return "IGreeterRpc.Greet";
+                case -1772909904: return "IGreeterRpc.GreetClass";
+                case -258043401: return "IGreeterRpc.GreetInterfaceSerializeClass";
+                case -1629016744: return "IGreeterRpc.SessionParameter";
+                case -1153730677: return "IGreeterViewRpc.Greet";
+            }
+
+            return string.Empty;
+        }
+    }
+}
+
+#endregion
 #region Rpc.Test.Interface.DataClass
 
 namespace Rpc.Test.Interface

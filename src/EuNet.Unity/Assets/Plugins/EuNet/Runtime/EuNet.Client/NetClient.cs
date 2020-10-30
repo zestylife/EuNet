@@ -95,7 +95,7 @@ namespace EuNet.Client
                     0);
             }
 
-            _request = new SessionRequest(this);
+            _request = new SessionRequest(this, _statistic);
 
             _rpcHandlers = new List<IRpcInvokable>();
         }

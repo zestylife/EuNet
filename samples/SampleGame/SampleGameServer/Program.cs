@@ -37,8 +37,8 @@ namespace SampleGameServer
                 serverOption,
                 loggerFactory,
                 statistics,
-                (sessionId, tcpChannel, udpChannel) => {
-                    return new UserSession(sessionId, tcpChannel, udpChannel); 
+                (createInfo) => {
+                    return new UserSession(createInfo); 
                 }); 
 
             _server = new NetServer(

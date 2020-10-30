@@ -50,16 +50,20 @@ namespace CodeGenerator
         public void GenerateCode(Type[] types)
         {
             HashSet<string> namespaceHashSet = new HashSet<string>();
+            Dictionary<int, string> rpcEnumMap = new Dictionary<int, string>();
 
             var rpcTypes = types.Where(t => Utility.IsRpcInterface(t)).ToArray();
             var rpcCodeGen = new RpcCodeGenerator() { Options = Options };
             foreach (var type in rpcTypes)
-                rpcCodeGen.GenerateCode(type, CodeWriter);
+                rpcCodeGen.GenerateCode(type, rpcEnumMap, CodeWriter);
 
             var netViewRpcTypes = types.Where(t => Utility.IsViewRpcInterface(t)).ToArray();
             var netViewRpcCodeGen = new ViewRpcCodeGenerator() { Options = Options };
             foreach (var type in netViewRpcTypes)
-                netViewRpcCodeGen.GenerateCode(type, CodeWriter);
+                netViewRpcCodeGen.GenerateCode(type, rpcEnumMap, CodeWriter);
+
+            var rpcEnumCodeGen = new RpcEnumCodeGenerator() { Options = Options };
+            rpcEnumCodeGen.GenerateCode(rpcEnumMap, CodeWriter);
 
             Dictionary<string, string> formatterMap = new Dictionary<string, string>();
 

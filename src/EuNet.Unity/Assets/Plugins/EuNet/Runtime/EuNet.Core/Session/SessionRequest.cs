@@ -16,14 +16,16 @@ namespace EuNet.Core
             CustomMessage = 5,
         }
 
-        private ISession _session;
+        private readonly ISession _session;
+        private readonly NetStatistic _statistic;
         private int _lastRequestId;
         private readonly ConcurrentDictionary<int, TaskCompletionSource<NetDataBufferReader>> _responseWaitingItems =
             new ConcurrentDictionary<int, TaskCompletionSource<NetDataBufferReader>>();
 
-        public SessionRequest(ISession session)
+        public SessionRequest(ISession session, NetStatistic statistic)
         {
             _session = session;
+            _statistic = statistic;
         }
 
         public void Close()
@@ -35,8 +37,15 @@ namespace EuNet.Core
             _lastRequestId = 0;
         }
 
+        private void IncreaseRequestRpc(byte[] data, int offset, int length)
+        {
+            _statistic.IncreaseRequestRpc(FastBitConverter.ToInt32(data, offset + 1), length);
+        }
+
         public Task<NetDataBufferReader> RequestAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
+            IncreaseRequestRpc(data, offset, length);
+
             var tcs = new TaskCompletionSource<NetDataBufferReader>();
             int requestId;
 
@@ -89,6 +98,8 @@ namespace EuNet.Core
 
         public void Notification(byte[] data, int offset, int length, DeliveryMethod deliveryMethod)
         {
+            IncreaseRequestRpc(data, offset, length);
+
             var writer = NetPool.DataWriterPool.Alloc();
             try
             {
@@ -109,6 +120,8 @@ namespace EuNet.Core
 
         public Task<NetDataBufferReader> ViewRequestAsync(byte[] data, int offset, int length, int viewId, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
+            IncreaseRequestRpc(data, offset, length);
+
             var tcs = new TaskCompletionSource<NetDataBufferReader>();
             int requestId;
 
@@ -162,6 +175,8 @@ namespace EuNet.Core
 
         public void ViewNotification(byte[] data, int offset, int length, int viewId, DeliveryMethod deliveryMethod)
         {
+            IncreaseRequestRpc(data, offset, length);
+
             var writer = NetPool.DataWriterPool.Alloc();
             try
             {
@@ -190,7 +205,9 @@ namespace EuNet.Core
             var requestType = (RequestType)reader.ReadByte();
             int requestId = reader.ReadInt32();
 
-            switch(requestType)
+            _statistic.IncreaseResponseRpc(requestId);
+
+            switch (requestType)
             {
                 case RequestType.Notification:
                     {

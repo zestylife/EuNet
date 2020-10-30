@@ -15,12 +15,14 @@ namespace EuNet.Server
             ServerOption serverOption,
             ILoggerFactory loggerFactory,
             NetStatistic statistic,
-            Func<ushort, TcpChannel, UdpChannel, ServerSession> createSessionFunc = null)
+            Func<SessionCreateInfo, ServerSession> createSessionFunc = null)
         {
             createSessionFunc = createSessionFunc ?? CreateSession;
 
             _sessionQueue = new ConcurrentQueue<ISession>();
             _maxSession = serverOption.MaxSession;
+
+            var createInfo = new SessionCreateInfo();
 
             for (int i = 0; i < _maxSession; ++i)
             {
@@ -40,15 +42,20 @@ namespace EuNet.Server
                         0);
                 }
 
-                ServerSession session = createSessionFunc((ushort)(i + 1), tcpChannel, udpChannel);
+                createInfo.SessionId = (ushort)(i + 1);
+                createInfo.TcpChannel = tcpChannel;
+                createInfo.UdpChannel = udpChannel;
+                createInfo.Statistic = statistic;
+
+                ServerSession session = createSessionFunc(createInfo);
 
                 _sessionQueue.Enqueue(session);
             }
         }
 
-        private ServerSession CreateSession(ushort sessionId, TcpChannel tcpChannel, UdpChannel udpChannel)
+        private ServerSession CreateSession(SessionCreateInfo createInfo)
         {
-            return new ServerSession(sessionId, tcpChannel, udpChannel);
+            return new ServerSession(createInfo);
         }
 
         public ISession Create()

@@ -58,7 +58,7 @@ namespace EuNet.Client
 
             _receivedPacketQueue = new ConcurrentQueue<NetPacket>();
             _packetReader = new NetDataReader();
-            _request = new SessionRequest(this);
+            _request = new SessionRequest(this, netClient.Statistic);
 
             _state = SessionState.Connected;
         }

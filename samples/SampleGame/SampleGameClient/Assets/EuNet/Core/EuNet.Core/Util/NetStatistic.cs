@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 
 namespace EuNet.Core
@@ -48,6 +49,10 @@ namespace EuNet.Core
         public long RelayServCount;
         public long RelayServBytes;
 
+        public volatile bool IsGatherRpc = false;
+        public Dictionary<int, int> _requestRpcMap = new Dictionary<int, int>();
+        public Dictionary<int, int> _responseRpcMap = new Dictionary<int, int>();
+
         public float UdpPacketLossPercent
         {
             get { return UdpReliablePacketSentCount == 0 ? 0.0f : (float)UdpPacketLossCount * 100.0f / (float)UdpReliablePacketSentCount; }
@@ -60,6 +65,32 @@ namespace EuNet.Core
         public long TotalReceivedBytes { get { return TcpReceivedBytes + UdpReceivedBytes; } }
 
         public long TotalPacketSentCount { get { return TcpPacketSentCount + UdpPacketSentCount; } }
+        
+        public void IncreaseRequestRpc(int requestId, int length)
+        {
+            if (IsGatherRpc == false)
+                return;
+
+            lock(_requestRpcMap)
+            {
+                if (_requestRpcMap.ContainsKey(requestId))
+                    _requestRpcMap[requestId]++;
+                else _requestRpcMap[requestId] = 0;
+            }
+        }
+
+        public void IncreaseResponseRpc(int requestId)
+        {
+            if (IsGatherRpc == false)
+                return;
+
+            lock (_responseRpcMap)
+            {
+                if (_responseRpcMap.ContainsKey(requestId))
+                    _responseRpcMap[requestId]++;
+                else _responseRpcMap[requestId] = 0;
+            }
+        }
 
         public void Reset()
         {

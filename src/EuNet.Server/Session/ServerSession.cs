@@ -40,18 +40,18 @@ namespace EuNet.Core
         private SessionRequest _request;
         public SessionRequest SessionRequest => _request;
 
-        public ServerSession(ushort sessionId, TcpChannel tcpChannel, UdpChannel udpChannel)
+        public ServerSession(SessionCreateInfo createInfo)
         {
-            SessionId = sessionId;
-            _tcpChannel = tcpChannel;
+            SessionId = createInfo.SessionId;
+            _tcpChannel = createInfo.TcpChannel;
             if (_tcpChannel != null)
                 _tcpChannel.PacketReceived = OnReceiveFromChannel;
 
-            _udpChannel = udpChannel;
+            _udpChannel = createInfo.UdpChannel;
             if (_udpChannel != null)
                 _udpChannel.PacketReceived = OnReceiveFromChannel;
 
-            _request = new SessionRequest(this);
+            _request = new SessionRequest(this, createInfo.Statistic);
         }
 
         public void Init(SessionInitializeInfo info)

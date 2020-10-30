@@ -26,8 +26,8 @@ namespace CodeGenerator
         [Option('t', "target", HelpText = "Filename of a generated code.")]
         public string TargetFile { get; set; }
 
-        [Option('n', "namespace", HelpText = "Resolver namespace.")]
-        public string ResolverNamespace { get; set; } = "EuNet.Resolvers";
+        [Option('n', "namespace", HelpText = "namespace.")]
+        public string Namespace { get; set; } = "EuNet";
 
         [Option("include", Separator = ';', HelpText = "Source include regular expression filter.")]
         public IEnumerable<string> Includes { get; set; }

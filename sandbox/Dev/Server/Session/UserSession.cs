@@ -9,8 +9,8 @@ namespace StarterServer
     {
         private UserInfo _userInfo;
 
-        public UserSession(ushort sessionId, TcpChannel tcpChannel, UdpChannel udpChannel)
-            : base(sessionId, tcpChannel, udpChannel)
+        public UserSession(SessionCreateInfo createInfo)
+            : base(createInfo)
         {
 
         }
