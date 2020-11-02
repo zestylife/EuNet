@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>zestylife</Authors>
     <Company></Company>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/zestylife/EuNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zestylife/EuNet</RepositoryUrl>
