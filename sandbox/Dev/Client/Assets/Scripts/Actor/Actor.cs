@@ -64,6 +64,11 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
         return Task.CompletedTask;
     }
 
+    public Task<Color> OnTest(Vector3 position, Quaternion rotation)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void OnViewInstantiate(NetDataReader reader)
     {
         _renderer.material.color = reader.ReadColor();

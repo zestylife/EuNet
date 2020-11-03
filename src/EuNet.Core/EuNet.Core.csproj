@@ -16,11 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Extensions\**" />
     <Compile Remove="Extension\**" />
-    <EmbeddedResource Remove="Extensions\**" />
     <EmbeddedResource Remove="Extension\**" />
-    <None Remove="Extensions\**" />
     <None Remove="Extension\**" />
   </ItemGroup>
 
@@ -29,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extentions\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>

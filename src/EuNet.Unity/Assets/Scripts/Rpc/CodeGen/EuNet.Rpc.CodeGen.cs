@@ -306,11 +306,13 @@ namespace EuNet.Rpc.Test.Interface
     public interface IGreeterViewRpc_NoReply
     {
         void Greet(int value);
+        void UnityType(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
     }
 
     public enum IGreeterViewRpc_Enum : int
     {
         Greet = -1153730677,
+        UnityType = -826639833,
     }
 
     public class GreeterViewRpc : RpcRequester, IGreeterViewRpc, IGreeterViewRpc_NoReply
@@ -392,6 +394,25 @@ namespace EuNet.Rpc.Test.Interface
             }
         }
 
+        public async Task<UnityEngine.Color> UnityType(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterViewRpc_Enum.UnityType);
+                _writer_.Write(position);
+                _writer_.Write(rotation);
+                using(var _reader_ = await SendRequestAndReceive(_writer_))
+                {
+                    return _reader_.ReadColor();
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         void IGreeterViewRpc_NoReply.Greet(int value)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -406,12 +427,29 @@ namespace EuNet.Rpc.Test.Interface
                 NetPool.DataWriterPool.Free(_writer_);
             }
         }
+
+        void IGreeterViewRpc_NoReply.UnityType(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterViewRpc_Enum.UnityType);
+                _writer_.Write(position);
+                _writer_.Write(rotation);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
     }
 
     [RequireComponent(typeof(NetView))]
     public abstract class GreeterViewRpcServiceBehaviour : MonoBehaviour, IRpcInvokable, IGreeterViewRpc
     {
         public abstract Task<bool> Greet(int value);
+        public abstract Task<UnityEngine.Color> UnityType(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
         public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
         {
             ISession session = _target_ as ISession;
@@ -422,6 +460,14 @@ namespace EuNet.Rpc.Test.Interface
                     {
                         var value = _reader_.ReadInt32();
                         var _result_ = await Greet(value);
+                        _writer_.Write(_result_);
+                    }
+                    break;
+                case IGreeterViewRpc_Enum.UnityType:
+                    {
+                        var position = _reader_.ReadVector3();
+                        var rotation = _reader_.ReadQuaternion();
+                        var _result_ = await UnityType(position, rotation);
                         _writer_.Write(_result_);
                     }
                     break;
@@ -444,6 +490,14 @@ namespace EuNet.Rpc.Test.Interface
                     {
                         var value = _reader_.ReadInt32();
                         var _result_ = await _view_.FindRpcHandler<IGreeterViewRpc>().Greet(value);
+                        _writer_.Write(_result_);
+                    }
+                    break;
+                case IGreeterViewRpc_Enum.UnityType:
+                    {
+                        var position = _reader_.ReadVector3();
+                        var rotation = _reader_.ReadQuaternion();
+                        var _result_ = await _view_.FindRpcHandler<IGreeterViewRpc>().UnityType(position, rotation);
                         _writer_.Write(_result_);
                     }
                     break;
@@ -472,6 +526,7 @@ namespace EuNet.Rpc.Test.Interface
                 case -258043401: return "IGreeterRpc.GreetInterfaceSerializeClass";
                 case -1629016744: return "IGreeterRpc.SessionParameter";
                 case -1153730677: return "IGreeterViewRpc.Greet";
+                case -826639833: return "IGreeterViewRpc.UnityType";
             }
 
             return string.Empty;

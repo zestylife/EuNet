@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using EuNet.Core;
 using Microsoft.CodeAnalysis.CSharp;
+using UnityEngine;
 
 namespace CodeGenerator
 {
@@ -35,6 +36,46 @@ namespace CodeGenerator
             TypeInfo ti = type.GetTypeInfo();
             NetDataObjectAttribute attr = ti.GetCustomAttribute<NetDataObjectAttribute>();
             if (attr != null)
+                return true;
+
+            return false;
+        }
+
+        public static bool IsBasicSerializeType(Type type)
+        {
+            if (type == typeof(string) ||
+                type == typeof(long) ||
+                type == typeof(ulong) ||
+                type == typeof(int) ||
+                type == typeof(uint) ||
+                type == typeof(short) ||
+                type == typeof(ushort) ||
+                type == typeof(byte) ||
+                type == typeof(bool) ||
+                type == typeof(char) ||
+                type == typeof(float) ||
+                type == typeof(double) ||
+                type == typeof(Vector2) ||
+                type == typeof(Vector3) ||
+                type == typeof(Vector4) ||
+                type == typeof(Quaternion) ||
+                type == typeof(Color) ||
+                type == typeof(Bounds) ||
+                type == typeof(Rect) ||
+                type == typeof(Keyframe) ||
+                type == typeof(AnimationCurve) ||
+                type == typeof(Matrix4x4) ||
+                type == typeof(GradientColorKey) ||
+                type == typeof(GradientAlphaKey) ||
+                type == typeof(Gradient) ||
+                type == typeof(Color32) ||
+                type == typeof(RectOffset) ||
+                type == typeof(LayerMask) ||
+                type == typeof(Vector2Int) ||
+                type == typeof(Vector3Int) ||
+                type == typeof(RangeInt) ||
+                type == typeof(RectInt) ||
+                type == typeof(BoundsInt))
                 return true;
 
             return false;
@@ -146,18 +187,7 @@ namespace CodeGenerator
 
         public static string GetWriteMethod(Type type, string name)
         {
-            if (type == typeof(string) ||
-                type == typeof(long) ||
-                type == typeof(ulong) ||
-                type == typeof(int) ||
-                type == typeof(uint) ||
-                type == typeof(short) ||
-                type == typeof(ushort) ||
-                type == typeof(byte) ||
-                type == typeof(bool) ||
-                type == typeof(char) ||
-                type == typeof(float) ||
-                type == typeof(double) ||
+            if (IsBasicSerializeType(type) ||
                 type == typeof(string[]) ||
                 type == typeof(long[]) ||
                 type == typeof(ulong[]) ||
@@ -196,18 +226,7 @@ namespace CodeGenerator
 
             string value = string.Empty;
 
-            if (type == typeof(string) ||
-                type == typeof(long) ||
-                type == typeof(ulong) ||
-                type == typeof(int) ||
-                type == typeof(uint) ||
-                type == typeof(short) ||
-                type == typeof(ushort) ||
-                type == typeof(byte) ||
-                type == typeof(bool) ||
-                type == typeof(char) ||
-                type == typeof(float) ||
-                type == typeof(double))
+            if (IsBasicSerializeType(type))
                 value = type.Name;
             else if (type == typeof(string[]))
                 value = "StringArray";

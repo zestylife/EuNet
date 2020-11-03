@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\EuNet.Core\EuNet.Core.csproj" />
     <ProjectReference Include="..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
+    <ProjectReference Include="..\..\src\EuNet.UnityShims\EuNet.UnityShims.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

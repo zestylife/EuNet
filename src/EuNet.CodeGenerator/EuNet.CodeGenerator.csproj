@@ -21,10 +21,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
+    <ProjectReference Include="..\EuNet.UnityShims\EuNet.UnityShims.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="ping -n 3 127.0.0.1 > nul"/>
+    <Exec Command="ping -n 3 127.0.0.1 &gt; nul" />
   </Target>
 
   

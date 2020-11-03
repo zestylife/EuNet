@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.Client", "..\..\src\E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.CodeGenerator.Templates", "..\..\src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.csproj", "{66AAFEEF-2CC4-47C2-A0EB-02885988AF48}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EuNet.UnityShims", "..\..\src\EuNet.UnityShims\EuNet.UnityShims.csproj", "{F19CA55D-8284-4CA9-99CF-1F342EF7385A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{66AAFEEF-2CC4-47C2-A0EB-02885988AF48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66AAFEEF-2CC4-47C2-A0EB-02885988AF48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66AAFEEF-2CC4-47C2-A0EB-02885988AF48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F19CA55D-8284-4CA9-99CF-1F342EF7385A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F19CA55D-8284-4CA9-99CF-1F342EF7385A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F19CA55D-8284-4CA9-99CF-1F342EF7385A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F19CA55D-8284-4CA9-99CF-1F342EF7385A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{223F8E68-E803-409B-A06C-7B723BA41E81} = {D0F04E5A-3D2F-4373-9220-318025A0188D}
 		{C0AB53CE-CDCC-48F7-BA54-973F1E06CB69} = {D0F04E5A-3D2F-4373-9220-318025A0188D}
 		{66AAFEEF-2CC4-47C2-A0EB-02885988AF48} = {D0F04E5A-3D2F-4373-9220-318025A0188D}
+		{F19CA55D-8284-4CA9-99CF-1F342EF7385A} = {D0F04E5A-3D2F-4373-9220-318025A0188D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8D4A48C-B318-47BA-812E-789C0F8721FE}

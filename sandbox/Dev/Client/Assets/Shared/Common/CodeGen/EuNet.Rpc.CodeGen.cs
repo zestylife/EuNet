@@ -377,11 +377,13 @@ namespace Common
     public interface IActorViewRpc_NoReply
     {
         void OnSetMoveDirection(float x, float y);
+        void OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
     }
 
     public enum IActorViewRpc_Enum : int
     {
         OnSetMoveDirection = -2049226282,
+        OnTest = -742564806,
     }
 
     public class ActorViewRpc : RpcRequester, IActorViewRpc, IActorViewRpc_NoReply
@@ -461,6 +463,25 @@ namespace Common
             }
         }
 
+        public async Task<UnityEngine.Color> OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IActorViewRpc_Enum.OnTest);
+                _writer_.Write(position);
+                _writer_.Write(rotation);
+                using(var _reader_ = await SendRequestAndReceive(_writer_))
+                {
+                    return _reader_.ReadColor();
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         void IActorViewRpc_NoReply.OnSetMoveDirection(float x, float y)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -476,12 +497,29 @@ namespace Common
                 NetPool.DataWriterPool.Free(_writer_);
             }
         }
+
+        void IActorViewRpc_NoReply.OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IActorViewRpc_Enum.OnTest);
+                _writer_.Write(position);
+                _writer_.Write(rotation);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
     }
 
     [RequireComponent(typeof(NetView))]
     public abstract class ActorViewRpcServiceBehaviour : MonoBehaviour, IRpcInvokable, IActorViewRpc
     {
         public abstract Task OnSetMoveDirection(float x, float y);
+        public abstract Task<UnityEngine.Color> OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
         public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
         {
             ISession session = _target_ as ISession;
@@ -493,6 +531,14 @@ namespace Common
                         var x = _reader_.ReadSingle();
                         var y = _reader_.ReadSingle();
                         await OnSetMoveDirection(x, y);
+                    }
+                    break;
+                case IActorViewRpc_Enum.OnTest:
+                    {
+                        var position = _reader_.ReadVector3();
+                        var rotation = _reader_.ReadQuaternion();
+                        var _result_ = await OnTest(position, rotation);
+                        _writer_.Write(_result_);
                     }
                     break;
                 default: return false;
@@ -515,6 +561,14 @@ namespace Common
                         var x = _reader_.ReadSingle();
                         var y = _reader_.ReadSingle();
                         await _view_.FindRpcHandler<IActorViewRpc>().OnSetMoveDirection(x, y);
+                    }
+                    break;
+                case IActorViewRpc_Enum.OnTest:
+                    {
+                        var position = _reader_.ReadVector3();
+                        var rotation = _reader_.ReadQuaternion();
+                        var _result_ = await _view_.FindRpcHandler<IActorViewRpc>().OnTest(position, rotation);
+                        _writer_.Write(_result_);
                     }
                     break;
                 default: return false;
@@ -542,6 +596,7 @@ namespace Common
                 case -1327137735: return "ILoginRpc.Login";
                 case -1585425401: return "IShopRpc.PurchaseItem";
                 case -2049226282: return "IActorViewRpc.OnSetMoveDirection";
+                case -742564806: return "IActorViewRpc.OnTest";
             }
 
             return string.Empty;

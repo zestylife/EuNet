@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F65366DD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{7C6A08F4-2550-4FB8-949B-439D303A4BB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EuNet.UnityShims", "src\EuNet.UnityShims\EuNet.UnityShims.csproj", "{470CD8AC-FA5D-4710-8420-F64216AF2D26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C16FD89-B87C-4187-94CB-DE51A1ABD974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{470CD8AC-FA5D-4710-8420-F64216AF2D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{470CD8AC-FA5D-4710-8420-F64216AF2D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{470CD8AC-FA5D-4710-8420-F64216AF2D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{470CD8AC-FA5D-4710-8420-F64216AF2D26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
