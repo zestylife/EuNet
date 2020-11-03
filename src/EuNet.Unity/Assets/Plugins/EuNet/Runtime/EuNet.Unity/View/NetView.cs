@@ -25,6 +25,7 @@ namespace EuNet.Unity
         public string PrefabPath { get; set; } = string.Empty;
         private INetViewHandler[] _viewHandlers;
         private INetViewPeriodicSync[] _viewPeriodicSyncs;
+        private int[] _viewPeriodicSyncHashs;
         private IRpcInvokable[] _viewRpcInvokables;
         private INetSerializable _serializer;
         private NetViewPosRotSync _posRotSync;
@@ -89,6 +90,8 @@ namespace EuNet.Unity
 
             if (serializerComp.Length > 0)
                 _serializer = serializerComp[0];
+
+            _viewPeriodicSyncHashs = new int[_viewPeriodicSyncs.Length];
 
             switch (_viewSyncType)
             {
@@ -203,15 +206,20 @@ namespace EuNet.Unity
             var firstPos = writer.Length;
             bool isExist = false;
 
-            foreach (var sync in _viewPeriodicSyncs)
+            for(int i=0; i<_viewPeriodicSyncs.Length; ++i)
             {
+                var sync = _viewPeriodicSyncs[i];
                 var prevPos = writer.Length;
                 writer.Write(true);
 
                 var result = sync.OnViewPeriodicSyncSerialize(writer);
 
-                if (result == true)
+                int hash = writer.GetHashCode(prevPos, writer.Length - prevPos);
+                if (result == true && _viewPeriodicSyncHashs[i] != hash)
+                {
+                    _viewPeriodicSyncHashs[i] = hash;
                     isExist = true;
+                }
                 else
                 {
                     writer.Length = prevPos;

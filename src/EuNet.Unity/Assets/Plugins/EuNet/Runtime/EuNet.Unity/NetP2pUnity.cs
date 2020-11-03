@@ -467,13 +467,15 @@ namespace EuNet.Unity
 
         private void OnViewPeriodicSyncSerialize()
         {
-            foreach (var kvp in _views.Views)
+            var writer = NetPool.DataWriterPool.Alloc();
+            try
             {
-                if (kvp.Value.IsMine() == false)
-                    continue;
-
-                NetPool.DataWriterPool.Use((NetDataWriter writer) =>
+                foreach (var kvp in _views.Views)
                 {
+                    if (kvp.Value.IsMine() == false)
+                        continue;
+
+                    writer.Reset();
                     writer.Write((ushort)NetProtocol.P2pPeriodicSync);
                     writer.Write(kvp.Key);
 
@@ -481,7 +483,11 @@ namespace EuNet.Unity
                     {
                         SendP2pInternal(writer, DeliveryTarget.Others, DeliveryMethod.Unreliable);
                     }
-                });
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(writer);
             }
         }
 

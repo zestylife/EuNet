@@ -407,6 +407,17 @@ namespace EuNet.Core
             obj.Serialize(this);
         }
 
+        public int GetHashCode(int offset, int length)
+        {
+            int hc = length;
+            for (int i = offset; i < length; ++i)
+            {
+                hc = unchecked(hc * 314159 + _data[i]);
+            }
+
+            return hc;
+        }
+
         public override int GetHashCode()
         {
             int hc = _data.Length;
