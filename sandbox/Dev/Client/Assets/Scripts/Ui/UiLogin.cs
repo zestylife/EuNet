@@ -40,6 +40,11 @@ public class UiLogin : MonoBehaviour
                 var joinResult = await loginRpc.Join();
                 Debug.Log($"Join : {joinResult}");
 
+                var purchaseResult = await GameClient.Instance.ShopRpc.PurchaseItem("TestItem");
+                Debug.Log($"purchaseResult : {purchaseResult}");
+                if (purchaseResult != 1)
+                    throw new Exception("Fail to PurchaseItem");
+
                 // Game Scene 으로 이동
                 await SceneManager.LoadSceneAsync("Game");
             }

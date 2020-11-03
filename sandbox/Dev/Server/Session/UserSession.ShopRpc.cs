@@ -9,7 +9,7 @@ namespace StarterServer
     {
         public Task<int> PurchaseItem(string itemId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<int>(1);
         }
     }
 }

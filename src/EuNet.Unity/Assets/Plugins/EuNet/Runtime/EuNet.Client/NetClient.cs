@@ -534,12 +534,21 @@ namespace EuNet.Client
 
         internal async Task OnRequestReceive(ISession session, NetDataReader reader, NetDataWriter writer)
         {
+            var preReaderPos = reader.Position;
+            var preWriterPos = writer.Length;
+
             foreach (var handler in _rpcHandlers)
             {
+                reader.Position = preReaderPos;
+                writer.Length = preWriterPos;
+
                 var result = await handler.Invoke(session, reader, writer);
                 if (result == true)
                     return;
             }
+
+            reader.Position = preReaderPos;
+            writer.Length = preWriterPos;
 
             await OnRequestReceived(session, reader, writer);
         }

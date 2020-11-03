@@ -290,12 +290,21 @@ namespace EuNet.Server
 
         private async Task OnSessionRequestReceive(ISession session, NetDataReader reader, NetDataWriter writer)
         {
-            foreach(var handler in _rpcHandlers)
+            var preReaderPos = reader.Position;
+            var preWriterPos = writer.Length;
+
+            foreach (var handler in _rpcHandlers)
             {
+                reader.Position = preReaderPos;
+                writer.Length = preWriterPos;
+
                 var result = await handler.Invoke(session, reader, writer);
                 if (result == true)
                     return;
             }
+
+            reader.Position = preReaderPos;
+            writer.Length = preWriterPos;
 
             await OnSessionRequestReceived(session, reader, writer);
         }

@@ -28,6 +28,7 @@ public class GameClient : Singleton<GameClient>
 
         // 자동으로 생성된 Rpc 서비스를 사용하기 위해 등록함
         _client.AddRpcService(new ActorViewRpcServiceView());
+        _client.AddRpcService(new ActorScaleRpcServiceView());
 
         CustomResolver.Register(GeneratedResolver.Instance);
     }

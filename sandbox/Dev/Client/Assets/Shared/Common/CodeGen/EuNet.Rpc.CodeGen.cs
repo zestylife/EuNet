@@ -369,6 +369,160 @@ namespace Common
 }
 
 #endregion
+#region Common.IActorScaleRpc
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS
+
+namespace Common
+{
+    public interface IActorScaleRpc_NoReply
+    {
+        void OnSetScale(UnityEngine.Vector3 scale);
+    }
+
+    public enum IActorScaleRpc_Enum : int
+    {
+        OnSetScale = -1897249703,
+    }
+
+    public class ActorScaleRpc : RpcRequester, IActorScaleRpc, IActorScaleRpc_NoReply
+    {
+        public override Type InterfaceType => typeof(IActorScaleRpc);
+
+        public ActorScaleRpc(NetView view, TimeSpan? timeout = null)
+            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
+        {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
+        }
+
+        public ActorScaleRpc(ISession target, IRequestWaiter requestWaiter, TimeSpan? timeout = null) : base(target, requestWaiter, timeout)
+        {
+            DeliveryMethod = DeliveryMethod.Unreliable;
+            DeliveryTarget = DeliveryTarget.Others;
+        }
+
+        public ActorScaleRpc ToTarget(DeliveryMethod deliveryMethod, ushort sessionId)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Target;
+            Extra = sessionId;
+            return this;
+        }
+
+        public ActorScaleRpc ToMaster(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Master;
+            return this;
+        }
+
+        public IActorScaleRpc_NoReply ToOthers(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.Others;
+            return this;
+        }
+
+        public IActorScaleRpc_NoReply ToAll(DeliveryMethod deliveryMethod)
+        {
+            DeliveryMethod = deliveryMethod;
+            DeliveryTarget = DeliveryTarget.All;
+            return this;
+        }
+
+        public IActorScaleRpc_NoReply WithNoReply()
+        {
+            return this;
+        }
+
+        public ActorScaleRpc WithRequestWaiter(IRequestWaiter requestWaiter)
+        {
+            return new ActorScaleRpc(Target, requestWaiter, Timeout);
+        }
+
+        public ActorScaleRpc WithTimeout(TimeSpan? timeout)
+        {
+            return new ActorScaleRpc(Target, RequestWaiter, timeout);
+        }
+
+        public async Task OnSetScale(UnityEngine.Vector3 scale)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IActorScaleRpc_Enum.OnSetScale);
+                _writer_.Write(scale);
+                await SendRequestAndWait(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        void IActorScaleRpc_NoReply.OnSetScale(UnityEngine.Vector3 scale)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IActorScaleRpc_Enum.OnSetScale);
+                _writer_.Write(scale);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+    }
+
+    [RequireComponent(typeof(NetView))]
+    public abstract class ActorScaleRpcServiceBehaviour : MonoBehaviour, IRpcInvokable, IActorScaleRpc
+    {
+        public abstract Task OnSetScale(UnityEngine.Vector3 scale);
+        public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
+        {
+            ISession session = _target_ as ISession;
+            var typeEnum = (IActorScaleRpc_Enum)_reader_.ReadInt32();
+            switch(typeEnum)
+            {
+                case IActorScaleRpc_Enum.OnSetScale:
+                    {
+                        var scale = _reader_.ReadVector3();
+                        await OnSetScale(scale);
+                    }
+                    break;
+                default: return false;
+            }
+
+            return true;
+        }
+    }
+
+    public class ActorScaleRpcServiceView : IRpcInvokable
+    {
+        public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
+        {
+            NetView _view_ = _target_ as NetView;
+            var typeEnum = (IActorScaleRpc_Enum)_reader_.ReadInt32();
+            switch(typeEnum)
+            {
+                case IActorScaleRpc_Enum.OnSetScale:
+                    {
+                        var scale = _reader_.ReadVector3();
+                        await _view_.FindRpcHandler<IActorScaleRpc>().OnSetScale(scale);
+                    }
+                    break;
+                default: return false;
+            }
+
+            return true;
+        }
+    }
+}
+
+#endif
+#endregion
 #region Common.IActorViewRpc
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_ANDROID || UNITY_IOS
 
@@ -595,6 +749,7 @@ namespace Common
                 case -1471800254: return "ILoginRpc.Join";
                 case -1327137735: return "ILoginRpc.Login";
                 case -1585425401: return "IShopRpc.PurchaseItem";
+                case -1897249703: return "IActorScaleRpc.OnSetScale";
                 case -2049226282: return "IActorViewRpc.OnSetMoveDirection";
                 case -742564806: return "IActorViewRpc.OnTest";
             }
@@ -616,14 +771,23 @@ namespace Common
         public void Serialize(NetDataWriter _writer_, UserInfo _value_, NetDataSerializerOptions options)
         {
             _writer_.Write(_value_.Name);
+            _writer_.Write(_value_.String);
+            _writer_.Write(_value_.Property);
+            _writer_.Write(_value_.Int);
         }
 
         public UserInfo Deserialize(NetDataReader _reader_, NetDataSerializerOptions options)
         {
             var __Name = _reader_.ReadString();
+            var __String = _reader_.ReadString();
+            var __Property = _reader_.ReadInt32();
+            var __Int = _reader_.ReadInt32();
 
             return new UserInfo() {
                 Name = __Name,
+                String = __String,
+                Property = __Property,
+                Int = __Int,
             };
         }
     }

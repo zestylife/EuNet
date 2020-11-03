@@ -487,6 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61309d3cd1b23444e83beac5986334b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LogLevel: 3
   ServerAddress: 192.168.0.4
   TcpServerPort: 12000
   UdpServerPort: 12001

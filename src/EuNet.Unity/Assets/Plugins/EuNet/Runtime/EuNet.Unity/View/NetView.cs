@@ -237,8 +237,14 @@ namespace EuNet.Unity
 
         public void OnNetViewRequestReceive(ISession session, NetDataReader reader, NetDataWriter writer)
         {
+            var preReaderPos = reader.Position;
+            var preWriterPos = writer.Length;
+
             foreach (var handler in _viewRpcInvokables)
             {
+                reader.Position = preReaderPos;
+                writer.Length = preWriterPos;
+
                 var result = handler.Invoke(session, reader, writer).Result;
                 if (result == true)
                     return;

@@ -569,12 +569,21 @@ namespace EuNet.Unity
                 return Task.CompletedTask;
             }
 
+            var preReaderPos = reader.Position;
+            var preWriterPos = writer.Length;
+
             foreach (var handler in _rpcHandlers)
             {
+                reader.Position = preReaderPos;
+                writer.Length = preWriterPos;
+
                 var result = handler.Invoke(view, reader, writer).Result;
                 if (result == true)
                     return Task.CompletedTask;
             }
+
+            reader.Position = preReaderPos;
+            writer.Length = preWriterPos;
 
             view.OnNetViewRequestReceive(session, reader, writer);
             return Task.CompletedTask;
