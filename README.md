@@ -111,8 +111,14 @@ Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Commo
 
 ### Install via git URL
 
-After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package.   
-You can add `https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet` to Package Manager
+After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package.
+You can add package from UPM (Unity Package Manager)
+
+![image](https://github.com/zestylife/EuNet/blob/master/doc/AddPackageFromUPM.png)
+
+```
+https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
+``` 
 
 ### Install via package file
 * Install the unity-package. [Download here](https://github.com/zestylife/EuNet/releases)
