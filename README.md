@@ -28,6 +28,9 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
     - [Client project (Unity3D)](#client-project-unity3d-1)
   - [Quick Start](#quick-start)
   - [Unity3D](#unity3d)
+    - [Settings](#settings)
+    - [How to use Rpc](#how-to-use-rpc)
+    - [How to use ViewRpc](#how-to-use-viewrpc)
   - [IL2CPP issue (AOT)](#il2cpp-issue-aot)
 
 ## Features
@@ -114,7 +117,7 @@ Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Commo
 After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package.
 You can add package from UPM (Unity Package Manager)
 
-![image](https://github.com/zestylife/EuNet/blob/master/doc/AddPackageFromUPM.png)
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/AddPackageFromUPM.png?raw=true)
 
 ```
 https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
@@ -167,13 +170,15 @@ public partial class UserSession : ILoginRpc
 ```csharp
 private async UniTaskVoid ConnectAsync()
 {
+    var client = NetClientGlobal.Instance.Client;
+
     // Trying to connect. Timeout is 10 seconds.
-    var result = await NetP2pUnity.Instance.ConnectAsync(TimeSpan.FromSeconds(10));
+    var result = await client.ConnectAsync(TimeSpan.FromSeconds(10));
 
     if(result == true)
     {
         // Create an object for calling login Rpc
-        LoginRpc loginRpc = new LoginRpc(NetP2pUnity.Instance.Client);
+        LoginRpc loginRpc = new LoginRpc(client);
 
         // Call the server's login function (UserSession.Login)
         var loginResult = await loginRpc.Login("AuthedId", null);
@@ -198,5 +203,140 @@ private async UniTaskVoid ConnectAsync()
 ## Quick Start
 
 ## Unity3D
+
+* Special object NetView is supported, and synchronization and Rpc communication between NetViews are possible.   
+(NetClientP2pBehaviour required. Peer to Peer only)
+* Supported global settings with NetClientGlobal object. (Singleton)
+* Supported for communication to the server (NetClientBehaviour, NetClientP2pBehaviour)
+* Support NetClientP2pBehaviour only one.
+
+### Settings
+
+* Add an empty GameObject to the first run Scene and add a NetClientGlobal component.   
+Only one should be made globally.
+
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/NetClientGlobal.png?raw=true)
+
+* Add NetClientP2pBehaviour component for communicate to one server (including P2p).  
+Modify the options as needed.
+
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/NetClientP2pBehaviour.png?raw=true)
+
+* Add user component to receive and process events.
+
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/GameClient.png?raw=true)
+
+* `GameClient.cs` file
+```csharp
+using Common.Resolvers;
+using EuNet.Core;
+using EuNet.Unity;
+using System.Threading.Tasks;
+
+public class GameClient : Singleton<GameClient>
+{
+    private NetClientP2pBehaviour _client;
+
+    public NetClientP2p Client => _client.ClientP2p;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        _client = GetComponent<NetClientP2pBehaviour>();
+
+        Client.OnConnected = OnConnected;
+        Client.OnClosed = OnClosed;
+        Client.OnReceived = OnReceive;
+        
+        // Register automatically generated resolver.
+        //CustomResolver.Register(GeneratedResolver.Instance);
+
+        // If you generated RpcService, register it.
+        //Client.AddRpcService(new GameScRpcService());
+    }
+
+    public Task<bool> ConnectAsync()
+    {
+        // Try to connect server. All functions can be accessed with Client instance
+        return Client.ConnectAsync(TimeSpan.FromSeconds(10));
+    }
+
+    private void OnConnected()
+    {
+        // Connected
+    }
+
+    private void OnClosed()
+    {
+        // Disconnected
+
+    private Task OnReceive(NetDataReader reader)
+    {
+        // Received data. No need to use when using RPC
+        return Task.CompletedTask;
+    }
+}
+```
+
+### How to use Rpc
+
+Rpc is service that can call remote procedures.   
+EuNet's Rpc is a function call service between the server and the client.   
+When you declare an interface that inherits the IRpc interface, calls and service codes are automatically generated.
+
+* Create Rpc Interface in `Common` project.
+* Build project.
+  
+```csharp
+using EuNet.Rpc;
+using System.Threading.Tasks;
+
+namespace Common
+{
+    // Inherit IRpc for Rpc
+    public interface IGameCsRpc : IRpc
+    {
+        // Login Rpc
+        Task<int> Login(string id);
+    }
+}
+```
+
+* In the `Server` project, register RpcService when creating a server .
+
+```csharp
+_server.AddRpcService(new GameCsRpcServiceSession());
+```
+
+* In the `Server` project, `UserSession` class inherits from `IGameCsRpc`.
+```csharp
+public partial class UserSession : IGameCsRpc
+{
+    public Task<int> Login(string id)
+    {
+        return Task.FromResult(0);
+    }
+}
+```
+
+* In the `Client` project, call Rpc.
+
+```csharp
+// Rpc callable object
+var rpc = new GameCsRpc(_client.Client, null, TimeSpan.FromSeconds(10));
+
+// Call Rpc Login
+var loginResult = await rpc.Login("MyId");
+Debug.Log(loginResult);
+```
+
+
+### How to use ViewRpc
+
+ViewRpc is a technology that makes peer-to-peer communication between NetView Components as Rpc.   
+By adding a NetView Component to the GameObject, you can call functions of the same NetView Component (same ViewId) that exist on different clients.   
+For example, if you shoot a cannon from a red tank, the other user's red tank will also fire.   
+1:1 or 1:N call is possible, and in case of 1:N, return value can not be received.
 
 ## IL2CPP issue (AOT)
