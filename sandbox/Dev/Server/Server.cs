@@ -34,6 +34,9 @@ namespace StarterServer
                 IsServiceUdp = true,
                 UdpServerPort = 12001,
                 MaxSession = 1000,
+                TcpKeepAliveTime = 30,
+                TcpKeepAliveInterval = 1,
+                TcpKeepAliveRetryCount = 10
             };
 
             // 로거 팩토리를 생성

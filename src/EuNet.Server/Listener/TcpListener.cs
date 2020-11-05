@@ -32,17 +32,17 @@ namespace EuNet.Server
                 var listenEndpoint = NetUtil.GetEndPoint(options.TcpServerAddress, options.TcpServerPort);
                 var listenSocket = _listenSocket = new Socket(listenEndpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                listenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
                 listenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, !options.TcpNoDelay);
-
+                listenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, options.TcpKeepAlive);
+                
                 //TcpKeepAliveTime
-                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, 60);
+                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, options.TcpKeepAliveTime);
 
                 //TcpKeepAliveInterval
-                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, 3);
+                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, options.TcpKeepAliveInterval);
 
                 //TcpKeepAliveRetryCount
-                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)16, 20);
+                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)16, options.TcpKeepAliveRetryCount);
 
                 listenSocket.LingerState = new LingerOption(false, 0);
 
