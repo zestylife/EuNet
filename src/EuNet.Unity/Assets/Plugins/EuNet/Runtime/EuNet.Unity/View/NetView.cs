@@ -7,6 +7,7 @@ using UnityEngine;
 namespace EuNet.Unity
 {
     [ExecutionOrder(100)]
+    [AddComponentMenu("EuNet/NetView")]
     public class NetView : MonoBehaviour, INetView
     {
         [Header("NetView")]

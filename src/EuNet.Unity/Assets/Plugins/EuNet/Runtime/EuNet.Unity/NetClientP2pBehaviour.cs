@@ -4,6 +4,7 @@ using UnityEngine;
 namespace EuNet.Unity
 {
     [ExecutionOrder(-1000)]
+    [AddComponentMenu("EuNet/NetClientP2pBehaviour")]
     public class NetClientP2pBehaviour : NetClientBehaviour
     {
         public int UdpServerPort = 12001;

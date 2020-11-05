@@ -5,6 +5,7 @@ using UnityEngine;
 namespace EuNet.Unity
 {
     [ExecutionOrder(-10000)]
+    [AddComponentMenu("EuNet/NetClientGlobal")]
     public class NetClientGlobal : Singleton<NetClientGlobal>
     {
         [Header("Mode")]
