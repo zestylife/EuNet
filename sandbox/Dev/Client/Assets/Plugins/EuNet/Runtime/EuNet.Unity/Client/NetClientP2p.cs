@@ -7,29 +7,8 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
-    public class NetP2pUnity : NetUnity
+    public class NetClientP2p : NetClient
     {
-        public int UdpServerPort = 12001;
-        public int PingInterval = 1000;
-        public int MtuInterval = 1100;
-        public int RudpDisconnectTimeout = 5000;
-
-        [Header("Lifecycle")]
-        [SerializeField] private bool _isDontDestroyOnLoad = true;
-
-        [Header("Synchronization")]
-        [SerializeField] private float _precisionForVectorSqrtSync = 0.0001f;
-        public float PrecisionForVectorSqrtSync => _precisionForVectorSqrtSync;
-
-        [SerializeField] private float _precisionForQuaternionSync = 0.1f;
-        public float PrecisionForQuaternionSync => _precisionForQuaternionSync;
-
-        [SerializeField] private float _limitForPositionSqrtSync = 100f;
-        public float LimitForPositionSqrtSync => _limitForPositionSqrtSync;
-
-        [SerializeField] private float _limitForRotationSync = 90f;
-        public float LimitForRotationSync => _limitForRotationSync;
-
         private NetViews _views;
         public NetViews Views => _views;
 
@@ -39,93 +18,33 @@ namespace EuNet.Unity
         private TaskCompletionSource<bool> _recoveryTcs;
         private float _syncInterval = 0.05f;
         private float _syncElapsedTime;
-        private List<IRpcInvokable> _rpcHandlers = new List<IRpcInvokable>();
 
-        public ushort SessionId => _client.SessionId;
-
-        private static NetP2pUnity s_instance;
-        public static NetP2pUnity Instance
+        public NetClientP2p(ClientOption clientOption, ILoggerFactory loggerFactory = null)
+            : base(clientOption, loggerFactory)
         {
-            get
-            {
-                if (s_inited == false)
-                {
-                    s_inited = true;
-                    s_instance = FindObjectOfType<NetP2pUnity>();
-                }
+            if (clientOption.IsServiceUdp == false)
+                throw new Exception("Must set true to ClientOption.IsServiceUdp.");
 
-                return s_instance;
-            }
-        }
-        private static bool s_inited = false;
-
-        protected override void Awake()
-        {
-            if (s_instance == null)
-            {
-                s_instance = this;
-
-                if(_isDontDestroyOnLoad)
-                    DontDestroyOnLoad(this.gameObject);
-
-                s_inited = true;
-            }
-            else
-            {
-                //Debug.LogErrorFormat(gameObject, "Already created singleton object {0}", typeof(NetP2pUnity));
-                Destroy(this);
-                return;
-            }
-
-            _clientOption.IsServiceUdp = true;
-            _clientOption.UdpServerAddress = ServerAddress;
-            _clientOption.UdpServerPort = UdpServerPort;
-            _clientOption.PingInterval = PingInterval;
-            _clientOption.MtuInterval = MtuInterval;
-            _clientOption.RudpDisconnectTimeout = RudpDisconnectTimeout;
-
-            base.Awake();
-
-            _client.OnP2pReceived += OnP2pReceive;
-            _client.OnViewRequestReceived = OnViewRequestReceive;
+            OnP2pReceived = OnP2pReceive;
+            OnViewRequestReceived = OnViewRequestReceiveEx;
 
             _views = new NetViews();
             _zeroDataWriter = new NetDataWriter(false, 1);
             _readerForSendInternal = new NetDataReader();
-
-            if (_clientOption.IsServiceUdp == false)
-                Debug.LogError("[NetP2pUnity] require [IsServiceUdp] option");
         }
 
-        protected virtual void OnDestroy()
+        public void FixedUpdate(float deltaTime)
         {
-            if (s_instance == this)
-            {
-                s_instance = null;
-                s_inited = false;
-            }
-        }
+            Update((int)(deltaTime * 1000f));
 
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-            
-            _views.Update(Time.deltaTime);
+            _views.Update(deltaTime);
 
-            _syncElapsedTime += Time.deltaTime;
+            _syncElapsedTime += deltaTime;
             if (_syncElapsedTime >= _syncInterval)
             {
                 _syncElapsedTime = 0f;
                 OnViewPeriodicSyncSerialize();
             }
-        }
-
-        public void AddRpcService(IRpcInvokable service)
-        {
-            if (_rpcHandlers.Contains(service))
-                throw new Exception("Already exist IRpcInvokable in _rpcHandlers");
-
-            _rpcHandlers.Add(service);
         }
 
         public bool RegisterView(NetView view)
@@ -140,14 +59,14 @@ namespace EuNet.Unity
 
         public int GenerateViewId()
         {
-            return _views.GenerateViewId(_client.SessionId);
+            return _views.GenerateViewId(SessionId);
         }
 
         public int GenerateSceneViewId()
         {
             if (MasterIsMine() == false)
             {
-                Debug.LogError("Only the master client can GenerateSceneViewId()");
+                _logger.LogError("Only the master client can GenerateSceneViewId()");
                 return -1;
             }
 
@@ -161,11 +80,10 @@ namespace EuNet.Unity
 
         public bool MasterIsMine()
         {
-            if (_client == null || 
-                _client.P2pGroup == null)
+            if (P2pGroup == null)
                 return false;
 
-            return _client.P2pGroup.MasterIsMine();
+            return P2pGroup.MasterIsMine();
         }
 
         private void SendP2pInternal(
@@ -175,24 +93,24 @@ namespace EuNet.Unity
         {
             if (deliveryMethod == DeliveryMethod.Tcp)
             {
-                Debug.LogError("not support tcp transfer in p2p");
+                _logger.LogError("not support tcp transfer in p2p");
                 return;
             }
 
             if (deliveryTarget == DeliveryTarget.All)
             {
-                _client.P2pGroup.SendAll(writer, deliveryMethod);
+                P2pGroup.SendAll(writer, deliveryMethod);
 
                 _readerForSendInternal.SetSource(writer);
-                OnP2pReceive(_client, _readerForSendInternal);
+                OnP2pReceive(this, _readerForSendInternal);
             }
             else if (deliveryTarget == DeliveryTarget.Others)
             {
-                _client.P2pGroup.SendAll(writer, deliveryMethod);
+                P2pGroup.SendAll(writer, deliveryMethod);
             }
             else if (deliveryTarget == DeliveryTarget.Master)
             {
-                var member = _client.P2pGroup.Find(_client.P2pGroup.MasterSessionId);
+                var member = P2pGroup.Find(P2pGroup.MasterSessionId);
 
                 if (member != null)
                 {
@@ -200,7 +118,7 @@ namespace EuNet.Unity
                     {
                         // 내가 마스터라면 바로 호출함
                         _readerForSendInternal.SetSource(writer);
-                        OnP2pReceive(_client, _readerForSendInternal);
+                        OnP2pReceive(this, _readerForSendInternal);
                     }
                     else
                     {
@@ -217,19 +135,19 @@ namespace EuNet.Unity
         {
             if (deliveryMethod == DeliveryMethod.Tcp)
             {
-                Debug.LogError("not support tcp transfer in p2p");
+                _logger.LogError("not support tcp transfer in p2p");
                 return;
             }
 
-            if(sessionId == SessionId)
+            if (sessionId == SessionId)
             {
                 // 내가 받아야 한다면
                 _readerForSendInternal.SetSource(writer);
-                OnP2pReceive(_client, _readerForSendInternal);
+                OnP2pReceive(this, _readerForSendInternal);
             }
             else
             {
-                var member = _client.P2pGroup.Find(sessionId);
+                var member = P2pGroup.Find(sessionId);
 
                 if (member != null)
                     member.SendAsync(writer, deliveryMethod);
@@ -238,9 +156,9 @@ namespace EuNet.Unity
 
         private GameObject Instantiate(string name, Vector3 pos, Quaternion rot, bool isSceneObject, NetDataWriter writer = null)
         {
-            if(isSceneObject == true && MasterIsMine() == false)
+            if (isSceneObject == true && MasterIsMine() == false)
             {
-                Debug.LogError("Only can master client instantiate scene object.");
+                _logger.LogError("Only can master client instantiate scene object.");
                 return null;
             }
 
@@ -250,7 +168,7 @@ namespace EuNet.Unity
 
             if (prefab.GetComponent<NetView>() == null)
             {
-                Debug.LogError("Failed to Instantiate prefab:" + name + ". Prefab must have a EveView component.");
+                _logger.LogError("Failed to Instantiate prefab:" + name + ". Prefab must have a EveView component.");
                 return null;
             }
 
@@ -259,13 +177,13 @@ namespace EuNet.Unity
             List<int> viewIds = new List<int>(views.Length);
             for (int i = 0; i < views.Length; i++)
             {
-                if(isSceneObject)
+                if (isSceneObject)
                     viewIds.Add(GenerateSceneViewId());
                 else viewIds.Add(GenerateViewId());
             }
 
             var viewIdsArray = viewIds.ToArray();
-            ushort ownerSessionId = _client.SessionId;
+            ushort ownerSessionId = SessionId;
 
             var w = NetPool.DataWriterPool.Alloc();
 
@@ -305,9 +223,9 @@ namespace EuNet.Unity
         private GameObject ExecuteInstantiate(string name, Vector3 pos, Quaternion rot, ushort ownerSessionId, bool isSceneObject, int[] viewIds, NetDataReader reader)
         {
             var res = Resources.Load(name);
-            if(res == null)
+            if (res == null)
             {
-                Debug.LogError($"P2pInstantiate can not found prefab resource : {name}", this);
+                _logger.LogError($"P2pInstantiate can not found prefab resource : {name}");
                 return null;
             }
 
@@ -369,7 +287,7 @@ namespace EuNet.Unity
             var view = _views.Find(viewId);
             if (view == null)
             {
-                Debug.LogError($"ViewId[{viewId}] not exist gameObject for destroy");
+                _logger.LogError($"ViewId[{viewId}] not exist gameObject for destroy");
                 return;
             }
 
@@ -384,7 +302,7 @@ namespace EuNet.Unity
             view.OnNetDestroy(reader);
 
             // 삭제
-            Destroy(view.gameObject);
+            UnityEngine.Object.Destroy(view.gameObject);
         }
 
         public void SendP2pMessage(INetView view, NetDataWriter writer, DeliveryTarget deliveryTarget, DeliveryMethod deliveryMethod)
@@ -403,11 +321,11 @@ namespace EuNet.Unity
         {
             if (MasterIsMine() == true)
             {
-                Debug.LogError("Only can no master client request recovery");
+                _logger.LogError("Only can no master client request recovery");
                 throw new Exception("Only can no master client request recovery");
             }
 
-            if(_recoveryTcs != null)
+            if (_recoveryTcs != null)
                 _recoveryTcs.TrySetResult(false);
 
             _recoveryTcs = new TaskCompletionSource<bool>();
@@ -428,7 +346,7 @@ namespace EuNet.Unity
 
         private void OnRequestRecovery(NetDataReader reader)
         {
-            Debug.Log("OnRequestRecovery");
+            _logger.LogInformation("OnRequestRecovery");
 
             ushort sessionId = reader.ReadUInt16();
             int recoveryId = reader.ReadInt32();
@@ -446,7 +364,7 @@ namespace EuNet.Unity
 
         private void OnResponseRecovery(NetDataReader reader)
         {
-            Debug.Log("OnResponseRecovery");
+            _logger.LogInformation("OnResponseRecovery");
 
             ushort sessionId = reader.ReadUInt16();
             int recoveryId = reader.ReadInt32();
@@ -459,7 +377,7 @@ namespace EuNet.Unity
                 reader.TryRead(ref _views);
                 _recoveryTcs?.TrySetResult(true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _recoveryTcs?.TrySetException(ex);
             }
@@ -562,10 +480,10 @@ namespace EuNet.Unity
 
         public void SendAll(NetDataWriter writer, DeliveryMethod deliveryMethod)
         {
-            _client.P2pGroup?.SendAll(writer, deliveryMethod);
+            P2pGroup?.SendAll(writer, deliveryMethod);
         }
 
-        internal Task OnViewRequestReceive(ISession session, NetDataReader reader, NetDataWriter writer)
+        internal Task OnViewRequestReceiveEx(ISession session, NetDataReader reader, NetDataWriter writer)
         {
             var viewId = reader.ReadInt32();
             var view = _views.Find(viewId);

@@ -7,28 +7,31 @@ using System.Threading.Tasks;
 
 public class GameClient : Singleton<GameClient>
 {
-    private NetP2pUnity _client;
+    private NetClientP2pBehaviour _client;
 
     // Rpcs
     public LoginRpc LoginRpc { get; private set; }
     public ShopRpc ShopRpc { get; private set; }
 
+    public NetClientP2p Client => _client.ClientP2p;
+
     protected override void Awake()
     {
         base.Awake();
 
-        _client = NetP2pUnity.Instance;
-        _client.Client.OnConnected = OnConnected;
-        _client.Client.OnClosed = OnClosed;
-        _client.Client.OnReceived = OnReceive;
-        _client.Client.OnP2pGroupLeaved = OnP2pGroupLeave;
+        _client = GetComponent<NetClientP2pBehaviour>();
+
+        Client.OnConnected = OnConnected;
+        Client.OnClosed = OnClosed;
+        Client.OnReceived = OnReceive;
+        Client.OnP2pGroupLeaved = OnP2pGroupLeave;
 
         // 릴레이 테스트를 위한 옵션
         //_client.Client.ClientOption.IsForceRelay = true;
 
         // 자동으로 생성된 Rpc 서비스를 사용하기 위해 등록함
-        _client.AddRpcService(new ActorViewRpcServiceView());
-        _client.AddRpcService(new ActorScaleRpcServiceView());
+        Client.AddRpcService(new ActorViewRpcServiceView());
+        Client.AddRpcService(new ActorScaleRpcServiceView());
 
         CustomResolver.Register(GeneratedResolver.Instance);
     }
@@ -60,7 +63,7 @@ public class GameClient : Singleton<GameClient>
             {
                 if (actor.View.OwnerSessionId == sessionId)
                 {
-                    NetP2pUnity.Instance.Destroy(actor.View.ViewId);
+                    Client.Destroy(actor.View.ViewId);
                 }
             });
         }

@@ -44,8 +44,8 @@ namespace EuNet.Unity
                 {
                     if (Application.isPlaying)
                     {
-                        NetP2pUnity.Instance.UnregisterView(this);
-                        NetP2pUnity.Instance.RemoveViewId(_viewId);
+                        NetClientGlobal.Instance.UnregisterView(this);
+                        NetClientGlobal.Instance.RemoveViewId(_viewId);
                     }
                 }
 
@@ -54,7 +54,7 @@ namespace EuNet.Unity
                     _viewId = value;
 
                     if (Application.isPlaying)
-                        NetP2pUnity.Instance.RegisterView(this);
+                        NetClientGlobal.Instance.RegisterView(this);
                 }
 
                 _viewId = value;
@@ -76,7 +76,7 @@ namespace EuNet.Unity
         protected virtual void Awake()
         {
             if (ViewId != 0)
-                NetP2pUnity.Instance.RegisterView(this);
+                NetClientGlobal.Instance.RegisterView(this);
 
             _viewHandlers = GetComponents<INetViewHandler>();
             _viewPeriodicSyncs = GetComponents<INetViewPeriodicSync>();
@@ -103,10 +103,10 @@ namespace EuNet.Unity
 
         protected virtual void OnDestroy()
         {
-            if (ViewId > 0 && NetP2pUnity.Instance != null)
+            if (ViewId > 0)
             {
-                NetP2pUnity.Instance.UnregisterView(this);
-                NetP2pUnity.Instance.RemoveViewId(ViewId);
+                NetClientGlobal.Instance.UnregisterView(this);
+                NetClientGlobal.Instance.RemoveViewId(ViewId);
             }
         }
 
@@ -119,12 +119,12 @@ namespace EuNet.Unity
         {
             if (_isSceneObject == true)
             {
-                if (NetP2pUnity.Instance.MasterIsMine() == true)
+                if (NetClientGlobal.Instance.MasterIsMine() == true)
                     return true;
             }
             else
             {
-                if (NetP2pUnity.Instance.SessionId == _ownerSessionId)
+                if (NetClientGlobal.Instance.SessionId == _ownerSessionId)
                     return true;
             }
 
@@ -155,7 +155,7 @@ namespace EuNet.Unity
 
         public void SendMessage(NetDataWriter writer, DeliveryTarget deliveryTarget, DeliveryMethod deliveryMethod)
         {
-            NetP2pUnity.Instance.SendP2pMessage(this, writer, deliveryTarget, deliveryMethod);
+            NetClientGlobal.Instance.SendP2pMessage(this, writer, deliveryTarget, deliveryMethod);
         }
 
         public void OnMessage(NetDataReader reader)

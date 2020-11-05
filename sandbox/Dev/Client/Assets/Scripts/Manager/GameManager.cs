@@ -30,7 +30,7 @@ public class GameManager : SceneSingleton<GameManager>, INetViewHandler
 
     private async UniTaskVoid Start()
     {
-        if (NetP2pUnity.Instance.MasterIsMine() == false)
+        if (NetClientGlobal.Instance.MasterIsMine() == false)
         {
             // 마스터가 아니므로 마스터로부터 현재 게임 상황을 받아서 복구시킴
             await RecoveryAsync();
@@ -42,7 +42,7 @@ public class GameManager : SceneSingleton<GameManager>, INetViewHandler
     public async UniTask<bool> RecoveryAsync()
     {
         await UniTask.DelayFrame(1);
-        await NetP2pUnity.Instance.RequestRecovery();
+        await NetClientGlobal.Instance.RequestRecovery();
         return true;
     }
 
@@ -54,7 +54,7 @@ public class GameManager : SceneSingleton<GameManager>, INetViewHandler
             writer.Write(_colorTable[Random.Range(0, _colorTable.Length)]);
 
             // 내가 주인인 플레이어를 생성함
-            var playerObj = NetP2pUnity.Instance.Instantiate(
+            var playerObj = NetClientGlobal.Instance.Instantiate(
                 "Player",
                 new Vector3(Random.Range(-5f, 5f), 0, Random.Range(-5f, 5f)),
                 Quaternion.identity,

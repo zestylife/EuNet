@@ -99,7 +99,7 @@ namespace CodeGenerator
                 // Constructors
 
                 using (w.B($"public {rpcClassName}(NetView view, TimeSpan? timeout = null)",
-                    "\t: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)"))
+                    "\t: base(NetClientGlobal.Instance.Client, new NetViewRequestWaiter(view), timeout)"))
                 {
                     w._("DeliveryMethod = DeliveryMethod.Unreliable;");
                     w._("DeliveryTarget = DeliveryTarget.Others;");

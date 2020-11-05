@@ -14,14 +14,6 @@ namespace EuNet.Unity
                 {
                     s_inited = true;
                     s_instance = FindObjectOfType<T>();
-
-                    if (s_instance == null &&
-                        s_quitted == false)
-                    {
-                        GameObject obj = new GameObject();
-                        obj.name = typeof(T).Name;
-                        s_instance = obj.AddComponent<T>();
-                    }
                 }
 
                 return s_instance;

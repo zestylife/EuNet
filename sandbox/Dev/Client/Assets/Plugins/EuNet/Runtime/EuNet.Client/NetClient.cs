@@ -66,7 +66,7 @@ namespace EuNet.Client
         private readonly NetStatistic _statistic;
         public NetStatistic Statistic => _statistic;
 
-        private List<IRpcInvokable> _rpcHandlers;
+        protected List<IRpcInvokable> _rpcHandlers;
 
         public NetClient(ClientOption clientOption, ILoggerFactory loggerFactory = null)
         {

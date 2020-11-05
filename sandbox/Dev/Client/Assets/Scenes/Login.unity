@@ -187,7 +187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
@@ -279,7 +279,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &963194225
 GameObject:
@@ -362,7 +362,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1073572322
 GameObject:
@@ -443,6 +443,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1073572322}
   m_CullTransparentMesh: 0
+--- !u!1 &1164532247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1164532249}
+  - component: {fileID: 1164532248}
+  m_Layer: 0
+  m_Name: NetClientGlobal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1164532248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164532247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a9ba3a215a15bc49bb711c8253391dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isLocalMode: 0
+  _precisionForVectorSqrtSync: 0.0001
+  _precisionForQuaternionSync: 0.1
+  _limitForPositionSqrtSync: 100
+  _limitForRotationSync: 90
+--- !u!4 &1164532249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164532247}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1283901514
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,7 +521,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1283901516
 MonoBehaviour:
@@ -484,9 +532,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1283901514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61309d3cd1b23444e83beac5986334b8, type: 3}
+  m_Script: {fileID: 11500000, guid: e1c0f1e501972a0459c63335d0b2ac67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isDontDestroyOnLoad: 1
   LogLevel: 3
   ServerAddress: 192.168.0.4
   TcpServerPort: 12000
@@ -494,11 +543,6 @@ MonoBehaviour:
   PingInterval: 1000
   MtuInterval: 1100
   RudpDisconnectTimeout: 5000
-  _isDontDestroyOnLoad: 1
-  _precisionForVectorSqrtSync: 0.0001
-  _precisionForQuaternionSync: 0.1
-  _limitForPositionSqrtSync: 100
-  _limitForRotationSync: 90
 --- !u!114 &1283901517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -724,7 +768,7 @@ RectTransform:
   m_Children:
   - {fileID: 1512111798}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

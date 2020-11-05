@@ -15,6 +15,6 @@ public class UiGame : MonoBehaviour
 
     private void Update()
     {
-        _playerCountText.text = $"Player : {NetP2pUnity.Instance.Client.P2pGroup.MemberList.Count}";
+        _playerCountText.text = $"Player : {NetClientGlobal.Instance.Client.P2pGroup.MemberList.Count}";
     }
 }

@@ -1,19 +1,21 @@
 ﻿using EuNet.Client;
 using EuNet.Core;
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace EuNet.Unity
 {
     [ExecutionOrder(-1000)]
-    public class NetUnity : MonoBehaviour
+    public class NetClientBehaviour : MonoBehaviour
     {
+        [Header("Lifecycle")]
+        [SerializeField] protected bool _isDontDestroyOnLoad = true;
+
         [Header("Log Level")]
         public LogLevel LogLevel = LogLevel.Information;
 
         [Header("Network Infomation")]
-        public string ServerAddress = "192.168.0.4";
+        public string ServerAddress = "127.0.0.1";
         public int TcpServerPort = 12000;
 
         protected ClientOption _clientOption = new ClientOption();
@@ -24,22 +26,29 @@ namespace EuNet.Unity
         {
             _clientOption.TcpServerAddress = ServerAddress;
             _clientOption.TcpServerPort = TcpServerPort;
-            
+
             _client = new NetClient(
                 _clientOption,
-                DefaultLoggerFactory.Create(builder => 
+                DefaultLoggerFactory.Create(builder =>
                 {
                     builder.SetMinimumLevel(LogLevel);
                     builder.AddUnityDebugLogger();
                 }));
 
-            //_client.OnReceived += OnReceive;
             _client.OnErrored += OnError;
+
+            if (_isDontDestroyOnLoad)
+                DontDestroyOnLoad(gameObject);
         }
 
         protected virtual void Start()
         {
 
+        }
+
+        protected virtual void OnDestroy()
+        {
+            _client.Disconnect();
         }
 
         protected virtual void FixedUpdate()
@@ -53,27 +62,7 @@ namespace EuNet.Unity
             _client.Disconnect();
         }
 
-        public async Task<bool> ConnectAsync(TimeSpan timeout)
-        {
-            return await _client.ConnectAsync(timeout);
-        }
-
-        public void SendAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod)
-        {
-            _client.SendAsync(data, offset, length, deliveryMethod);
-        }
-
-        public void SendAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
-        {
-            _client.SendAsync(dataWriter, deliveryMethod);
-        }
-
-        private Task OnReceive(NetDataReader reader)
-        {
-            return Task.CompletedTask;
-        }
-
-        private void OnError(Exception ex)
+        protected void OnError(Exception ex)
         {
             Debug.LogError(ex.ToString());
         }

@@ -50,7 +50,7 @@ namespace EuNet.Unity
                             _lastSentHash = hash;
 
                             //Debug.Log($"send pos rot {hash}");
-                            NetP2pUnity.Instance.SendAll(writer, DeliveryMethod.Unreliable);
+                            NetClientGlobal.Instance.SendAll(writer, DeliveryMethod.Unreliable);
                         }
                     }
                     finally
@@ -65,7 +65,7 @@ namespace EuNet.Unity
             {
                 var transform = _view.transform;
 
-                if ((_targetPos - transform.localPosition).sqrMagnitude >= NetP2pUnity.Instance.PrecisionForVectorSqrtSync)
+                if ((_targetPos - transform.localPosition).sqrMagnitude >= NetClientGlobal.Instance.PrecisionForVectorSqrtSync)
                 {
                     transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPos, Time.deltaTime * 10f);
                 }
@@ -74,7 +74,7 @@ namespace EuNet.Unity
                     transform.localPosition = _targetPos;
                 }
 
-                if (Quaternion.Angle(_targetRot, transform.localRotation) >= NetP2pUnity.Instance.PrecisionForQuaternionSync)
+                if (Quaternion.Angle(_targetRot, transform.localRotation) >= NetClientGlobal.Instance.PrecisionForQuaternionSync)
                 {
                     transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRot, Time.deltaTime * 10f);
                 }
@@ -92,10 +92,10 @@ namespace EuNet.Unity
 
             var transform = _view.transform;
 
-            if((_targetPos - transform.localPosition).sqrMagnitude >= NetP2pUnity.Instance.LimitForPositionSqrtSync)
+            if((_targetPos - transform.localPosition).sqrMagnitude >= NetClientGlobal.Instance.LimitForPositionSqrtSync)
                 transform.localPosition = _targetPos;
 
-            if (Quaternion.Angle(_targetRot, transform.localRotation) >= NetP2pUnity.Instance.LimitForRotationSync)
+            if (Quaternion.Angle(_targetRot, transform.localRotation) >= NetClientGlobal.Instance.LimitForRotationSync)
                 transform.localRotation = _targetRot;
         }
     }

@@ -3,7 +3,7 @@
 namespace EuNet.Unity
 {
     // 모든 씬에 전역적으로 사용될 싱글톤
-    public class Singleton<T> : MonoBehaviour where T : Component
+    public class SingletonAutoCreate<T> : MonoBehaviour where T : Component
     {
         private static T s_instance;
         public static T Instance
@@ -14,6 +14,14 @@ namespace EuNet.Unity
                 {
                     s_inited = true;
                     s_instance = FindObjectOfType<T>();
+
+                    if (s_instance == null &&
+                        s_quitted == false)
+                    {
+                        GameObject obj = new GameObject();
+                        obj.name = typeof(T).Name;
+                        s_instance = obj.AddComponent<T>();
+                    }
                 }
 
                 return s_instance;

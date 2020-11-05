@@ -389,7 +389,7 @@ namespace Common
         public override Type InterfaceType => typeof(IActorScaleRpc);
 
         public ActorScaleRpc(NetView view, TimeSpan? timeout = null)
-            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
+            	: base(NetClientGlobal.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
             DeliveryMethod = DeliveryMethod.Unreliable;
             DeliveryTarget = DeliveryTarget.Others;
@@ -545,7 +545,7 @@ namespace Common
         public override Type InterfaceType => typeof(IActorViewRpc);
 
         public ActorViewRpc(NetView view, TimeSpan? timeout = null)
-            	: base(NetP2pUnity.Instance.Client, new NetViewRequestWaiter(view), timeout)
+            	: base(NetClientGlobal.Instance.Client, new NetViewRequestWaiter(view), timeout)
         {
             DeliveryMethod = DeliveryMethod.Unreliable;
             DeliveryTarget = DeliveryTarget.Others;
