@@ -267,7 +267,7 @@ public class InterfaceSerializeClass : INetSerializable
 
     public void Deserialize(NetDataReader reader)
     {
-        Int = reader.ReadInt32();
+        Value = reader.ReadInt32();
         Name = reader.ReadString();
     }
 }
