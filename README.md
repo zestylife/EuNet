@@ -29,11 +29,15 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
     - [Server project (.Net Core)](#server-project-net-core-1)
     - [Client project (Unity3D)](#client-project-unity3d-1)
   - [Quick Start](#quick-start)
+  - [Serialize](#serialize)
+    - [Using Auto-Generated formmater](#using-auto-generated-formmater)
+    - [Manualy serialize](#manualy-serialize)
   - [Unity3D](#unity3d)
     - [Settings](#settings)
     - [How to use Rpc](#how-to-use-rpc)
     - [How to use ViewRpc](#how-to-use-viewrpc)
   - [IL2CPP issue (AOT)](#il2cpp-issue-aot)
+    - [Serialization](#serialization)
 
 ## Features
   
@@ -204,6 +208,71 @@ private async UniTaskVoid ConnectAsync()
 
 ## Quick Start
 
+## Serialize
+
+Object serialization is required to use Rpc.
+There are two ways to serialize objects.
+
+### Using Auto-Generated formmater
+
+Declaring the `NetDataObject` Attribute makes the class serializable.
+All public objects are serialized.
+Declaring the `[IgnoreMember]` Attribute does not serialize it.
+
+```csharp
+[NetDataObject]
+public class DataClass
+{
+    // Serializable
+    public int Int;
+
+    // Serializable
+    public int Property { get; set; }
+
+    // Ignore
+    public int PropertyOnlyGet { get; }
+
+    // Ignore
+    private int IntPrivate;
+
+    // Ignore
+    protected int IntProtected;
+    
+    // Ignore
+    [IgnoreMember]
+    public int IgnoreInt;
+
+    // Ignore
+    [IgnoreMember]
+    public int IgnoreProperty { get; set; }
+}
+```
+
+### Manualy serialize
+
+Implement serialization manually by inheriting `INetSerializable`.
+You have to code, but it's the fastest and most flexible.
+
+```csharp
+public class InterfaceSerializeClass : INetSerializable
+{
+    public int Value;
+    public string Name;
+
+    public void Serialize(NetDataWriter writer)
+    {
+        writer.Write(Value);
+        writer.Write(Name);
+    }
+
+    public void Deserialize(NetDataReader reader)
+    {
+        Int = reader.ReadInt32();
+        Name = reader.ReadString();
+    }
+}
+```
+
 ## Unity3D
 
 * Special object NetView is supported, and synchronization and Rpc communication between NetViews are possible.   
@@ -342,3 +411,38 @@ For example, if you shoot a cannon from a red tank, the other user's red tank wi
 1:1 or 1:N call is possible, and in case of 1:N, return value can not be received.
 
 ## IL2CPP issue (AOT)
+
+Some platforms do not allow runtime code generation. Therefore, any managed code which depends upon just-in-time (JIT) compilation on the target device will fail. Instead, you need to compile all of the managed code ahead-of-time (AOT). Often, this distinction doesn’t matter, but in a few specific cases, AOT platforms require additional consideration.
+
+See more   
+https://docs.unity3d.com/2019.4/Documentation/Manual/ScriptingRestrictions.html
+
+### Serialization
+
+There is a problem when serializing generic objects as AOT cannot generate code
+So, you need to provide a hint so that AOT can generate the code.
+
+* Class for serialize (In `Common` project)
+```csharp
+[NetDataObject]
+public class DataClass
+{
+    public Tuple<int,string> TupleData;
+    public Dictionary<int,string> DictionaryData;
+}
+```
+
+* Hint function (In `Client` unity project)
+```csharp
+private void UsedOnlyForAOTCodeGeneration()
+{
+    // Hints for using <int,string> in TupleFormatter<T,T>
+    new TupleFormatter<int, string>();
+
+    // Hints for using <int,string> in DictionaryFormatter<T,T>
+    new DictionaryFormatter<int, string>();
+
+    // Exception!
+    throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
+}
+```
