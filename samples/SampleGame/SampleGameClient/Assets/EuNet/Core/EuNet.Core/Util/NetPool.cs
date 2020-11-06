@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("EuNet.Server"), InternalsVisibleTo("EuNet.Client"), InternalsVisibleTo("EuNet.Server.Tests"), InternalsVisibleTo("EuNet.Benchmark")]
+[assembly: InternalsVisibleTo("EuNet.Server"), InternalsVisibleTo("EuNet.Client"), InternalsVisibleTo("EuNet.Core.Tests"), InternalsVisibleTo("EuNet.Server.Tests"), InternalsVisibleTo("EuNet.Benchmark")]
 namespace EuNet.Core
 {
     public static class NetPool
