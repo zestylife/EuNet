@@ -193,7 +193,7 @@ namespace EuNet.Server.Tests
                 try
                 {
                     if (i < sendCount - 1)
-                        writer.Write("Hello Server");
+                        writer.Write("12345678901234567890123456789012345678901234567890123");
                     else writer.Write("Finish");
 
                     client.SendAsync(writer, DeliveryMethod.Tcp);

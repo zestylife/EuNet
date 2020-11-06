@@ -6,7 +6,7 @@ namespace EuNet.Core
     public class XorPacketFilter : IPacketFilter
     {
         private byte[] _xorKey;
-        private const byte InitChecksumValue = 89;
+        private const byte InitChecksumValue = 0;
 
         public IPacketFilter NextFilter => null;
 
@@ -28,7 +28,7 @@ namespace EuNet.Core
             data[size - 1] = InitChecksumValue;
 
             // 체크섬값을 마지막에 넣자
-            data[size - 1] = GetBufferHash(data, 0, size);
+            data[size - 1] = GetChecksum(data, headerSize, size - headerSize);
 
             // xor
             CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
@@ -46,10 +46,12 @@ namespace EuNet.Core
             CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
 
             // checksum
-            byte checksum = GetBufferHash(data, 0, size);
+            byte checksum = GetChecksum(data, headerSize, size - headerSize);
 
             if (InitChecksumValue != checksum)
                 throw new Exception("not match packet checksum");
+
+            packet.Size -= 1;
 
             return packet;
         }
@@ -67,16 +69,16 @@ namespace EuNet.Core
             }
             else
             {
-                poolingPacket.Size = (ushort)(poolingPacket.Size + addSize);
+                poolingPacket.Size += (ushort)addSize;
             }
 
             return poolingPacket;
         }
 
-        private byte GetBufferHash(byte[] buffer, int offset, int length)
+        private byte GetChecksum(byte[] buffer, int offset, int length)
         {
             byte checksum = 0;
-            for (int i = offset; i < length; ++i)
+            for (int i = offset; i < offset + length; ++i)
                 checksum ^= buffer[i];
 
             return checksum;

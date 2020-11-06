@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EuNet.Core.Tests
 {
@@ -38,6 +39,8 @@ namespace EuNet.Core.Tests
             var decodedPacket = filter.Decode(encodedPacket);
 
             NetDataReader reader = new NetDataReader(decodedPacket.RawData, decodedPacket.GetHeaderSize(), decodedPacket.Size);
+
+            Assert.AreEqual(packet.Size, decodedPacket.Size);
 
             for (int i = 0; i < data.Length; i++)
             {
