@@ -47,7 +47,7 @@ namespace EuNet.Core.Tests
 
         [Test]
         public void XorPacketFilterTest(
-            [Values(56, 57, 58)] int dataSize)
+            [Values(55, 56, 57, 58, 59)] int dataSize)
         {
             TestBase(new XorPacketFilter(), dataSize);
         }

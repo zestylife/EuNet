@@ -5,17 +5,14 @@ namespace EuNet.Core
     // xor + checksum
     public class XorPacketFilter : IPacketFilter
     {
-        private byte[] _xorData;
+        private byte[] _xorKey;
         private const byte InitChecksumValue = 89;
 
         public IPacketFilter NextFilter => null;
 
-        public XorPacketFilter(int seed = 36324016, int xorLength = 512)
+        public XorPacketFilter(int seed = 36324016, int keyLength = 1024)
         {
-            _xorData = new byte[xorLength];
-
-            Random rand = new Random(seed);
-            rand.NextBytes(_xorData);
+            _xorKey = CryptXor.GenerateKey(seed, keyLength);
         }
 
         public NetPacket Encode(NetPacket packet)
@@ -34,11 +31,8 @@ namespace EuNet.Core
             data[size - 1] = GetBufferHash(data, 0, size);
 
             // xor
-            for (int i = headerSize; i < size; ++i)
-            {
-                data[i] ^= _xorData[i % _xorData.Length];
-            }
-
+            CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
+            
             return packet;
         }
 
@@ -48,11 +42,10 @@ namespace EuNet.Core
             int size = packet.Size;
             byte[] data = packet.RawData;
 
-            for (int i = headerSize; i < size; ++i)
-            {
-                data[i] ^= _xorData[i % _xorData.Length];
-            }
+            // xor
+            CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
 
+            // checksum
             byte checksum = GetBufferHash(data, 0, size);
 
             if (InitChecksumValue != checksum)
