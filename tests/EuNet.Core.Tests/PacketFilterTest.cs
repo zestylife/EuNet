@@ -12,31 +12,46 @@ namespace EuNet.Core.Tests
 
         }
 
-        [Test]
-        public void XorPacketFilterTest()
+        private byte[] GetData(int size)
+        {
+            byte[] data = new byte[size];
+
+            Random rand = new Random();
+            rand.NextBytes(data);
+
+            return data;
+        }
+
+        public void TestBase(
+            IPacketFilter filter,
+            int dataSize)
         {
             NetDataWriter writer = new NetDataWriter();
-            List<byte> data = new List<byte>()
-            {
-                1,2,3,4,5,6,7,8,9,10,100,101,102,103,104,105
-            };
+            byte[] data = GetData(dataSize);
 
             foreach (var item in data)
                 writer.Write(item);
 
             NetPacket packet = NetPool.PacketPool.Alloc(PacketProperty.UserData, writer);
 
-            XorPacketFilter filter = new XorPacketFilter();
+            var encodedPacket = filter.Encode(packet);
+            var decodedPacket = filter.Decode(encodedPacket);
 
-            int encodeSize = filter.Encode(packet);
-            filter.Decode(packet);
+            NetDataReader reader = new NetDataReader(decodedPacket.RawData, decodedPacket.GetHeaderSize(), decodedPacket.Size);
 
-            NetDataReader reader = new NetDataReader(packet.RawData, packet.GetHeaderSize(), packet.Size);
-
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 Assert.AreEqual(data[i], reader.ReadByte());
             }
         }
+
+        [Test]
+        public void XorPacketFilterTest(
+            [Values(56, 57, 58)] int dataSize)
+        {
+            TestBase(new XorPacketFilter(), dataSize);
+        }
+
+        
     }
 }

@@ -73,17 +73,17 @@ namespace EuNet.Core
                 IPacketFilter filter = packetFilter;
                 while (filter != null)
                 {
-                    filter.Decode(packet);
+                    packet = filter.Decode(packet);
                     filter = filter.NextFilter;
                 }
-
-                Interlocked.Increment(ref _statistic.PacketReceivedCount);
 
                 // 유저 패킷 처리
                 OnPacketReceived(packet);
 
                 offset += packetSize;
                 remainSize -= packetSize;
+
+                Interlocked.Increment(ref _statistic.PacketReceivedCount);
             }
 
             return offset;

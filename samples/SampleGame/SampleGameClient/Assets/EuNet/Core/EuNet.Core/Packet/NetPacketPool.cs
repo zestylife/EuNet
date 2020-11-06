@@ -148,6 +148,26 @@ namespace EuNet.Core
             return packet;
         }
 
+        // 패킷을 복제하고, 추가버퍼사이즈만큼 버퍼를 추가 할당함
+        public NetPacket Alloc(NetPacket packet, int addBufferSize)
+        {
+            Interlocked.Increment(ref _totalAllocCount);
+            Interlocked.Increment(ref _allocCount);
+
+            int size = packet.Size + addBufferSize;
+
+            NetPacket data = null;
+            var pool = FindPoolForAlloc(size);
+            if (pool != null)
+                data = pool.Alloc(size);
+            else data = new NetPacket(size);
+
+            Buffer.BlockCopy(packet.RawData, 0, data.RawData, 0, packet.Size);
+            data.Size = (ushort)size;
+
+            return data;
+        }
+
         public void Free(NetPacket data)
         {
             if (data == null)
@@ -166,7 +186,7 @@ namespace EuNet.Core
         {
             for (int i = 0; i < _poolCell.Length; i++)
             {
-                if (size < _poolCell[i].AllocSize)
+                if (size <= _poolCell[i].AllocSize)
                     return _poolCell[i];
             }
 
@@ -177,7 +197,7 @@ namespace EuNet.Core
         {
             for (int i = _poolCell.Length - 1; i >= 0; i--)
             {
-                if (size >= _poolCell[i].AllocSize)
+                if (size > _poolCell[i].AllocSize)
                     return _poolCell[i];
             }
 

@@ -132,7 +132,7 @@ namespace EuNet.Core
             IPacketFilter filter = _channelOption.PacketFilter;
             while (filter != null)
             {
-                filter.Encode(poolingPacket);
+                poolingPacket = filter.Encode(poolingPacket);
                 filter = filter.NextFilter;
             }
 
