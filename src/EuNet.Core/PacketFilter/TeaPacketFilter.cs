@@ -2,23 +2,28 @@
 
 namespace EuNet.Core
 {
-    // xor + checksum
-    public class XorPacketFilter : IPacketFilter
+    // tea + checksum
+    public class TeaPacketFilter : IPacketFilter
     {
-        private byte[] _xorKey;
+        private uint[] _keys;
         private const byte InitChecksumValue = 89;
 
         public IPacketFilter NextFilter => null;
 
-        public XorPacketFilter(int seed = 36324016, int keyLength = 1024)
+        public TeaPacketFilter(int seed = 36324016)
         {
-            _xorKey = CryptXor.GenerateKey(seed, keyLength);
+            _keys = CryptTea.GenerateKey(seed);
         }
 
         public NetPacket Encode(NetPacket packet)
         {
+            // 필요한 사이즈를 계산하자
+            int addSize = packet.Size - packet.GetHeaderSize() + 1;
+            if (addSize % 8 != 0)
+                addSize = 8 - (addSize % 8);
+
             // 패킷에 데이터가 남아있지 않으면 새로 할당하자
-            packet = CheckAndResizePacket(packet, 1);
+            packet = CheckAndResizePacket(packet, addSize);
 
             int headerSize = packet.GetHeaderSize();
             byte[] data = packet.RawData;
@@ -30,9 +35,9 @@ namespace EuNet.Core
             // 체크섬값을 마지막에 넣자
             data[size - 1] = GetChecksum(data, headerSize, size - headerSize);
 
-            // xor
-            CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
-            
+            // tea
+            CryptTea.EncryptSimple(data, headerSize, size - headerSize, _keys);
+
             return packet;
         }
 
@@ -42,16 +47,14 @@ namespace EuNet.Core
             int size = packet.Size;
             byte[] data = packet.RawData;
 
-            // xor
-            CryptXor.Crypt(data, headerSize, size - headerSize, _xorKey);
+            // tea
+            CryptTea.DecryptSimple(data, headerSize, size - headerSize, _keys);
 
             // checksum
             byte checksum = GetChecksum(data, headerSize, size - headerSize);
 
             if (InitChecksumValue != checksum)
                 throw new Exception("not match packet checksum");
-
-            packet.Size -= 1;
 
             return packet;
         }

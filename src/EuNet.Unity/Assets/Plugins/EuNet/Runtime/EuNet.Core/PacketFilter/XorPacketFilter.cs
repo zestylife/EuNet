@@ -6,7 +6,7 @@ namespace EuNet.Core
     public class XorPacketFilter : IPacketFilter
     {
         private byte[] _xorKey;
-        private const byte InitChecksumValue = 0;
+        private const byte InitChecksumValue = 89;
 
         public IPacketFilter NextFilter => null;
 

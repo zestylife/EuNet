@@ -22,6 +22,32 @@ namespace EuNet.Server.Tests
             [Values(100)] int sendCount,
             [Values(false, true)] bool isServiceUdp)
         {
+            await FilterTest(
+                () => new XorPacketFilter(),
+                clientCount,
+                sendCount,
+                isServiceUdp);
+        }
+
+        [Test]
+        public async Task TeaPacketFilterTest(
+            [Values(100)] int clientCount,
+            [Values(100)] int sendCount,
+            [Values(false, true)] bool isServiceUdp)
+        {
+            await FilterTest(
+                () => new TeaPacketFilter(),
+                clientCount,
+                sendCount,
+                isServiceUdp);
+        }
+
+        public async Task FilterTest(
+            Func<IPacketFilter> filterCreater,
+            int clientCount,
+            int sendCount,
+            bool isServiceUdp)
+        {
             var serverTcs = new TaskCompletionSource<string>();
             int receivedUnreliableCount = 0;
             int receivedTcpCount = 0;
@@ -35,7 +61,7 @@ namespace EuNet.Server.Tests
                     UdpServerPort = 9001,
                     TcpBackLog = Math.Max(clientCount, 512),
                     MaxSession = clientCount,
-                    PacketFilter = new XorPacketFilter()
+                    PacketFilter = filterCreater()
                 });
 
             server.OnSessionReceived += (ISession session, NetDataReader reader) =>
@@ -87,7 +113,7 @@ namespace EuNet.Server.Tests
             List<Task<NetClient>> taskList = new List<Task<NetClient>>();
             for (int i = 0; i < clientCount; i++)
             {
-                taskList.Add(WorkClient(isServiceUdp, sendCount));
+                taskList.Add(WorkClient(filterCreater(), isServiceUdp, sendCount));
             }
 
             await Task.WhenAny(Task.WhenAll(taskList), serverTcs.Task);
@@ -127,7 +153,7 @@ namespace EuNet.Server.Tests
             Assert.Pass();
         }
 
-        private async Task<NetClient> WorkClient(bool isServiceUdp, int sendCount)
+        private async Task<NetClient> WorkClient(IPacketFilter filter, bool isServiceUdp, int sendCount)
         {
             NetClient client = new NetClient(new ClientOption()
             {
@@ -136,7 +162,7 @@ namespace EuNet.Server.Tests
                 IsServiceUdp = isServiceUdp,
                 UdpServerAddress = "127.0.0.1",
                 UdpServerPort = 9001,
-                PacketFilter = new XorPacketFilter()
+                PacketFilter = filter
             });
 
             int receivedUnreliableCount = 0;

@@ -40,7 +40,7 @@ namespace EuNet.Core.Tests
 
             NetDataReader reader = new NetDataReader(decodedPacket.RawData, decodedPacket.GetHeaderSize(), decodedPacket.Size);
 
-            Assert.AreEqual(packet.Size, decodedPacket.Size);
+            Assert.GreaterOrEqual(decodedPacket.Size, packet.Size);
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -50,11 +50,17 @@ namespace EuNet.Core.Tests
 
         [Test]
         public void XorPacketFilterTest(
-            [Values(55, 56, 57, 58, 59)] int dataSize)
+            [Values(54, 55, 56, 57, 58, 59, 60)] int dataSize)
         {
             TestBase(new XorPacketFilter(), dataSize);
         }
 
-        
+        [Test]
+        public void TeaPacketFilterTest(
+         [Values(54, 55, 56, 57, 58, 59, 60)] int dataSize)
+        {
+            TestBase(new TeaPacketFilter(), dataSize);
+        }
+
     }
 }
