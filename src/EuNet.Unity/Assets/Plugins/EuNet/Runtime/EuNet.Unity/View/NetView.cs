@@ -202,7 +202,7 @@ namespace EuNet.Unity
             }
         }
 
-        public bool OnViewPeriodicSyncSerialize(NetDataWriter writer)
+        public bool OnViewPeriodicSyncSerialize(NetDataWriter writer, PeriodicSyncType syncType)
         {
             var firstPos = writer.Length;
             bool isExist = false;
@@ -215,8 +215,13 @@ namespace EuNet.Unity
 
                 var result = sync.OnViewPeriodicSyncSerialize(writer);
 
-                int hash = writer.GetHashCode(prevPos, writer.Length - prevPos);
-                if (result == true && _viewPeriodicSyncHashs[i] != hash)
+                int hash = 0;
+
+                if(syncType == PeriodicSyncType.Changed)
+                    hash = writer.GetHashCode(prevPos, writer.Length - prevPos);
+
+                if(result == true && 
+                    (syncType == PeriodicSyncType.Always || (syncType == PeriodicSyncType.Changed && _viewPeriodicSyncHashs[i] != hash)))
                 {
                     _viewPeriodicSyncHashs[i] = hash;
                     isExist = true;

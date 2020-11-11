@@ -7,6 +7,13 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
+    public enum PeriodicSyncType
+    {
+        None = 0,
+        Always = 1,
+        Changed = 2
+    }
+
     public class NetClientP2p : NetClient
     {
         private NetViews _views;
@@ -16,7 +23,9 @@ namespace EuNet.Unity
         private NetDataReader _readerForSendInternal;
         private int _recoveryId;
         private TaskCompletionSource<bool> _recoveryTcs;
-        private float _syncInterval = 0.05f;
+
+        public PeriodicSyncType SyncType = PeriodicSyncType.None;
+        public float SyncInterval = 0.05f;
         private float _syncElapsedTime;
 
         public NetClientP2p(ClientOption clientOption, ILoggerFactory loggerFactory = null)
@@ -40,7 +49,7 @@ namespace EuNet.Unity
             _views.Update(deltaTime);
 
             _syncElapsedTime += deltaTime;
-            if (_syncElapsedTime >= _syncInterval)
+            if (_syncElapsedTime >= SyncInterval)
             {
                 _syncElapsedTime = 0f;
                 OnViewPeriodicSyncSerialize();
@@ -397,7 +406,7 @@ namespace EuNet.Unity
                     writer.Write((ushort)NetProtocol.P2pPeriodicSync);
                     writer.Write(kvp.Key);
 
-                    if (kvp.Value.OnViewPeriodicSyncSerialize(writer))
+                    if (kvp.Value.OnViewPeriodicSyncSerialize(writer, SyncType))
                     {
                         SendP2pInternal(writer, DeliveryTarget.Others, DeliveryMethod.Unreliable);
                     }

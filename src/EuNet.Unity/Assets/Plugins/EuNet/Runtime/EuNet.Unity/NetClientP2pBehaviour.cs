@@ -11,6 +11,8 @@ namespace EuNet.Unity
         public int PingInterval = 1000;
         public int MtuInterval = 1100;
         public int RudpDisconnectTimeout = 5000;
+        public PeriodicSyncType SyncType = PeriodicSyncType.None;
+        public float SyncInterval = 0.5f;
         
         public NetClientP2p ClientP2p => _client as NetClientP2p;
 
@@ -32,6 +34,9 @@ namespace EuNet.Unity
                     builder.SetMinimumLevel(LogLevel);
                     builder.AddUnityDebugLogger();
                 }));
+
+            ClientP2p.SyncType = SyncType;
+            ClientP2p.SyncInterval = SyncInterval;
 
             _client.OnErrored += OnError;
 
