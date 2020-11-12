@@ -663,9 +663,7 @@ namespace EuNet.Client
 
                             if (session != null && session.UdpChannel != null)
                             {
-                                int headerSize = NetPacket.GetHeaderSize(cachedPacket.Property);
-
-                                NetDataReader reader = new NetDataReader(cachedPacket.RawData, headerSize, cachedPacket.Size);
+                                NetDataReader reader = new NetDataReader(cachedPacket);
                                 IPEndPoint ep = reader.ReadIPEndPoint();
 
                                 session.UdpChannel.TempEndPoint = endPoint;
@@ -717,9 +715,7 @@ namespace EuNet.Client
                                 var member = _p2pGroup.Find(sessionId);
                                 if (member != null)
                                 {
-                                    int headerSize = NetPacket.GetHeaderSize(cachedPacket.Property);
-
-                                    NetDataReader reader = new NetDataReader(cachedPacket.RawData, headerSize, cachedPacket.Size);
+                                    NetDataReader reader = new NetDataReader(cachedPacket);
                                     IPEndPoint ep = reader.ReadIPEndPoint();
 
                                     member.Session.UdpChannel.SetPunchedEndPoint(ep, true);

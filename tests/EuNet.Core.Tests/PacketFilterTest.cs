@@ -38,7 +38,7 @@ namespace EuNet.Core.Tests
             var encodedPacket = filter.Encode(packet);
             var decodedPacket = filter.Decode(encodedPacket);
 
-            NetDataReader reader = new NetDataReader(decodedPacket.RawData, decodedPacket.GetHeaderSize(), decodedPacket.Size);
+            NetDataReader reader = new NetDataReader(decodedPacket);
 
             Assert.GreaterOrEqual(decodedPacket.Size, packet.Size);
 
