@@ -68,4 +68,10 @@ public class GameClient : Singleton<GameClient>
             });
         }
     }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+            Client.Disconnect();
+    }
 }

@@ -456,7 +456,7 @@ namespace EuNet.Core
                         IPacketFilter f = _channelOption.PacketFilter;
                         while (f != null)
                         {
-                            f.Encode(p);
+                            p = f.Encode(p);
                             f = f.NextFilter;
                         }
 
@@ -476,7 +476,7 @@ namespace EuNet.Core
             IPacketFilter filter = _channelOption.PacketFilter;
             while (filter != null)
             {
-                filter.Encode(poolingPacket);
+                poolingPacket = filter.Encode(poolingPacket);
                 filter = filter.NextFilter;
             }
 

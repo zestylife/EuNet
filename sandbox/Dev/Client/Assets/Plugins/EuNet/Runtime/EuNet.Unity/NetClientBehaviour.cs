@@ -6,6 +6,7 @@ using UnityEngine;
 namespace EuNet.Unity
 {
     [ExecutionOrder(-1000)]
+    [AddComponentMenu("EuNet/NetClientBehaviour")]
     public class NetClientBehaviour : MonoBehaviour
     {
         [Header("Lifecycle")]

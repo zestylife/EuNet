@@ -9,6 +9,9 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
         ActorInput();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
     }
 
     private void ActorInput()

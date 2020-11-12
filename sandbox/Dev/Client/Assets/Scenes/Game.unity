@@ -497,8 +497,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 165.01, y: -23.703}
-  m_SizeDelta: {x: 330.0116, y: 47.405334}
+  m_AnchoredPosition: {x: 277.9, y: -113.7}
+  m_SizeDelta: {x: 555.84845, y: 227.44315}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1303380607
 MonoBehaviour:
@@ -530,8 +530,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 'Player : 0'
 --- !u!222 &1303380608
