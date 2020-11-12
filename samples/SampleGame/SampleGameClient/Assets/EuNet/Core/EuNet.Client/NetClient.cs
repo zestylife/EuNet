@@ -163,7 +163,12 @@ namespace EuNet.Client
                 {
                     _udpChannel.Init(_cts);
                     _udpChannel.PacketReceived = OnReceiveFromChannel;
-                    _udpChannel.SetSocket(_udpSocket);
+
+                    if (_udpSocket != null)
+                    {
+                        _udpChannel.SetSocket(_udpSocket);
+                        _udpChannel.LocalEndPoint = _udpSocket.GetLocalEndPoint();
+                    }
                 }
 
                 RunAsync().DoNotAwait();
@@ -447,6 +452,9 @@ namespace EuNet.Client
                                 if (_p2pGroup != null)
                                     throw new Exception("already joined p2p group");
 
+                                _udpChannel.RemoteEndPoint = remoteEndPoint;
+                                _udpChannel.TempEndPoint = remoteEndPoint;
+
                                 _p2pGroup = new P2pGroup(this, groupId, masterSessionId);
 
                                 // 자신을 참가 시킨다
@@ -580,20 +588,37 @@ namespace EuNet.Client
 
         private async Task ConnectUdpLoopAsync(ushort sessionId)
         {
-            var property = PacketProperty.RequestConnection;
-            NetPacket packet = new NetPacket(NetPacket.GetHeaderSize(property) + 8);
-            packet.Property = property;
-            packet.DeliveryMethod = DeliveryMethod.Unreliable;
-            packet.SessionIdForConnection = sessionId;
-            FastBitConverter.GetBytes(packet.RawData, 5, _connectId);
+            IPEndPoint localEp = _udpSocket.GetLocalEndPoint();
 
-            SocketError error = SocketError.Success;
-
-            while (State == SessionState.Initialized &&
-                IsUdpConnected == false)
+            var writer = NetPool.DataWriterPool.Alloc();
+            try
             {
-                _udpSocket.SendTo(packet.RawData, 0, packet.Size, _serverUdpEndPoint, ref error);
-                await Task.Delay(100);
+                writer.Write(_connectId);
+                writer.Write(localEp);
+
+                var packet = NetPool.PacketPool.Alloc(PacketProperty.RequestConnection, writer);
+                try
+                {
+                    packet.DeliveryMethod = DeliveryMethod.Unreliable;
+                    packet.SessionIdForConnection = sessionId;
+
+                    SocketError error = SocketError.Success;
+
+                    while (State == SessionState.Initialized &&
+                        IsUdpConnected == false)
+                    {
+                        _udpSocket.SendTo(packet.RawData, 0, packet.Size, _serverUdpEndPoint, ref error);
+                        await Task.Delay(100);
+                    }
+                }
+                finally
+                {
+                    NetPool.PacketPool.Free(packet);
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(writer);
             }
         }
 

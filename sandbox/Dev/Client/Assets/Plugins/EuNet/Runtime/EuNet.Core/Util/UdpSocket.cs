@@ -116,14 +116,11 @@ namespace EuNet.Core
             }
             catch (SocketException bindException)
             {
-                switch (bindException.SocketErrorCode)
+                if(bindException.SocketErrorCode != SocketError.AddressFamilyNotSupported)
                 {
-                    //hack for iOS (Unity3D)
-                    case SocketError.AddressFamilyNotSupported:
-                        return true;
+                    _logger.LogError(bindException, $"Bind exception error code : {bindException.SocketErrorCode}");
+                    return false;
                 }
-                _logger.LogError(bindException, $"Bind exception error code : {bindException.SocketErrorCode}");
-                return false;
             }
 
             LocalPort = ((IPEndPoint)_socket.LocalEndPoint).Port;
@@ -191,6 +188,22 @@ namespace EuNet.Core
             }
 
             return true;
+        }
+
+        public IPEndPoint GetLocalEndPoint()
+        {
+            IPEndPoint p = (IPEndPoint)_socket.LocalEndPoint;
+
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            for (int i = 0; i < host.AddressList.Length; i++)
+            {
+                if (host.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return new IPEndPoint(host.AddressList[i], p.Port);
+                }
+            }
+
+            return null;
         }
 
         private void ReceiveLogic(object state)

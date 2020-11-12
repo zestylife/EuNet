@@ -79,6 +79,11 @@ namespace EuNet.Core
             SetSource(source, offset, maxSize);
         }
 
+        public NetDataReader(NetPacket packet)
+        {
+            SetSource(packet.RawData, packet.GetHeaderSize(), packet.Size);
+        }
+
         public void SkipBytes(int count)
         {
             _position += count;

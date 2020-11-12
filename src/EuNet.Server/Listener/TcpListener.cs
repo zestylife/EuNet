@@ -42,7 +42,14 @@ namespace EuNet.Server
                 listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, options.TcpKeepAliveInterval);
 
                 //TcpKeepAliveRetryCount
-                listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)16, options.TcpKeepAliveRetryCount);
+                try
+                {
+                    listenSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)16, options.TcpKeepAliveRetryCount);
+                }
+                catch
+                {
+
+                }
 
                 listenSocket.LingerState = new LingerOption(false, 0);
 

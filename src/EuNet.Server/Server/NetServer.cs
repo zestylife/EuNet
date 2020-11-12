@@ -362,14 +362,18 @@ namespace EuNet.Server
                     case PacketProperty.RequestConnection:
                         {
                             ushort sessionId = cachedPacket.SessionIdForConnection;
-                            long connectId = BitConverter.ToInt64(cachedPacket.RawData, 5);
+
+                            NetDataReader reader = new NetDataReader(cachedPacket);
+
+                            long connectId = reader.ReadInt64();
+                            IPEndPoint localEp = reader.ReadIPEndPoint();
 
                             var session = _sessionManager.FindSession(sessionId) as ServerSession;
 
                             if (session != null &&
                                 session.ConnectId == connectId)
                             {
-                                session.UdpChannel.LocalEndPoint = endPoint;
+                                session.UdpChannel.LocalEndPoint = localEp;
                                 session.UdpChannel.RemoteEndPoint = endPoint;
 
                                 if (session.UdpChannel.SetPunchedEndPoint(endPoint) == true)
@@ -387,6 +391,8 @@ namespace EuNet.Server
                                     sendPacket.DeliveryMethod = DeliveryMethod.Unreliable;
                                     SocketError error = SocketError.Success;
                                     _udpSocket.SendTo(sendPacket.RawData, 0, sendPacket.Size, endPoint, ref error);
+
+                                    _logger.LogInformation($"send ResponseConnection to {endPoint}");
                                 }
                                 finally
                                 {

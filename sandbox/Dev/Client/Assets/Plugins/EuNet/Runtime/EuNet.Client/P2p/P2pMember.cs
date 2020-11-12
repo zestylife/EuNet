@@ -82,7 +82,7 @@ namespace EuNet.Client
 
             IPEndPoint ep = null;
 
-            switch (_holePunchingStartCount % 3)
+            switch (_holePunchingStartCount % 4)
             {
                 case 0:
                     ep = Session.UdpChannel.LocalEndPoint;
@@ -92,6 +92,12 @@ namespace EuNet.Client
                     break;
                 case 2:
                     ep = Session.UdpChannel.TempEndPoint;
+                    break;
+                case 3:
+                    {
+                        int port = Session.UdpChannel.TempEndPoint.Port - 5 + _holePunchingStartCount / 4;
+                        ep = new IPEndPoint(Session.UdpChannel.TempEndPoint.Address, port);
+                    }
                     break;
             }
 
