@@ -12,6 +12,11 @@ public class UiLogin : MonoBehaviour
 {
     [SerializeField] private Button _loginButton;
 
+    private void Awake()
+    {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    }
+
     private void Start()
     {
         _loginButton.OnClickAsAsyncEnumerable().Subscribe(OnLoginAsync);

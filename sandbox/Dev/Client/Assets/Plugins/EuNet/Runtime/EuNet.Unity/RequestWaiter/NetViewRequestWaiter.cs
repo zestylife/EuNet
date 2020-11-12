@@ -3,6 +3,7 @@ using EuNet.Core;
 using EuNet.Rpc;
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace EuNet.Unity
 {
@@ -20,8 +21,20 @@ namespace EuNet.Unity
             NetClient client = session as NetClient;
             if (client == null)
                 throw new Exception($"Session must be NetClient instance");
-            
-            switch(deliveryTarget)
+
+            if(client.State != SessionState.Connected)
+            {
+                Debug.LogWarning("[NetViewRequestWaiter.SendRequest] Not connected to server");
+                return;
+            }
+
+            if (client.P2pGroup == null)
+            {
+                Debug.LogWarning("[NetViewRequestWaiter.SendRequest] Not joined p2p group");
+                return;
+            }
+
+            switch (deliveryTarget)
             {
                 case DeliveryTarget.All:
                     {

@@ -707,6 +707,7 @@ namespace EuNet.Client
                         break;
                     case PacketProperty.UserData:
                     case PacketProperty.Ack:
+                    case PacketProperty.ViewRequest:
                         {
                             if (_serverUdpEndPoint.Equals(endPoint) == false)
                                 return false;

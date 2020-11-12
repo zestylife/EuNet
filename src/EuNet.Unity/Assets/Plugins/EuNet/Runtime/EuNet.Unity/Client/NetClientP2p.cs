@@ -394,6 +394,9 @@ namespace EuNet.Unity
 
         private void OnViewPeriodicSyncSerialize()
         {
+            if (SyncType == PeriodicSyncType.None)
+                return;
+
             var writer = NetPool.DataWriterPool.Alloc();
             try
             {
