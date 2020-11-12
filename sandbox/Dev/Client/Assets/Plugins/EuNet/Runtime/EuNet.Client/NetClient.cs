@@ -636,8 +636,6 @@ namespace EuNet.Client
                             ushort sessionId = cachedPacket.SessionIdForConnection;
                             var session = FindSession(sessionId);
 
-                            _logger.LogInformation($"Receive HolePunchingStart from {sessionId}");
-
                             if (session != null && session.UdpChannel != null)
                             {
                                 int headerSize = NetPacket.GetHeaderSize(cachedPacket.Property);
@@ -688,8 +686,6 @@ namespace EuNet.Client
                     case PacketProperty.HolePunchingEnd:
                         {
                             ushort sessionId = cachedPacket.SessionIdForConnection;
-
-                            _logger.LogInformation($"Receive HolePunchingEnd from {sessionId}");
 
                             if (_p2pGroup != null)
                             {
