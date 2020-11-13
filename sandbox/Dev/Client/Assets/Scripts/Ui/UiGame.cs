@@ -23,8 +23,10 @@ public class UiGame : MonoBehaviour
         {
             var udpChannel = member.Session.UdpChannel;
             if(member.SessionId == NetClientGlobal.Instance.Client.SessionId)
-                builder.AppendLine($"[Myself] Local[{udpChannel.LocalEndPoint}] Remote[{udpChannel.RemoteEndPoint}] Temp[{udpChannel.TempEndPoint}]");
-            else builder.AppendLine($"[{member.State}] Local[{udpChannel.LocalEndPoint}] Remote[{udpChannel.RemoteEndPoint}] Temp[{udpChannel.TempEndPoint}]");
+                builder.Append($"[Myself] ");
+            else builder.Append($"[{member.State}] ");
+
+            builder.AppendLine($"Ping [{member.Session.UdpChannel.Ping}ms] Mtu[{member.Session.UdpChannel.Mtu}] L[{udpChannel.LocalEndPoint}] R[{udpChannel.RemoteEndPoint}] T[{udpChannel.TempEndPoint}]");
         }
 
         _playerCountText.text = builder.ToString();

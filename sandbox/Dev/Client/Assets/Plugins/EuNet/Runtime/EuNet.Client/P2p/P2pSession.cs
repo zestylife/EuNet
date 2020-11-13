@@ -56,6 +56,9 @@ namespace EuNet.Client
             _udpChannel.TempEndPoint = remoteEp;
             _udpChannel.RelayEndPoint = NetUtil.GetEndPoint(netClient.ClientOption.UdpServerAddress, netClient.ClientOption.UdpServerPort);
 
+            _udpChannel.IsRunMtu = false;
+            _udpChannel.IsRunPing = false;
+
             _receivedPacketQueue = new ConcurrentQueue<NetPacket>();
             _packetReader = new NetDataReader();
             _request = new SessionRequest(this, netClient.Statistic);

@@ -40,6 +40,7 @@ namespace EuNet.Core
 
         private byte[] _sendBuffer;
         private int _sendBufferOffset;
+        public volatile bool IsRunMtu;
         private volatile int _mtuId;
         private int _mtuElapsedTime;
         private int _mtuRemainCheckCount;
@@ -51,6 +52,7 @@ namespace EuNet.Core
         private NetPacket _pingPacket;
         private NetPacket _pongPacket;
         private Stopwatch _pingTimer;
+        public volatile bool IsRunPing;
         private int _pingElapsedTime;
         private int _ping;
         public int Ping => _ping;
@@ -101,6 +103,7 @@ namespace EuNet.Core
             _sendBufferOffset = 0;
             _mtu = NetPacket.PossibleMtu[0];
             _punchedEndPoint = null;
+            IsRunMtu = true;
             _mtuId = 0;
             _mtuRemainCheckCount = NetPacket.PossibleMtu.Length * 2;
             _mtuElapsedTime = 0;
@@ -109,6 +112,7 @@ namespace EuNet.Core
             _fragments.Init();
             _resendDelay = 200;
 
+            IsRunPing = true;
             _pingTimer.Reset();
             _pingElapsedTime = 0;
             _ping = 0;
@@ -163,56 +167,62 @@ namespace EuNet.Core
 
         public override bool Update(int elapsedTime)
         {
-            // 핑 계산
-            _pingElapsedTime += elapsedTime;
-            if (_pingElapsedTime >= _channelOption.PingInterval)
+            if (IsRunPing)
             {
-                _pingElapsedTime = 0;
+                // 핑 계산
+                _pingElapsedTime += elapsedTime;
+                if (_pingElapsedTime >= _channelOption.PingInterval)
+                {
+                    _pingElapsedTime = 0;
 
-                if (_pingTimer.IsRunning)
-                    UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
+                    if (_pingTimer.IsRunning)
+                        UpdateRoundTripTime((int)_pingTimer.ElapsedMilliseconds);
 
-                _pingTimer.Reset();
-                _pingTimer.Start();
+                    _pingTimer.Reset();
+                    _pingTimer.Start();
 
-                _pingPacket.Sequence++;
-                SendTo(_pingPacket.RawData, 0, _pingPacket.Size, SendMode.Immediately);
+                    _pingPacket.Sequence++;
+                    SendTo(_pingPacket.RawData, 0, _pingPacket.Size, SendMode.Immediately);
+                }
             }
 
-            // MTU Check
-            _mtuElapsedTime += elapsedTime;
-            if (_finishMtu == false &&
-                _mtuRemainCheckCount > 0 &&
-                _mtuElapsedTime >= _channelOption.MtuInterval)
+            if(IsRunMtu)
             {
-                _mtuElapsedTime = 0;
-
-                int requestMtuId = _mtuId + 1;
-                if (requestMtuId >= NetPacket.PossibleMtu.Length)
-                    _finishMtu = true;
-                else
+                // MTU Check
+                _mtuElapsedTime += elapsedTime;
+                if (_finishMtu == false &&
+                    _mtuRemainCheckCount > 0 &&
+                    _mtuElapsedTime >= _channelOption.MtuInterval)
                 {
-                    int mtuSize = NetPacket.PossibleMtu[requestMtuId];
-                    NetPacket packet = NetPool.PacketPool.Alloc(mtuSize);
+                    _mtuElapsedTime = 0;
 
-                    try
+                    int requestMtuId = _mtuId + 1;
+                    if (requestMtuId >= NetPacket.PossibleMtu.Length)
+                        _finishMtu = true;
+                    else
                     {
-                        packet.Property = PacketProperty.MtuCheck;
-                        packet.DeliveryMethod = DeliveryMethod.Unreliable;
-                        packet.RawData[3] = (byte)requestMtuId;
+                        int mtuSize = NetPacket.PossibleMtu[requestMtuId];
+                        NetPacket packet = NetPool.PacketPool.Alloc(mtuSize);
 
-                        SendTo(packet.RawData, 0, packet.Size, SendMode.Immediately);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Exception happened in MtuCheckLoopAsync");
-                    }
-                    finally
-                    {
-                        NetPool.PacketPool.Free(packet);
-                    }
+                        try
+                        {
+                            packet.Property = PacketProperty.MtuCheck;
+                            packet.DeliveryMethod = DeliveryMethod.Unreliable;
+                            packet.RawData[3] = (byte)requestMtuId;
 
-                    _mtuRemainCheckCount--;
+                            SendTo(packet.RawData, 0, packet.Size, SendMode.Immediately);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Exception happened in MtuCheckLoopAsync");
+                        }
+                        finally
+                        {
+                            NetPool.PacketPool.Free(packet);
+                        }
+
+                        _mtuRemainCheckCount--;
+                    }
                 }
             }
 

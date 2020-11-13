@@ -45,6 +45,14 @@ namespace EuNet.Client
             Logger.LogInformation($"SetState : {_state} to {state}");
 
             _state = state;
+
+            if(Session.UdpChannel != null)
+            {
+                var isConnected = IsConnected();
+
+                Session.UdpChannel.IsRunPing = isConnected;
+                Session.UdpChannel.IsRunMtu = isConnected;
+            }
         }
 
         internal void Update(int elasepdTime)
