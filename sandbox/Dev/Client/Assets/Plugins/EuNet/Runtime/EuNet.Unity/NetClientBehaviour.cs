@@ -18,6 +18,9 @@ namespace EuNet.Unity
         [Header("Network Infomation")]
         public string ServerAddress = "127.0.0.1";
         public int TcpServerPort = 12000;
+        public bool IsCheckAlive = false;
+        public long CheckAliveInterval = 30000;
+        public long CheckAliveTimeout = 50000;
 
         protected ClientOption _clientOption = new ClientOption();
         protected NetClient _client;
@@ -27,6 +30,9 @@ namespace EuNet.Unity
         {
             _clientOption.TcpServerAddress = ServerAddress;
             _clientOption.TcpServerPort = TcpServerPort;
+            _clientOption.IsCheckAlive = IsCheckAlive;
+            _clientOption.CheckAliveInterval = CheckAliveInterval;
+            _clientOption.CheckAliveTimeout = CheckAliveTimeout;
 
             _client = new NetClient(
                 _clientOption,

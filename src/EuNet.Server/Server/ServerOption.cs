@@ -18,16 +18,16 @@ namespace EuNet.Server
         public int TcpBackLog { get; set; } = 512;
         public bool TcpNoDelay { get; set; } = false;
 
-        // KeepAlive 사용여부
+        // Tcp KeepAlive 사용여부
         public bool TcpKeepAlive { get; set; } = false;
 
-        // KeepAlive 를 보내서 체크하는 주기 (초)
+        // Tcp KeepAlive 를 보내서 체크하는 주기 (초)
         public int TcpKeepAliveTime { get; set; } = 60;
 
-        // KeepAliveTime이 지나고 처리되지 않았을때 재시도 간격 (초)
+        // Tcp KeepAliveTime이 지나고 처리되지 않았을때 재시도 간격 (초)
         public int TcpKeepAliveInterval { get; set; } = 1;
 
-        // TcpKeepAliveInterval 별로 재시도 회수
+        // Tcp TcpKeepAliveInterval 별로 재시도 회수
         public int TcpKeepAliveRetryCount { get; set; } = 10;
 
         public bool IsServiceUdp { get; set; } = false;
@@ -39,5 +39,14 @@ namespace EuNet.Server
         public int PingInterval { get; set; } = 1000;
         public int MtuInterval { get; set; } = 1100;
         public int RudpDisconnectTimeout { get; set; } = 5000;
+
+        // 살아있는지 체크여부
+        public bool IsCheckAlive { get; set; } = false;
+
+        // 이 주기로 한번씩 패킷을 전송함 (ms)
+        public long CheckAliveInterval { get; set; } = 40000;
+
+        // 이 시간동안 서버로 패킷이 오지 않으면 접속해제 (ms)
+        public long CheckAliveTimeout { get; set; } = 60000;
     }
 }

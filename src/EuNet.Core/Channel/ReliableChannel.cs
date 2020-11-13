@@ -154,7 +154,7 @@ namespace EuNet.Core
 
             lock (_pendingPackets)
             {
-                long nowTicks = DateTime.Now.Ticks;
+                long nowTicks = DateTime.UtcNow.Ticks;
 
                 lock (_sendQueue)
                 {

@@ -9,6 +9,7 @@
         // 내부 패킷
         Request,
         ViewRequest,
+        AliveCheck,
 
         // P2p 관련
         JoinP2p,

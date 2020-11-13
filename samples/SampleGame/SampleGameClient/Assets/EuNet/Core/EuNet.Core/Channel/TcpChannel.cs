@@ -18,6 +18,10 @@ namespace EuNet.Core
         private byte[] _receivedBuffer;
         private int _receivedSize;
 
+        private bool _isCheckAlive;
+        private long _lastReceivedTicks;
+        private long _lastSendAliveTicks;
+
         public TcpChannel(IChannelOption channelOption, ILogger logger, NetStatistic statistic)
             : base(channelOption, logger, statistic)
         {
@@ -51,6 +55,8 @@ namespace EuNet.Core
             }
 
             _receivedSize = 0;
+            _lastReceivedTicks = DateTime.UtcNow.Ticks;
+            _lastSendAliveTicks = _lastReceivedTicks;
         }
 
         public override void Close()
@@ -124,6 +130,25 @@ namespace EuNet.Core
 
         public override bool Update(int elapsedTime)
         {
+            if(_channelOption.IsCheckAlive)
+            {
+                long currentTicks = DateTime.UtcNow.Ticks;
+
+                if (currentTicks - _lastReceivedTicks >= _channelOption.CheckAliveTimeout * TimeSpan.TicksPerMillisecond)
+                {
+                    // 접속을 해제함
+                    return false;
+                }
+                else if (currentTicks - _lastSendAliveTicks >= _channelOption.CheckAliveInterval * TimeSpan.TicksPerMillisecond)
+                {
+                    _lastSendAliveTicks = currentTicks;
+
+                    var poolingPacket = NetPool.PacketPool.Alloc(PacketProperty.AliveCheck);
+                    poolingPacket.RawData[NetPacket.HeaderSize] = 0xFF;
+                    SendAsync(poolingPacket);
+                }
+            }
+            
             return true;
         }
 
@@ -259,6 +284,9 @@ namespace EuNet.Core
             {
                 Interlocked.Increment(ref _statistic.TcpReceivedCount);
                 Interlocked.Add(ref _statistic.TcpReceivedBytes, e.BytesTransferred);
+
+                _lastReceivedTicks = DateTime.UtcNow.Ticks;
+                _lastSendAliveTicks = _lastReceivedTicks;
 
                 _receivedSize += e.BytesTransferred;
 

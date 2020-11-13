@@ -251,6 +251,19 @@ namespace EuNet.Server
             {
                 switch (poolingPacket.Property)
                 {
+                    case PacketProperty.AliveCheck:
+                        {
+                            byte type = poolingPacket.RawData[NetPacket.HeaderSize];
+                            //_logger.LogInformation($"Received PacketProperty.AliveCheck Type[{type}]");
+
+                            if (type == 0xFF)
+                            {
+                                var packet = NetPool.PacketPool.Alloc(PacketProperty.AliveCheck);
+                                packet.RawData[NetPacket.HeaderSize] = 0;
+                                session.TcpChannel.SendAsync(packet);
+                            }
+                        }
+                        break;
                     case PacketProperty.JoinP2p:
                         {
                             try

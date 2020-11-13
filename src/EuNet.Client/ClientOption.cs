@@ -18,5 +18,14 @@ namespace EuNet.Client
 
         // 강제로 릴레이시킴 (홀펀칭 시도 안함. 테스트 전용)
         public bool IsForceRelay { get; set; } = false;
+
+        // 살아있는지 체크여부
+        public bool IsCheckAlive { get; set; } = false;
+
+        // 이 주기로 한번씩 패킷을 전송함 (ms)
+        public long CheckAliveInterval { get; set; } = 30000;
+
+        // 이 시간동안 서버로 패킷이 오지 않으면 접속해제 (ms)
+        public long CheckAliveTimeout { get; set; } = 50000;
     }
 }

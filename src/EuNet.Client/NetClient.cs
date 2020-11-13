@@ -213,10 +213,11 @@ namespace EuNet.Client
 
             try
             {
-                _tcpChannel?.Update(elapsedTime);
+                if (_tcpChannel?.Update(elapsedTime) == false)
+                    throw new Exception("Disconnected due to TCP timeout");
 
                 if (_udpChannel?.Update(elapsedTime) == false)
-                    throw new Exception("rudp disconnect timeout");
+                    throw new Exception("Disconnected due to RUDP timeout");
 
                 _p2pGroup?.Update(elapsedTime);
 
@@ -266,6 +267,7 @@ namespace EuNet.Client
             }
             catch (Exception ex)
             {
+                _isPossibleUpdate = false;
                 OnError(ex);
                 Close();
             }
@@ -442,6 +444,19 @@ namespace EuNet.Client
             {
                 switch (poolingPacket.Property)
                 {
+                    case PacketProperty.AliveCheck:
+                        {
+                            byte type = poolingPacket.RawData[NetPacket.HeaderSize];
+                            //_logger.LogInformation($"Received PacketProperty.AliveCheck Type[{type}]");
+
+                            if (type == 0xFF)
+                            {
+                                var packet = NetPool.PacketPool.Alloc(PacketProperty.AliveCheck);
+                                packet.RawData[NetPacket.HeaderSize] = 0;
+                                TcpChannel.SendAsync(packet);
+                            }
+                        }
+                        break;
                     case PacketProperty.JoinP2p:
                         {
                             ushort groupId = reader.ReadUInt16();

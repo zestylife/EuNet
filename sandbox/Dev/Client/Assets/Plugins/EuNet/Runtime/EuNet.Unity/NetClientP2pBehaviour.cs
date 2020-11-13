@@ -26,6 +26,9 @@ namespace EuNet.Unity
             _clientOption.RudpDisconnectTimeout = RudpDisconnectTimeout;
             _clientOption.TcpServerAddress = ServerAddress;
             _clientOption.TcpServerPort = TcpServerPort;
+            _clientOption.IsCheckAlive = IsCheckAlive;
+            _clientOption.CheckAliveInterval = CheckAliveInterval;
+            _clientOption.CheckAliveTimeout = CheckAliveTimeout;
 
             _client = new NetClientP2p(
                 _clientOption,

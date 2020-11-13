@@ -189,6 +189,8 @@ namespace EuNet.Core
                 case PacketProperty.HolePunchingStart:
                 case PacketProperty.HolePunchingEnd:
                     return UserDataHeaderSize;
+                case PacketProperty.AliveCheck:
+                    return HeaderSize + 1;
                 default:
                     return HeaderSize;
             }

@@ -539,6 +539,9 @@ MonoBehaviour:
   LogLevel: 3
   ServerAddress: 220.120.190.34
   TcpServerPort: 12000
+  IsCheckAlive: 1
+  CheckAliveInterval: 40000
+  CheckAliveTimeout: 60000
   UdpServerPort: 12001
   PingInterval: 1000
   MtuInterval: 1100

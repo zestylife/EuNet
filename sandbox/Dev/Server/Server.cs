@@ -34,9 +34,9 @@ namespace StarterServer
                 IsServiceUdp = true,
                 UdpServerPort = 12001,
                 MaxSession = 1000,
-                TcpKeepAliveTime = 30,
-                TcpKeepAliveInterval = 1,
-                TcpKeepAliveRetryCount = 10
+                IsCheckAlive = true,
+                CheckAliveInterval = 50000,
+                CheckAliveTimeout = 60000,
             };
 
             // 로거 팩토리를 생성
