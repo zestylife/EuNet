@@ -26,6 +26,7 @@ namespace EuNet.Client
         private CancellationTokenSource _cts;
         private ConcurrentQueue<NetPacket> _receivedPacketQueue;
         private NetDataReader _packetReader;
+        private UdpSocketEx _udpSocket;
 
         private SessionRequest _request;
         public SessionRequest SessionRequest => _request;
@@ -38,6 +39,13 @@ namespace EuNet.Client
             _sessionId = sessionId;
 
             _cts = new CancellationTokenSource();
+
+            _udpSocket = new UdpSocketEx(
+                netClient.LoggerFactory.CreateLogger("P2pSessionUdpSocket"),
+                netClient.OnPreProcessUdpRawData,
+                netClient.UdpSocketReceiveRawAsyncObject);
+
+            _udpSocket.CreateClient();
 
             _tcpChannel = null;
 
@@ -86,6 +94,9 @@ namespace EuNet.Client
             {
                 _udpChannel?.Close();
                 _udpChannel?.OnClosed();
+
+                _udpSocket?.Close(false);
+                _udpSocket = null;
 
                 _request.Close();
             }

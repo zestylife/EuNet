@@ -26,7 +26,7 @@ public class UiGame : MonoBehaviour
                 builder.Append($"[Myself] ");
             else builder.Append($"[{member.State}] ");
 
-            builder.AppendLine($"Ping [{member.Session.UdpChannel.Ping}ms] Mtu[{member.Session.UdpChannel.Mtu}] L[{udpChannel.LocalEndPoint}] R[{udpChannel.RemoteEndPoint}] T[{udpChannel.TempEndPoint}]");
+            builder.AppendLine($"Ping [{member.Session.UdpChannel.Ping}ms] Mtu[{member.Session.UdpChannel.Mtu}] L[{udpChannel.LocalEndPoint}] R[{udpChannel.RemoteEndPoint}] T[{udpChannel.TempEndPoint}] P[{udpChannel.PunchedEndPoint}]");
         }
 
         _playerCountText.text = builder.ToString();

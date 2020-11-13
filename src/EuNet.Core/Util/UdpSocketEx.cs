@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace EuNet.Core
 {
@@ -10,14 +11,16 @@ namespace EuNet.Core
         private ConcurrentDictionary<IPEndPoint, ISession> _channelMap;
         private NetPacket _cachedReceivedPacket;
 
+        private readonly object _onReceivedPacketAsyncObject;
         private readonly Func<byte[], int, NetPacket, IPEndPoint, bool> _onReceivedPacket;
 
-        public UdpSocketEx(ILogger logger, Func<byte[], int, NetPacket, IPEndPoint, bool> onReceivedPacket)
+        public UdpSocketEx(ILogger logger, Func<byte[], int, NetPacket, IPEndPoint, bool> onReceivedPacket, object onReceivedPacketAsyncObject = null)
             : base(logger)
         {
             _channelMap = new ConcurrentDictionary<IPEndPoint, ISession>();
             _cachedReceivedPacket = new NetPacket();
             _onReceivedPacket = onReceivedPacket;
+            _onReceivedPacketAsyncObject = onReceivedPacketAsyncObject;
         }
 
         internal bool TryGetSession(IPEndPoint endPoint, out ISession session)
@@ -62,13 +65,26 @@ namespace EuNet.Core
         {
             _cachedReceivedPacket.RawData = data;
 
-            if (_onReceivedPacket(data, size, _cachedReceivedPacket, endPoint) == false)
+            object asyncObject = _onReceivedPacketAsyncObject;
+
+            if (asyncObject != null)
+                Monitor.Enter(asyncObject);
+
+            try
             {
-                ISession session;
-                if (TryGetSession(endPoint, out session) == true)
+                if (_onReceivedPacket(data, size, _cachedReceivedPacket, endPoint) == false)
                 {
-                    session?.UdpChannel?.OnReceivedRawUdpData(data, size, _cachedReceivedPacket, error, endPoint);
+                    ISession session;
+                    if (TryGetSession(endPoint, out session) == true)
+                    {
+                        session?.UdpChannel?.OnReceivedRawUdpData(data, size, _cachedReceivedPacket, error, endPoint);
+                    }
                 }
+            }
+            finally
+            {
+                if (asyncObject != null)
+                    Monitor.Exit(asyncObject);
             }
         }
     }

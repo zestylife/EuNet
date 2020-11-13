@@ -18,6 +18,7 @@ namespace EuNet.Core
         }
 
         private UdpSocket _socket;
+        public UdpSocket Socket => _socket;
         private ChannelBase[] _udpChannels;
 
         public IPEndPoint LocalEndPoint;

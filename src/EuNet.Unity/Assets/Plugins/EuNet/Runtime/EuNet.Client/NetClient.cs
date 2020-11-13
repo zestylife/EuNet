@@ -52,6 +52,7 @@ namespace EuNet.Client
         private NetDataReader _packetReader;
         private UdpSocketEx _udpSocket;
         public UdpSocketEx UdpSocket => _udpSocket;
+        public readonly object UdpSocketReceiveRawAsyncObject = new object();
 
         private bool _isUdpConnected;
         private Task _connectUdpLoopTask;
@@ -133,7 +134,10 @@ namespace EuNet.Client
 
                 if (_clientOption.IsServiceUdp)
                 {
-                    _udpSocket = new UdpSocketEx(_loggerFactory.CreateLogger("ClientUdpSocket"), OnPreProcessUdpRawData);
+                    _udpSocket = new UdpSocketEx(
+                        _loggerFactory.CreateLogger("ClientUdpSocket"),
+                        OnPreProcessUdpRawData,
+                        UdpSocketReceiveRawAsyncObject);
                     _udpSocket.CreateClient();
                 }
 
@@ -622,7 +626,7 @@ namespace EuNet.Client
             }
         }
 
-        private bool OnPreProcessUdpRawData(byte[] data, int size, NetPacket cachedPacket, IPEndPoint endPoint)
+        internal bool OnPreProcessUdpRawData(byte[] data, int size, NetPacket cachedPacket, IPEndPoint endPoint)
         {
             Interlocked.Increment(ref _statistic.UdpReceivedCount);
             Interlocked.Add(ref _statistic.UdpReceivedBytes, size);
@@ -719,7 +723,11 @@ namespace EuNet.Client
                                     IPEndPoint ep = reader.ReadIPEndPoint();
 
                                     member.Session.UdpChannel.SetPunchedEndPoint(ep, true);
+
+                                    // 메인소켓에 등록해줌
                                     _udpSocket.AddSession(member.Session, endPoint);
+                                    // 피어별 소켓에도 등록해줌
+                                    (member.Session.UdpChannel.Socket as UdpSocketEx)?.AddSession(member.Session, endPoint);
 
                                     member.SetState(P2pConnectState.BothConnected);
                                 }

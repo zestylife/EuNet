@@ -23,6 +23,6 @@ public class InputManager : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
-        //actor.SetMoveDirection(x, y);
+        actor.SetMoveDirection(x, y);
     }
 }
