@@ -40,7 +40,9 @@ namespace EuNet.Unity
                     {
                         // 다른사람들 보냄
                         client.P2pGroup.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+
                         // 나를 호출함
+                        CallSelfNotification(client, writer, deliveryMethod);
                     }
                     break;
                 case DeliveryTarget.Others:
@@ -51,22 +53,60 @@ namespace EuNet.Unity
                     break;
                 case DeliveryTarget.Master:
                     {
-                        var target = client.P2pGroup.GetMasterMember();
-                        if (target == null)
-                            return;
+                        if(client.P2pGroup.MasterIsMine())
+                        {
+                            // 자신이 마스터임
+                            CallSelfNotification(client, writer, deliveryMethod);
+                        }
+                        else
+                        {
+                            // 다른유저가 마스터임
+                            var target = client.P2pGroup.GetMasterMember();
+                            if (target == null)
+                                return;
 
-                        target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                            target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                        }
                     }
                     break;
                 case DeliveryTarget.Target:
                     {
-                        var target = client.P2pGroup.Find((ushort)extra);
-                        if (target == null)
-                            return;
+                        ushort targetSessionId = (ushort)extra;
+                        if (targetSessionId == 0)
+                            throw new Exception("Target's SessionId must not be 0");
 
-                        target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                        if (client.SessionId == targetSessionId)
+                        {
+                            // 본인이 타겟임
+                            CallSelfNotification(client, writer, deliveryMethod);
+                        }
+                        else
+                        {
+                            var target = client.P2pGroup.Find(targetSessionId);
+                            if (target == null)
+                                return;
+
+                            target.ViewNotification(writer.Data, 0, writer.Length, View.ViewId, deliveryMethod);
+                        }
                     }
                     break;
+            }
+        }
+
+        private void CallSelfNotification(NetClient client, NetDataWriter writer, DeliveryMethod deliveryMethod)
+        {
+            var w = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                w.Write(View.ViewId);
+                w.WriteOnlyData(writer.Data, 0, writer.Length);
+
+                NetDataReader r = new NetDataReader(w);
+                client.OnViewRequestReceive(client, r, new NetDataWriter());
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(writer);
             }
         }
 

@@ -23,9 +23,9 @@ namespace EuNet.Client
         public bool IsCheckAlive { get; set; } = false;
 
         // 이 주기로 한번씩 패킷을 전송함 (ms)
-        public long CheckAliveInterval { get; set; } = 40000;
+        public long CheckAliveInterval { get; set; } = 30000;
 
         // 이 시간동안 서버로 패킷이 오지 않으면 접속해제 (ms)
-        public long CheckAliveTimeout { get; set; } = 60000;
+        public long CheckAliveTimeout { get; set; } = 50000;
     }
 }
