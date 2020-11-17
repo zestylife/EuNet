@@ -66,10 +66,7 @@ namespace EuNet.Core
         
         public bool Enqueue(T item)
         {
-            //var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) ;
-                //spin.SpinOnce();
 
             try
             {
@@ -90,13 +87,7 @@ namespace EuNet.Core
 
         public T Dequeue()
         {
-            if (IsEmpty)
-                return default(T);
-
-            //var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) ;
-                //spin.SpinOnce();
 
             try
             {
@@ -129,6 +120,37 @@ namespace EuNet.Core
 
             if (Interlocked.CompareExchange(ref _lock, 0, 1) != 1)
                 throw new InvalidOperationException();
+        }
+
+        public T[] ToArray()
+        {
+            var spin = new SpinWait();
+
+            while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
+                spin.SpinOnce();
+
+            var length = Length;
+
+            var array = new T[length];
+            if (IsEmpty)
+                return array;
+
+            if (_head < _tail)
+            {
+                Array.Copy(_buffer, _head + 1, array, 0, length);
+            }
+            else
+            {
+                var firstLegnth = _buffer.Length - _head - 1;
+
+                Array.Copy(_buffer, _head + 1, array, 0, firstLegnth);
+                Array.Copy(_buffer, 0, array, firstLegnth, length - firstLegnth);
+            }
+
+            if (Interlocked.CompareExchange(ref _lock, 0, 1) != 1)
+                throw new InvalidOperationException();
+
+            return array;
         }
 
         public void Enqueue(ICollection<T> items)
@@ -177,7 +199,9 @@ namespace EuNet.Core
 
             try
             {
-                if (array.Length - arrayIndex < Length)
+                var length = Length;
+
+                if (array.Length - arrayIndex < length)
                     throw new ArgumentException();
 
                 if (IsEmpty)
@@ -185,14 +209,14 @@ namespace EuNet.Core
 
                 if(_head < _tail)
                 {
-                    Array.Copy(_buffer, _head + 1, array, arrayIndex, Length);
+                    Array.Copy(_buffer, _head + 1, array, arrayIndex, length);
                 }
                 else
                 {
                     var firstLegnth = _buffer.Length - _head - 1;
 
                     Array.Copy(_buffer, _head + 1, array, arrayIndex, firstLegnth);
-                    Array.Copy(_buffer, 0, array, arrayIndex + firstLegnth, Length - firstLegnth);
+                    Array.Copy(_buffer, 0, array, arrayIndex + firstLegnth, length - firstLegnth);
                 }
             }
             finally

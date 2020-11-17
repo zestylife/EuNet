@@ -18,7 +18,7 @@ namespace EuNet.Core.Tests
         public void Setup()
         {
             _testList = new List<DataClass>();
-            for(int i=0; i<5; i++)
+            for(int i=0; i<100000; i++)
             {
                 _testList.Add(new DataClass() { Value = i });
             }
@@ -119,6 +119,66 @@ namespace EuNet.Core.Tests
             Assert.AreEqual(0, queue.Length);
 
             CheckList(_dequeueList, _dequeueList.Count);
+        }
+
+        private Task EnqueueTest(ConcurrentCircularQueue<DataClass> queue)
+        {
+            foreach (var item in _testList)
+                queue.Enqueue(item);
+
+            return Task.CompletedTask;
+        }
+
+        private Task EnqueueDequeueTest(ConcurrentCircularQueue<DataClass> queue)
+        {
+            foreach (var item in _testList)
+            {
+                queue.Enqueue(item);
+                Task.Yield();
+                queue.Dequeue();
+                Task.Yield();
+            }
+
+            return Task.CompletedTask;
+        }
+
+        [Test]
+        public async Task MultithreadTest()
+        {
+            int taskCount = 20;
+            var queue = new ConcurrentCircularQueue<DataClass>(_testList.Count * taskCount);
+
+            List<Task> taskList = new List<Task>();
+            for(int i =0; i<taskCount; ++i)
+            {
+                taskList.Add(EnqueueTest(queue));
+            }
+
+            await Task.WhenAll(taskList);
+
+            Assert.AreEqual(_testList.Count * taskCount, queue.Length);
+
+            var sortedQueue = new List<DataClass>(queue.ToArray());
+            sortedQueue.Sort((x, y) => x.Value.CompareTo(y.Value));
+
+            for(int x = 0; x<_testList.Count; ++x)
+            {
+                for (int y = 0; y < taskCount; ++y)
+                {
+                    Assert.AreSame(_testList[x] , sortedQueue[x * taskCount + y]);
+                }
+            }
+
+            var queue2 = new ConcurrentCircularQueue<DataClass>(_testList.Count);
+            taskList.Clear();
+            for (int i = 0; i < taskCount; ++i)
+            {
+                taskList.Add(EnqueueDequeueTest(queue2));
+            }
+
+            await Task.WhenAll(taskList);
+
+            Assert.AreEqual(0, queue2.Length);
         }
     }
 }

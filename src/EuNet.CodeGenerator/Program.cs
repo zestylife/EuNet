@@ -58,6 +58,7 @@ namespace CodeGenerator
                 var basePath = Path.GetFullPath(options.Path ?? ".");
                 var sources = options.Sources.Where(p => string.IsNullOrWhiteSpace(p) == false && FilterSource(options, p)).Select(p => MakeFullPath(p, basePath)).ToArray();
                 var references = options.References.Where(p => string.IsNullOrWhiteSpace(p) == false).Select(p => MakeFullPath(p, basePath)).ToArray();
+                var defines = options.Defines.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
                 var targetDefaultPath = @".\CodeGen\EuNet.Rpc.CodeGen.cs";
                 var targetPath = MakeFullPath(options.TargetFile ?? targetDefaultPath, basePath);
 
@@ -69,10 +70,9 @@ namespace CodeGenerator
                 }
 
                 // Build source and load assembly
-
                 Console.WriteLine("- Build sources");
 
-                var assembly = AssemblyLoader.BuildAndLoad(sources, references, options.Defines.ToArray());
+                var assembly = AssemblyLoader.BuildAndLoad(sources, references, defines);
                 if (assembly == null)
                 {
                     Console.WriteLine("Fail to AssemblyLoader.BuildAndLoad");

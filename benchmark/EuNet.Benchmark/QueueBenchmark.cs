@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using EuNet.Client;
 using EuNet.Core;
@@ -11,7 +12,9 @@ using System.Threading.Tasks;
 
 namespace EuNet.Benchmark
 {
-    [SimpleJob(launchCount: 1, warmupCount: 5, targetCount: 10)]
+    [SimpleJob(warmupCount: 5, targetCount: 10)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
     [MemoryDiagnoser]
     [RPlotExporter]
     public class QueueBenchmark

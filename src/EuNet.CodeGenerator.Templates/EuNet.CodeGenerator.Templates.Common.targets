@@ -11,12 +11,12 @@
     <!-- Internal build  -->
     <When Condition="'$(Configuration)'=='Debug' AND Exists('$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator')">
       <PropertyGroup>
-        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Debug\netcoreapp3.0</EuNetRpcCodeGenToolExeDir>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Debug\netcoreapp3.1</EuNetRpcCodeGenToolExeDir>
       </PropertyGroup>
     </When>
     <When Condition="'$(Configuration)'=='Release' AND Exists('$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator')">
       <PropertyGroup>
-        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Release\netcoreapp3.0</EuNetRpcCodeGenToolExeDir>
+        <EuNetRpcCodeGenToolExeDir>$(MSBuildThisFileDirectory)..\EuNet.CodeGenerator\bin\Release\netcoreapp3.1</EuNetRpcCodeGenToolExeDir>
       </PropertyGroup>
     </When>
   </Choose>
