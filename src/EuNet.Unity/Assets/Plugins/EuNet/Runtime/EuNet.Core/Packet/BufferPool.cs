@@ -7,7 +7,7 @@ namespace EuNet.Core
 {
     internal sealed class BufferPoolCell : IPool
     {
-        private readonly ConcurrentCircularQueue<byte[]> _queue;
+        private readonly ConcurrentQueue<byte[]> _queue;
         private readonly int _allocSize;
         private long _totalAllocCount;
         private long _allocCount;
@@ -24,7 +24,7 @@ namespace EuNet.Core
             _allocSize = allocSize;
             _maxPoolCount = maxPoolCount;
 
-            _queue = new ConcurrentCircularQueue<byte[]>(maxPoolCount);
+            _queue = new ConcurrentQueue<byte[]>();
         }
 
         public byte[] Alloc(int size)
@@ -32,9 +32,10 @@ namespace EuNet.Core
             Interlocked.Increment(ref _totalAllocCount);
             Interlocked.Increment(ref _allocCount);
 
-            byte[] buffer = _queue.Dequeue();
+            byte[] buffer;
 
-            if (buffer != null &&
+            if (_queue.TryDequeue(out buffer) &&
+                buffer != null &&
                 buffer.Length >= size)
             {
                 return buffer;
