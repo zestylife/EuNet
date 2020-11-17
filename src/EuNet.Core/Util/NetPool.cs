@@ -5,8 +5,8 @@ namespace EuNet.Core
 {
     public static class NetPool
     {
-        public static NetDataWriterPool DataWriterPool = new NetDataWriterPool();
-        internal static NetPacketPool PacketPool = new NetPacketPool();
-        public static BufferPool BufferPool = new BufferPool();
+        public static NetDataWriterPool DataWriterPool = new NetDataWriterPool(1000);
+        internal static NetPacketPool PacketPool = new NetPacketPool(10000);
+        public static BufferPool BufferPool = new BufferPool(1000);
     }
 }

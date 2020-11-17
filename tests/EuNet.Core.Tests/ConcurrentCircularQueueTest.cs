@@ -45,13 +45,13 @@ namespace EuNet.Core.Tests
             foreach (var item in _testList)
                 queue.Enqueue(item);
 
-            Assert.AreEqual(_testList.Count, queue.Length);
+            Assert.AreEqual(_testList.Count, queue.Count);
 
             List<DataClass> _dequeueList = new List<DataClass>(_testList.Count);
             foreach (var item in _testList)
                 _dequeueList.Add(queue.Dequeue());
 
-            Assert.AreEqual(0, queue.Length);
+            Assert.AreEqual(0, queue.Count);
 
             CheckList(_dequeueList, _dequeueList.Count);
 
@@ -75,7 +75,7 @@ namespace EuNet.Core.Tests
 
             queue.Enqueue(_testList);
 
-            Assert.AreEqual(_testList.Count, queue.Length);
+            Assert.AreEqual(_testList.Count, queue.Count);
             
             foreach(var item in _testList)
             {
@@ -110,13 +110,13 @@ namespace EuNet.Core.Tests
                 else Assert.AreEqual(false, result);
             }
 
-            Assert.AreEqual(allocCount, queue.Length);
+            Assert.AreEqual(allocCount, queue.Count);
 
             List<DataClass> _dequeueList = new List<DataClass>(_testList.Count);
             for (int i=0; i< allocCount; ++i)
                 _dequeueList.Add(queue.Dequeue());
 
-            Assert.AreEqual(0, queue.Length);
+            Assert.AreEqual(0, queue.Count);
 
             CheckList(_dequeueList, _dequeueList.Count);
         }
@@ -156,7 +156,7 @@ namespace EuNet.Core.Tests
 
             await Task.WhenAll(taskList);
 
-            Assert.AreEqual(_testList.Count * taskCount, queue.Length);
+            Assert.AreEqual(_testList.Count * taskCount, queue.Count);
 
             var sortedQueue = new List<DataClass>(queue.ToArray());
             sortedQueue.Sort((x, y) => x.Value.CompareTo(y.Value));
@@ -178,7 +178,7 @@ namespace EuNet.Core.Tests
 
             await Task.WhenAll(taskList);
 
-            Assert.AreEqual(0, queue2.Length);
+            Assert.AreEqual(0, queue2.Count);
         }
     }
 }

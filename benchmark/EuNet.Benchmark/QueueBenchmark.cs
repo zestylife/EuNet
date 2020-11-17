@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace EuNet.Benchmark
 {
-    [SimpleJob(warmupCount: 5, targetCount: 10)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
-    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
+    [SimpleJob(warmupCount: 3, targetCount: 5)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp31, warmupCount: 3, targetCount: 5)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp50, warmupCount: 3, targetCount: 5)]
     [MemoryDiagnoser]
     [RPlotExporter]
     public class QueueBenchmark
@@ -45,6 +45,12 @@ namespace EuNet.Benchmark
             DataClass result;
             for (int i = 0; i < TestCount; ++i)
                 _concurrentQueue.TryDequeue(out result);
+
+            for (int i = 0; i < TestCount; ++i)
+            {
+                _concurrentQueue.Enqueue(_list[i]);
+                _concurrentQueue.TryDequeue(out result);
+            }
         }
 
         [Benchmark]
@@ -55,6 +61,12 @@ namespace EuNet.Benchmark
 
             for (int i = 0; i < TestCount; ++i)
                 _concurrentCircluarQueue.Dequeue();
+
+            for (int i = 0; i < TestCount; ++i)
+            {
+                _concurrentCircluarQueue.Enqueue(_list[i]);
+                _concurrentCircluarQueue.Dequeue();
+            }
         }
     }
 }

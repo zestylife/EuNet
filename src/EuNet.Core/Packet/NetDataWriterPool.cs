@@ -4,6 +4,12 @@ namespace EuNet.Core
 {
     public class NetDataWriterPool : ConcurrentObjectPool<NetDataWriter>
     {
+        public NetDataWriterPool(int maxCount)
+            : base(0, maxCount)
+        {
+
+        }
+
         public override NetDataWriter Alloc()
         {
             var writer = base.Alloc();

@@ -7,14 +7,14 @@ namespace EuNet.Core
     public class ConcurrentObjectPool<T> : IPool
         where T : class, new()
     {
-        private ConcurrentQueue<T> _queue;
+        private ConcurrentCircularQueue<T> _queue;
 
         private int _alloced;
         private int _total;
 
-        public ConcurrentObjectPool(int count = 0)
+        public ConcurrentObjectPool(int count = 0, int maxCount = 1000)
         {
-            _queue = new ConcurrentQueue<T>();
+            _queue = new ConcurrentCircularQueue<T>(maxCount);
 
             for (int i = 0; i < count; ++i)
             {
@@ -60,18 +60,6 @@ namespace EuNet.Core
             if (obj == null)
                 return;
 
-#if DEBUG
-            lock (_queue)
-            {
-                foreach (T t in _queue)
-                {
-                    if (t == obj)
-                    {
-                        System.Diagnostics.Debugger.Break();
-                    }
-                }
-            }
-#endif
             _queue.Enqueue(obj);
             Interlocked.Decrement(ref _alloced);
         }

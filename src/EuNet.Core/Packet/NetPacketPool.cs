@@ -7,10 +7,11 @@ namespace EuNet.Core
 {
     internal sealed class NetPacketPoolCell : IPool
     {
-        private readonly ConcurrentQueue<NetPacket> _queue = new ConcurrentQueue<NetPacket>();
+        private readonly ConcurrentCircularQueue<NetPacket> _queue;
         private readonly int _allocSize;
         private long _totalAllocCount;
         private long _allocCount;
+        private int _maxPoolCount;
 
         public int AllocSize => _allocSize;
 
@@ -18,11 +19,12 @@ namespace EuNet.Core
         public long AllocCount => _allocCount;
         public long PoolingCount => _queue.Count;
 
-        private int MaxPoolCount = 10000;
-
-        public NetPacketPoolCell(int allocSize)
+        public NetPacketPoolCell(int allocSize, int maxPoolCount)
         {
             _allocSize = allocSize;
+            _maxPoolCount = maxPoolCount;
+
+            _queue = new ConcurrentCircularQueue<NetPacket>(_maxPoolCount);
         }
 
         public NetPacket Alloc(int size)
@@ -30,10 +32,9 @@ namespace EuNet.Core
             Interlocked.Increment(ref _totalAllocCount);
             Interlocked.Increment(ref _allocCount);
 
-            NetPacket packet;
+            NetPacket packet = _queue.Dequeue();
 
-            if (_queue.TryDequeue(out packet) == true &&
-                packet != null &&
+            if (packet != null &&
                 packet.RawData.Length >= size)
             {
                 return packet;
@@ -45,10 +46,6 @@ namespace EuNet.Core
         public void Free(NetPacket data)
         {
             Interlocked.Decrement(ref _allocCount);
-
-            if (_queue.Count > MaxPoolCount)
-                return;
-
             _queue.Enqueue(data);
         }
 
@@ -97,10 +94,10 @@ namespace EuNet.Core
             }
         }
 
-        public NetPacketPool()
+        public NetPacketPool(int maxPoolCountPerSegment = 10000)
         {
             for (int i = 0; i < _poolCell.Length; i++)
-                _poolCell[i] = new NetPacketPoolCell(SizeTable[i]);
+                _poolCell[i] = new NetPacketPoolCell(SizeTable[i], maxPoolCountPerSegment);
         }
 
         public NetPacket Alloc(int size)

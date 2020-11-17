@@ -39,7 +39,7 @@ namespace EuNet.Core
             }
         }
 
-        public int Length
+        public int Count
         {
             get
             {
@@ -63,7 +63,7 @@ namespace EuNet.Core
             _head = _tail = 0;
             _lock = 0;
         }
-        
+
         public bool Enqueue(T item)
         {
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) ;
@@ -109,6 +109,12 @@ namespace EuNet.Core
             }
         }
 
+        public bool TryDequeue(out T value)
+        {
+            value = Dequeue();
+            return value != null;
+        }
+
         public void Clear()
         {
             var spin = new SpinWait();
@@ -129,7 +135,7 @@ namespace EuNet.Core
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
                 spin.SpinOnce();
 
-            var length = Length;
+            var length = Count;
 
             var array = new T[length];
             if (IsEmpty)
@@ -168,7 +174,7 @@ namespace EuNet.Core
 
             try
             {
-                if (items.Count > Capacity - Length)
+                if (items.Count > Capacity - Count)
                     throw new InvalidOperationException("Not enough space left");
 
                 foreach(var item in items)
@@ -199,7 +205,7 @@ namespace EuNet.Core
 
             try
             {
-                var length = Length;
+                var length = Count;
 
                 if (array.Length - arrayIndex < length)
                     throw new ArgumentException();
