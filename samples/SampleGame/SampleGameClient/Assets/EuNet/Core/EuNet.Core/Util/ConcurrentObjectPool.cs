@@ -7,7 +7,7 @@ namespace EuNet.Core
     public class ConcurrentObjectPool<T> : IPool
         where T : class, new()
     {
-        private ConcurrentQueue<T> _queue;
+        private ConcurrentCircularQueue<T> _queue;
 
         private int _alloced;
         private int _total;
@@ -15,7 +15,7 @@ namespace EuNet.Core
 
         public ConcurrentObjectPool(int count = 0, int maxCount = 1000)
         {
-            _queue = new ConcurrentQueue<T>();
+            _queue = new ConcurrentCircularQueue<T>(maxCount);
             _maxCount = maxCount;
 
             for (int i = 0; i < count; ++i)
