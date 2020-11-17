@@ -145,11 +145,8 @@ namespace EuNet.Benchmark
 
         static void Main(string[] args)
         {
-            //Program program = new Program();
-            //program.Run();
-
-            BenchmarkRunner.Run<Program>();
-
+            //BenchmarkRunner.Run<Program>();
+            BenchmarkRunner.Run<QueueBenchmark>();
         }
     }
 }
