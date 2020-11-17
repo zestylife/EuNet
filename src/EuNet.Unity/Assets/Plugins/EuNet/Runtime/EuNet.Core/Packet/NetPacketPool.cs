@@ -7,7 +7,7 @@ namespace EuNet.Core
 {
     internal sealed class NetPacketPoolCell : IPool
     {
-        private readonly ConcurrentCircularQueue<NetPacket> _queue;
+        private readonly ConcurrentQueue<NetPacket> _queue;
         private readonly int _allocSize;
         private long _totalAllocCount;
         private long _allocCount;
@@ -24,7 +24,7 @@ namespace EuNet.Core
             _allocSize = allocSize;
             _maxPoolCount = maxPoolCount;
 
-            _queue = new ConcurrentCircularQueue<NetPacket>(_maxPoolCount);
+            _queue = new ConcurrentQueue<NetPacket>();
         }
 
         public NetPacket Alloc(int size)
@@ -32,9 +32,10 @@ namespace EuNet.Core
             Interlocked.Increment(ref _totalAllocCount);
             Interlocked.Increment(ref _allocCount);
 
-            NetPacket packet = _queue.Dequeue();
+            NetPacket packet;
 
-            if (packet != null &&
+            if (_queue.TryDequeue(out packet) &&
+                packet != null &&
                 packet.RawData.Length >= size)
             {
                 return packet;
@@ -46,6 +47,10 @@ namespace EuNet.Core
         public void Free(NetPacket data)
         {
             Interlocked.Decrement(ref _allocCount);
+
+            if (_queue.Count > _maxPoolCount)
+                return;
+
             _queue.Enqueue(data);
         }
 

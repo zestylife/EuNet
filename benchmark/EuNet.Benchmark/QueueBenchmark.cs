@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace EuNet.Benchmark
 {
-    [SimpleJob(warmupCount: 3, targetCount: 5)]
-    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp31, warmupCount: 3, targetCount: 5)]
-    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp50, warmupCount: 3, targetCount: 5)]
+    [SimpleJob(warmupCount: 3, targetCount: 10)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp31, warmupCount: 3, targetCount: 10)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp50, warmupCount: 3, targetCount: 10)]
     [MemoryDiagnoser]
     [RPlotExporter]
     public class QueueBenchmark
@@ -24,7 +24,7 @@ namespace EuNet.Benchmark
         private ConcurrentQueue<DataClass> _concurrentQueue;
         private ConcurrentCircularQueue<DataClass> _concurrentCircluarQueue;
 
-        private int TestCount = 10000000;
+        private int TestCount = 1000000;
 
         public QueueBenchmark()
         {

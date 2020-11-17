@@ -7,14 +7,16 @@ namespace EuNet.Core
     public class ConcurrentObjectPool<T> : IPool
         where T : class, new()
     {
-        private ConcurrentCircularQueue<T> _queue;
+        private ConcurrentQueue<T> _queue;
 
         private int _alloced;
         private int _total;
+        private int _maxCount;
 
         public ConcurrentObjectPool(int count = 0, int maxCount = 1000)
         {
-            _queue = new ConcurrentCircularQueue<T>(maxCount);
+            _queue = new ConcurrentQueue<T>();
+            _maxCount = maxCount;
 
             for (int i = 0; i < count; ++i)
             {
@@ -57,11 +59,12 @@ namespace EuNet.Core
 
         public virtual void Free(T obj)
         {
-            if (obj == null)
+            Interlocked.Decrement(ref _alloced);
+
+            if (_queue.Count >= _maxCount)
                 return;
 
             _queue.Enqueue(obj);
-            Interlocked.Decrement(ref _alloced);
         }
 
         public override string ToString()

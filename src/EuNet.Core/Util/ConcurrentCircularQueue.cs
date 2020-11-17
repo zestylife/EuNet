@@ -6,17 +6,18 @@ namespace EuNet.Core
 {
     public class ConcurrentCircularQueue<T> where T : class
     {
-        private int _lock;
+        private volatile int _lock;
 
         private volatile int _head;
         private volatile int _tail;
         private readonly T[] _buffer;
+        private int _bufferLength;
 
         public int Capacity
         {
             get
             {
-                return _buffer.Length - 1;
+                return _bufferLength - 1;
             }
         }
 
@@ -35,7 +36,7 @@ namespace EuNet.Core
         {
             get
             {
-                return _head == (_tail + 1) % _buffer.Length;
+                return _head == (_tail + 1) % _bufferLength;
             }
         }
 
@@ -47,7 +48,7 @@ namespace EuNet.Core
                     return 0;
 
                 if (_tail < _head)
-                    return _buffer.Length - _head + _tail;
+                    return _bufferLength - _head + _tail;
 
                 return _tail - _head;
             }
@@ -62,6 +63,7 @@ namespace EuNet.Core
             _buffer = new T[capacity + 1];
             _head = _tail = 0;
             _lock = 0;
+            _bufferLength = capacity + 1;
         }
 
         public bool Enqueue(T item)
@@ -73,7 +75,7 @@ namespace EuNet.Core
                 if (IsFull)
                     return false;
 
-                _tail = (++_tail) % _buffer.Length;
+                _tail = (++_tail) % _bufferLength;
                 _buffer[_tail] = item;
 
                 return true;
@@ -94,7 +96,7 @@ namespace EuNet.Core
                 if (IsEmpty)
                     return default(T);
 
-                var index = (++_head) % _buffer.Length;
+                var index = (++_head) % _bufferLength;
 
                 T item = _buffer[index];
                 _buffer[index] = null;
@@ -147,7 +149,7 @@ namespace EuNet.Core
             }
             else
             {
-                var firstLegnth = _buffer.Length - _head - 1;
+                var firstLegnth = _bufferLength - _head - 1;
 
                 Array.Copy(_buffer, _head + 1, array, 0, firstLegnth);
                 Array.Copy(_buffer, 0, array, firstLegnth, length - firstLegnth);
@@ -179,7 +181,7 @@ namespace EuNet.Core
 
                 foreach(var item in items)
                 {
-                    _tail = (++_tail) % _buffer.Length;
+                    _tail = (++_tail) % _bufferLength;
                     _buffer[_tail] = item;
                 }
             }
@@ -219,7 +221,7 @@ namespace EuNet.Core
                 }
                 else
                 {
-                    var firstLegnth = _buffer.Length - _head - 1;
+                    var firstLegnth = _bufferLength - _head - 1;
 
                     Array.Copy(_buffer, _head + 1, array, arrayIndex, firstLegnth);
                     Array.Copy(_buffer, 0, array, arrayIndex + firstLegnth, length - firstLegnth);
