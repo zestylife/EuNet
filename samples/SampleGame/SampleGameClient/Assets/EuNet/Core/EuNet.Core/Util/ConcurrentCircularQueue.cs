@@ -68,7 +68,9 @@ namespace EuNet.Core
 
         public bool Enqueue(T item)
         {
-            while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) ;
+            var spin = new SpinWait();
+            while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
+                spin.SpinOnce();
 
             try
             {
@@ -89,7 +91,9 @@ namespace EuNet.Core
 
         public T Dequeue()
         {
-            while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) ;
+            var spin = new SpinWait();
+            while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
+                spin.SpinOnce();
 
             try
             {
@@ -120,7 +124,6 @@ namespace EuNet.Core
         public void Clear()
         {
             var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
                 spin.SpinOnce();
 
@@ -133,7 +136,6 @@ namespace EuNet.Core
         public T[] ToArray()
         {
             var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
                 spin.SpinOnce();
 
@@ -170,7 +172,6 @@ namespace EuNet.Core
                 throw new InvalidOperationException("Trying to add too many items");
 
             var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
                 spin.SpinOnce();
 
@@ -201,7 +202,6 @@ namespace EuNet.Core
                 throw new ArgumentOutOfRangeException();
 
             var spin = new SpinWait();
-
             while (Interlocked.CompareExchange(ref _lock, 1, 0) != 0)
                 spin.SpinOnce();
 
