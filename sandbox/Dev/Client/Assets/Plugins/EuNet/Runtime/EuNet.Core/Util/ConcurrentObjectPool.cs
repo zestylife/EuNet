@@ -11,10 +11,12 @@ namespace EuNet.Core
 
         private int _alloced;
         private int _total;
+        private int _maxCount;
 
-        public ConcurrentObjectPool(int count = 0)
+        public ConcurrentObjectPool(int count = 0, int maxCount = 1000)
         {
             _queue = new ConcurrentQueue<T>();
+            _maxCount = maxCount;
 
             for (int i = 0; i < count; ++i)
             {
@@ -57,23 +59,12 @@ namespace EuNet.Core
 
         public virtual void Free(T obj)
         {
-            if (obj == null)
+            Interlocked.Decrement(ref _alloced);
+
+            if (_queue.Count >= _maxCount)
                 return;
 
-#if DEBUG
-            lock (_queue)
-            {
-                foreach (T t in _queue)
-                {
-                    if (t == obj)
-                    {
-                        System.Diagnostics.Debugger.Break();
-                    }
-                }
-            }
-#endif
             _queue.Enqueue(obj);
-            Interlocked.Decrement(ref _alloced);
         }
 
         public override string ToString()

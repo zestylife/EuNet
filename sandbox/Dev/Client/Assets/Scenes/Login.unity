@@ -546,7 +546,7 @@ MonoBehaviour:
   PingInterval: 1000
   MtuInterval: 1100
   RudpDisconnectTimeout: 5000
-  SyncType: 0
+  SyncType: 1
   SyncInterval: 0.5
 --- !u!114 &1283901517
 MonoBehaviour:

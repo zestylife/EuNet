@@ -29,6 +29,10 @@ namespace EuNet.Unity
         public NetClientP2p Client => _client;
 
         public ushort SessionId => _client.SessionId;
+        public TcpChannel TcpChannel => _client.TcpChannel;
+        public UdpChannel UdpChannel => _client.UdpChannel;
+        public NetViews Views => _client.Views;
+        public SessionState State => _client.State;
 
         public void SetClient(NetClientP2p client)
         {

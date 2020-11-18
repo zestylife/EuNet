@@ -7,10 +7,11 @@ namespace EuNet.Core
 {
     internal sealed class BufferPoolCell : IPool
     {
-        private readonly ConcurrentQueue<byte[]> _queue = new ConcurrentQueue<byte[]>();
+        private readonly ConcurrentQueue<byte[]> _queue;
         private readonly int _allocSize;
         private long _totalAllocCount;
         private long _allocCount;
+        private int _maxPoolCount;
 
         public int AllocSize => _allocSize;
 
@@ -18,11 +19,12 @@ namespace EuNet.Core
         public long AllocCount => _allocCount;
         public long PoolingCount => _queue.Count;
 
-        private int MaxPoolCount = 10000;
-
-        public BufferPoolCell(int allocSize)
+        public BufferPoolCell(int allocSize, int maxPoolCount)
         {
             _allocSize = allocSize;
+            _maxPoolCount = maxPoolCount;
+
+            _queue = new ConcurrentQueue<byte[]>();
         }
 
         public byte[] Alloc(int size)
@@ -32,7 +34,7 @@ namespace EuNet.Core
 
             byte[] buffer;
 
-            if (_queue.TryDequeue(out buffer) == true &&
+            if (_queue.TryDequeue(out buffer) &&
                 buffer != null &&
                 buffer.Length >= size)
             {
@@ -46,7 +48,7 @@ namespace EuNet.Core
         {
             Interlocked.Decrement(ref _allocCount);
 
-            if (_queue.Count > MaxPoolCount)
+            if (_queue.Count > _maxPoolCount)
                 return;
 
             _queue.Enqueue(data);
@@ -97,10 +99,10 @@ namespace EuNet.Core
             }
         }
 
-        public BufferPool()
+        public BufferPool(int maxPoolCountPerSegment = 1000)
         {
             for (int i = 0; i < _poolCell.Length; i++)
-                _poolCell[i] = new BufferPoolCell(SizeTable[i]);
+                _poolCell[i] = new BufferPoolCell(SizeTable[i], maxPoolCountPerSegment);
         }
 
         public byte[] Alloc(int size)
