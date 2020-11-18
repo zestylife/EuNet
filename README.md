@@ -1,6 +1,6 @@
 EuNet C# (.NET, .NET Core, Unity)
 ===
-[![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Release/badge.svg)](https://github.com/zestylife/EuNet/actions) [![Releases](https://img.shields.io/github/v/release/zestylife/EuNet)](https://github.com/zestylife/EuNet/releases)
+[![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Debug/badge.svg)](https://github.com/zestylife/EuNet/actions) [![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Release/badge.svg)](https://github.com/zestylife/EuNet/actions) [![Releases](https://img.shields.io/github/v/release/zestylife/EuNet)](https://github.com/zestylife/EuNet/releases)
 
 Easy Unity Network (EuNet) is a network solution for multiplayer games.
 
