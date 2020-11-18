@@ -19,7 +19,7 @@
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\Plugins\EuNet\Runtime\EuNet.Unity\Extensions\" />
   </Target>
 

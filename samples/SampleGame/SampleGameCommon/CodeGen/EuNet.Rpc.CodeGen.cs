@@ -17,6 +17,7 @@ using EuNet.Rpc;
 using EuNet.Unity;
 using UnityEngine;
 #endif
+using SampleGameCommon;
 
 #region SampleGameCommon.ILoginRpc
 
@@ -414,6 +415,85 @@ namespace SampleGameCommon
 }
 
 #endregion
+#region SampleGameCommon.GenericClass<T>
+
+namespace SampleGameCommon
+{
+    public sealed class GenericClassFormatter<T> : INetDataFormatter<GenericClass<T>>
+    {
+        public void Serialize(NetDataWriter _writer_, GenericClass<T> _value_, NetDataSerializerOptions options)
+        {
+            NetDataSerializer.Serialize<T>(_writer_, _value_.SlotId);
+        }
+
+        public GenericClass<T> Deserialize(NetDataReader _reader_, NetDataSerializerOptions options)
+        {
+            var __SlotId = NetDataSerializer.Deserialize<T>(_reader_);
+
+            return new GenericClass<T>() {
+                SlotId = __SlotId,
+            };
+        }
+    }
+}
+
+#endregion
+#region SampleGameCommon.RoomInfo
+
+namespace SampleGameCommon
+{
+    public sealed class RoomInfoFormatter : INetDataFormatter<RoomInfo>
+    {
+        public static readonly RoomInfoFormatter Instance = new RoomInfoFormatter();
+
+        public void Serialize(NetDataWriter _writer_, RoomInfo _value_, NetDataSerializerOptions options)
+        {
+            _writer_.Write(_value_.Name);
+            NetDataSerializer.Serialize<SampleGameCommon.RoomSlotInfo[]>(_writer_, _value_.Slots);
+            _writer_.Write(_value_.Id);
+        }
+
+        public RoomInfo Deserialize(NetDataReader _reader_, NetDataSerializerOptions options)
+        {
+            var __Name = _reader_.ReadString();
+            var __Slots = NetDataSerializer.Deserialize<SampleGameCommon.RoomSlotInfo[]>(_reader_);
+            var __Id = _reader_.ReadInt32();
+
+            return new RoomInfo() {
+                Name = __Name,
+                Slots = __Slots,
+                Id = __Id,
+            };
+        }
+    }
+}
+
+#endregion
+#region SampleGameCommon.RoomSlotInfo
+
+namespace SampleGameCommon
+{
+    public sealed class RoomSlotInfoFormatter : INetDataFormatter<RoomSlotInfo>
+    {
+        public static readonly RoomSlotInfoFormatter Instance = new RoomSlotInfoFormatter();
+
+        public void Serialize(NetDataWriter _writer_, RoomSlotInfo _value_, NetDataSerializerOptions options)
+        {
+            _writer_.Write(_value_.SlotId);
+        }
+
+        public RoomSlotInfo Deserialize(NetDataReader _reader_, NetDataSerializerOptions options)
+        {
+            var __SlotId = _reader_.ReadInt32();
+
+            return new RoomSlotInfo() {
+                SlotId = __SlotId,
+            };
+        }
+    }
+}
+
+#endregion
 #region SampleGameCommon.Resolvers
 
 namespace SampleGameCommon.Resolvers
@@ -445,6 +525,9 @@ namespace SampleGameCommon.Resolvers
     internal static class GeneratedResolverGetFormatterHelper
     {
         private static readonly Dictionary<Type, object> FormatterMap = new Dictionary<Type, object>() {
+            { typeof(GenericClass<>) , typeof(GenericClassFormatter<>) },
+            { typeof(RoomInfo) , RoomInfoFormatter.Instance },
+            { typeof(RoomSlotInfo) , RoomSlotInfoFormatter.Instance },
         };
         internal static object GetFormatter(Type t)
         {
