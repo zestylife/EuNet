@@ -9,10 +9,24 @@ using System.Threading.Tasks;
 
 namespace EuNet.Client
 {
+    /// <summary>
+    /// 클라이언트 클래스. 서버에 접속하여 데이터를 주고 받는 용도
+    /// </summary>
     public class NetClient : IClient, ISession
     {
+        /// <summary>
+        /// 서버로부터 받은 세션의 고유 아이디 (연결된 서버의 세션아이디와 동일)
+        /// </summary>
         public ushort SessionId { get; protected set; }
+
+        /// <summary>
+        /// 세션 상태
+        /// </summary>
         public SessionState State { get; private set; } = SessionState.Closed;
+
+        /// <summary>
+        /// 서버와 UDP 연결이 완료되었는지 여부
+        /// </summary>
         public bool IsUdpConnected => _isUdpConnected;
 
         protected readonly ILogger _logger;
@@ -23,16 +37,49 @@ namespace EuNet.Client
         private UdpChannel _udpChannel;
         public UdpChannel UdpChannel => _udpChannel;
 
+        /// <summary>
+        /// 연결됨 콜백
+        /// </summary>
         public Action OnConnected;
+
+        /// <summary>
+        /// 연결해제됨 콜백
+        /// </summary>
         public Action OnClosed;
+
+        /// <summary>
+        /// 데이터를 받음 콜백
+        /// </summary>
         public Func<NetDataReader, Task> OnReceived;
+
+        /// <summary>
+        /// 요청을 받음 콜백
+        /// </summary>
         public Func<ISession, NetDataReader, NetDataWriter, Task> OnRequestReceived;
+
+        /// <summary>
+        /// View 요청을 받은 콜백
+        /// </summary>
         public Func<ISession, NetDataReader, NetDataWriter, Task> OnViewRequestReceived;
+
+        /// <summary>
+        /// P2P 데이터를 받음 콜백
+        /// </summary>
         public Func<ISession, NetDataReader, Task> OnP2pReceived;
+
+        /// <summary>
+        /// 에러 발생 콜백
+        /// </summary>
         public Action<Exception> OnErrored;
 
-        // sessionId, isMine
+        /// <summary>
+        /// P2P 그룹에 가입됨 콜백. <c>Action<세션아이디, 본인여부></c>
+        /// </summary>
         public Action<ushort, bool> OnP2pGroupJoined;
+
+        /// <summary>
+        /// P2P 그룹에서 떠남 콜백. <c>Action<세션아이디, 본인여부></c>
+        /// </summary>
         public Action<ushort, bool> OnP2pGroupLeaved;
 
         private ILoggerFactory _loggerFactory;
@@ -43,10 +90,14 @@ namespace EuNet.Client
         public ClientOption ClientOption => _clientOption;
         private long _connectId;
 
-        // 서버의 TCP 연결 주소
+        /// <summary>
+        /// 서버로 연결할 TCP 주소
+        /// </summary>
         private IPEndPoint _serverEndPoint;
 
-        // 서버의 UDP에 처음 연결 패킷을 보낼 주소
+        /// <summary>
+        /// 서버의 UDP에 처음 연결 패킷을 보낼 주소 
+        /// </summary>
         private IPEndPoint _serverUdpEndPoint;
         private ConcurrentQueue<NetPacket> _receivedPacketQueue;
         private NetDataReader _packetReader;

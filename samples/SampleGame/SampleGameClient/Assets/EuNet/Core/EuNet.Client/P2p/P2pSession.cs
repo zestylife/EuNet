@@ -83,7 +83,7 @@ namespace EuNet.Client
         {
             _cts.Cancel();
 
-            NetPacket poolingPacket = null;
+            NetPacket poolingPacket;
             while (_receivedPacketQueue.TryDequeue(out poolingPacket) == true &&
                 poolingPacket != null)
             {

@@ -1,11 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
 namespace EuNet.Core
 {
+    /// <summary>
+    /// 데이터를 작성하는 클래스
+    /// </summary>
     public class NetDataWriter
     {
         protected byte[] _data;
@@ -13,9 +14,29 @@ namespace EuNet.Core
         private const int InitialSize = 64;
         private readonly bool _autoResize;
 
+        /// <summary>
+        /// 총 버퍼 크기 (사용되는 양과 관계없음)
+        /// </summary>
         public int Capacity
         {
             get { return _data.Length; }
+        }
+
+        /// <summary>
+        /// 버퍼 배열
+        /// </summary>
+        public byte[] Data
+        {
+            get { return _data; }
+        }
+
+        /// <summary>
+        /// 현재 쓰여진 버퍼 크기 (사용된 크기)
+        /// </summary>
+        public int Length
+        {
+            get { return _position; }
+            internal set { _position = value; }
         }
 
         public NetDataWriter() : this(true, InitialSize)
@@ -31,12 +52,7 @@ namespace EuNet.Core
             _data = new byte[initialSize];
             _autoResize = autoResize;
         }
-
-        /// <summary>
-        /// Creates NetDataWriter from existing ByteArray
-        /// </summary>
-        /// <param name="bytes">Source byte array</param>
-        /// <param name="copy">Copy array to new location or use existing</param>
+        
         public static NetDataWriter FromBytes(byte[] bytes, bool copy)
         {
             if (copy)
@@ -47,13 +63,7 @@ namespace EuNet.Core
             }
             return new NetDataWriter(true, 0) { _data = bytes };
         }
-
-        /// <summary>
-        /// Creates NetDataWriter from existing ByteArray (always copied data)
-        /// </summary>
-        /// <param name="bytes">Source byte array</param>
-        /// <param name="offset">Offset of array</param>
-        /// <param name="length">Length of array</param>
+        
         public static NetDataWriter FromBytes(byte[] bytes, int offset, int length)
         {
             var netDataWriter = new NetDataWriter(true, bytes.Length);
@@ -95,17 +105,6 @@ namespace EuNet.Core
             byte[] resultData = new byte[_position];
             Buffer.BlockCopy(_data, 0, resultData, 0, _position);
             return resultData;
-        }
-
-        public byte[] Data
-        {
-            get { return _data; }
-        }
-
-        public int Length
-        {
-            get { return _position; }
-            internal set { _position = value; }
         }
 
         public void Write(byte value)

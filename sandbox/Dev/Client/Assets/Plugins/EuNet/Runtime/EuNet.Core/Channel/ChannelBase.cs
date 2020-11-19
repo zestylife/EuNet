@@ -3,6 +3,9 @@ using System.Threading;
 
 namespace EuNet.Core
 {
+    /// <summary>
+    /// 채널의 베이스 로직을 구현한 클래스
+    /// </summary>
     public abstract class ChannelBase : IChannel
     {
         public abstract void SendAsync(NetPacket poolingPacket);
@@ -46,7 +49,13 @@ namespace EuNet.Core
             PacketReceived?.Invoke(this, poolingPacket);
         }
 
-        // 버퍼를 입력하여 패킷을 읽어서 처리합니다. buffer는 내용이 수정될 수 있습니다.
+        /// <summary>
+        /// 버퍼를 입력하여 패킷 단위로 읽어서 처리합니다.
+        /// </summary>
+        /// <param name="buffer">읽을 버퍼 (보통 채널을 통해 받은 데이터 버퍼)</param>
+        /// <param name="totalReceivedSize">버퍼에서 사용되는 크기</param>
+        /// <param name="packetFilter">패킷필터</param>
+        /// <returns>처리가 완료된 buffer의 offset. 에러가 난 경우 -1</returns>
         protected int ReadPacket(byte[] buffer, int totalReceivedSize, IPacketFilter packetFilter)
         {
             int offset = 0;

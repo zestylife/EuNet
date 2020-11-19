@@ -2,7 +2,9 @@
 
 namespace EuNet.Core
 {
-    // xor + checksum
+    /// <summary>
+    /// XOR 암호화와 Checksum 으로 검증하는 패킷필터
+    /// </summary>
     public class XorPacketFilter : IPacketFilter
     {
         private byte[] _xorKey;

@@ -4,66 +4,158 @@ using System.Threading;
 
 namespace EuNet.Core
 {
+    /// <summary>
+    /// 네트워크 통계
+    /// </summary>
     public sealed class NetStatistic
     {
+        /// <summary>
+        /// TCP 총 받은 바이트
+        /// </summary>
         public long TcpReceivedBytes;
+
+        /// <summary>
+        /// UDP 총 받은 바이트
+        /// </summary>
         public long UdpReceivedBytes;
 
+        /// <summary>
+        /// TCP 총 보낸 바이트
+        /// </summary>
         public long TcpSentBytes;
+
+        /// <summary>
+        /// UDP 총 보낸 바이트
+        /// </summary>
         public long UdpSentBytes;
 
-        // 받은 횟수 (커널기준)
+        /// <summary>
+        /// TCP 총 받은 개수
+        /// </summary>
         public long TcpReceivedCount;
+
+        /// <summary>
+        /// UDP 총 받은 개수
+        /// </summary>
         public long UdpReceivedCount;
 
-        // 보낸 횟수 (커널기준)
+        /// <summary>
+        /// TCP 총 보낸 개수
+        /// </summary>
         public long TcpSentCount;
+
+        /// <summary>
+        /// UDP 총 보낸 개수
+        /// </summary>
         public long UdpSentCount;
 
-        // 패킷 보낸 횟수
+        /// <summary>
+        /// TCP 총 보낸 Packet 개수
+        /// </summary>
         public long TcpPacketSentCount;
+
+        /// <summary>
+        /// UDP 총 보낸 Packet 개수
+        /// </summary>
         public long UdpPacketSentCount;
 
-        // 받은 패킷 개수
+        /// <summary>
+        /// 총 받은 Packet 개수
+        /// </summary>
         public long PacketReceivedCount;
 
-        // 다시 보낸 수
+        /// <summary>
+        /// UDP 다시 보낸 개수.
+        /// RUDP 사용시 Ack를 시간안에 받지 못하면 재전송함.
+        /// </summary>
         public long UdpResentCount;
 
+        /// <summary>
+        /// RUDP 보낸 Packet 개수
+        /// </summary>
         public long UdpReliablePacketSentCount;
 
-        // 소실된 패킷 수
+        /// <summary>
+        /// UDP 소실된 개수
+        /// </summary>
         public long UdpPacketLossCount;
 
-        // 모아 보내서 아낀 패킷 수
+        /// <summary>
+        /// UDP 모아서 전송하여 아낀 전송 개수
+        /// </summary>
         public long UdpSaveSentCount;
 
-        // 쪼개서 보낸 패킷의 원본수
+        /// <summary>
+        /// UDP 데이터가 너무 커서 분할하여 보낸 패킷의 원본 개수
+        /// </summary>
         public long UdpFragmentCount;
 
-        // 클라이언트에서 릴레이로 보내는 수치
+        /// <summary>
+        /// UDP 릴레이로 데이터를 보낸 개수 (클라이언트)
+        /// </summary>
         public long RelaySendCount;
+
+        /// <summary>
+        /// UDP 릴레이로 데이터를 보낸 바이트 (클라이언트)
+        /// </summary>
         public long RelaySendBytes;
 
-        // 서버에서 릴레이를 받아서 처리하는 수치
+        /// <summary>
+        /// UDP 릴레이를 처리한 개수 (서버)
+        /// </summary>
         public long RelayServCount;
+
+        /// <summary>
+        /// UDP 릴레이를 처리한 바이트 (서버)
+        /// </summary>
         public long RelayServBytes;
 
+        /// <summary>
+        /// RPC 통계를 수집할지 여부
+        /// </summary>
         public volatile bool IsGatherRpc = false;
+
+        /// <summary>
+        /// 요청한 RPC 맵
+        /// </summary>
         public Dictionary<int, int> _requestRpcMap = new Dictionary<int, int>();
+
+        /// <summary>
+        /// 요청받은 RPC 맵
+        /// </summary>
         public Dictionary<int, int> _responseRpcMap = new Dictionary<int, int>();
 
+        /// <summary>
+        /// UDP 패킷 소실 퍼센트 ( 0.0 ~ 100.0 )
+        /// </summary>
         public float UdpPacketLossPercent
         {
             get { return UdpReliablePacketSentCount == 0 ? 0.0f : (float)UdpPacketLossCount * 100.0f / (float)UdpReliablePacketSentCount; }
         }
 
+        /// <summary>
+        /// 모든 채널로 보낸 총 개수
+        /// </summary>
         public long TotalSentCount { get { return TcpSentCount + UdpSentCount; } }
+
+        /// <summary>
+        /// 모든 채널로 받은 총 개수
+        /// </summary>
         public long TotalReceivedCount { get { return TcpReceivedCount + UdpReceivedCount; } }
 
+        /// <summary>
+        /// 모든 채널로 보낸 총 바이트
+        /// </summary>
         public long TotalSentBytes { get { return TcpSentBytes + UdpSentBytes; } }
+
+        /// <summary>
+        /// 모든 채널로 받은 총 바이트
+        /// </summary>
         public long TotalReceivedBytes { get { return TcpReceivedBytes + UdpReceivedBytes; } }
 
+        /// <summary>
+        /// 모든 채널로 보낸 총 Packet 개수
+        /// </summary>
         public long TotalPacketSentCount { get { return TcpPacketSentCount + UdpPacketSentCount; } }
         
         public void IncreaseRequestRpc(int requestId, int length)

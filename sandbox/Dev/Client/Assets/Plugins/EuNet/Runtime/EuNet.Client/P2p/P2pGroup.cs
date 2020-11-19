@@ -6,21 +6,34 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("EuNet.Unity")]
 namespace EuNet.Client
 {
-    //! 클라이언트에서의 P2P 그룹. 여기에 자기 자신도 포함된다
+    /// <summary>
+    /// P2P 그룹 클래스.
+    /// 자기 자신도 멤버로 포함된다.
+    /// </summary>
     public class P2pGroup
     {
         private readonly NetClient _netClient;
         public NetClient NetClient => _netClient;
-
+        
         private ushort _id;
-
-        //! 그룹에 소속된 세션들
         private LinkedList<P2pMember> _memberList;
-
-        //! 마스터 세션
         private ushort _masterSessionId;
-
         protected ILogger Logger { get; }
+
+        /// <summary>
+        /// 그룹 고유 아이디
+        /// </summary>
+        public ushort Id => _id;
+
+        /// <summary>
+        /// 그룹에 소속된 멤버들
+        /// </summary>
+        public LinkedList<P2pMember> MemberList => _memberList;
+
+        /// <summary>
+        /// 마스터 세션 아이디
+        /// </summary>
+        public ushort MasterSessionId => _masterSessionId;
 
         internal P2pGroup(NetClient netClient, ushort id, ushort masterSessionId)
         {
@@ -30,10 +43,6 @@ namespace EuNet.Client
             _memberList = new LinkedList<P2pMember>();
             Logger = _netClient.LoggerFactory.CreateLogger(nameof(P2pGroup));
         }
-
-        public ushort Id => _id;
-        public LinkedList<P2pMember> MemberList => _memberList;
-        public ushort MasterSessionId => _masterSessionId;
 
         internal void Close()
         {
@@ -126,11 +135,20 @@ namespace EuNet.Client
             _masterSessionId = masterSessionId;
         }
 
+        /// <summary>
+        /// 마스터 멤버를 가져온다
+        /// </summary>
+        /// <returns>마스터 멤버</returns>
         public P2pMember GetMasterMember()
         {
             return Find(_masterSessionId);
         }
 
+        /// <summary>
+        /// 세션 아이디로 세션이 있는지 확인
+        /// </summary>
+        /// <param name="sessionId">세션 아이디</param>
+        /// <returns>포함여부</returns>
         public bool Contains(ushort sessionId)
         {
             LinkedListNode<P2pMember> node = _memberList.First;
@@ -147,6 +165,11 @@ namespace EuNet.Client
             return false;
         }
 
+        /// <summary>
+        /// 세션 아이디로 멤버를 구한다
+        /// </summary>
+        /// <param name="sessionId">세션 아이디</param>
+        /// <returns>찾은 멤버</returns>
         public P2pMember Find(ushort sessionId)
         {
             LinkedListNode<P2pMember> node = _memberList.First;
@@ -181,7 +204,9 @@ namespace EuNet.Client
             }
         }
 
-        //! 내가 마스터인가?
+        /// <summary>
+        /// 나 자신이 마스터인지 여부
+        /// </summary>
         public bool MasterIsMine()
         {
             if (_masterSessionId == _netClient.SessionId)

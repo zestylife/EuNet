@@ -1,14 +1,23 @@
 ﻿namespace EuNet.Core
 {
+    /// <summary>
+    /// 풀 인터페이스
+    /// </summary>
     public interface IPool
     {
-        // 총 할당 개수
+        /// <summary>
+        /// 총 할당 횟수
+        /// </summary>
         long TotalAllocCount { get; }
 
-        // 총 할당 개수 - 총 풀링 개수
+        /// <summary>
+        /// 현재 할당된 갯수 (총 할당 횟수 - 총 해제 횟수)
+        /// </summary>
         long AllocCount { get; }
 
-        // 현재 풀의 개수
+        /// <summary>
+        /// 현재 풀링되어 있는 객체 갯수
+        /// </summary>
         long PoolingCount { get; }
     }
 }

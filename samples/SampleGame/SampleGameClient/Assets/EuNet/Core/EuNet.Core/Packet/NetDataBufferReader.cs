@@ -18,7 +18,7 @@ namespace EuNet.Core
 
             reader.ReadBytesOnlyData(_data, size);
 
-            _dataSize = size;
+            _endOffset = size;
             _offset = 0;
             _position = 0;
         }

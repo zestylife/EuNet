@@ -7,8 +7,14 @@ using System.Threading.Tasks.Dataflow;
 [assembly: InternalsVisibleTo("EuNet.Rpc")]
 namespace EuNet.Core
 {
+    /// <summary>
+    /// 서버 세션. 이 클래스를 상속받아서 유저 클래스를 사용하면 편리함.
+    /// </summary>
     public class ServerSession : ISession
     {
+        /// <summary>
+        /// 세션 고유 아이디
+        /// </summary>
         public ushort SessionId { get; }
 
         private TcpChannel _tcpChannel;
@@ -19,22 +25,38 @@ namespace EuNet.Core
 
         public SessionState State { get; private set; } = SessionState.Initialized;
 
-        // 패킷을 넘기기전에 미리 처리해야 할 함수
+        /// <summary>
+        /// 패킷을 처리하기 전에 전처리하는 콜백
+        /// </summary>
         internal Func<ISession, NetPacket, bool> OnPreProcessPacket { get; set; }
 
-        // 데이터를 받았음
+        /// <summary>
+        /// 데이터를 받아서 처리하는 콜백
+        /// </summary>
         internal Func<ISession, NetDataReader, Task> OnReceived { get; set; }
+
+        /// <summary>
+        /// 요청을 받은 콜백
+        /// </summary>
         internal Func<ISession, NetDataReader, NetDataWriter, Task> OnRequestReceived { get; set; }
+
+        /// <summary>
+        /// 에러가 발생되는 콜백
+        /// </summary>
         internal Action<ISession, Exception> OnErrored { get; set; }
 
         private BufferBlock<NetPacket> _receivedPacketQueue;
         private CancellationTokenSource _cts;
 
-        // 연결인증키
+        /// <summary>
+        /// 연결 인증키. 새롭게 연결될때마다 랜덤한 값이 생성됨. 이를 통해 세션인증가능
+        /// </summary>
         private long _connectId;
         public long ConnectId => _connectId;
 
-        // 업데이트가 가능한 시점인가?
+        /// <summary>
+        /// 현재 업데이트가 가능한지 여부. 세션이 닫히면 false가 되어 업데이트를 막음
+        /// </summary>
         private volatile bool _isPossibleUpdate;
 
         private SessionRequest _request;
@@ -78,6 +100,9 @@ namespace EuNet.Core
             }
         }
 
+        /// <summary>
+        /// 세션을 닫음
+        /// </summary>
         public virtual void Close()
         {
             _receivedPacketQueue.Complete();
@@ -94,14 +119,20 @@ namespace EuNet.Core
             }
         }
 
+        /// <summary>
+        /// 세션이 연결되었음
+        /// </summary>
         protected virtual void OnConnected()
         {
 
         }
 
+        /// <summary>
+        /// 세션이 닫혔음
+        /// </summary>
         protected virtual Task OnClosed()
         {
-            NetPacket poolingPacket = null;
+            NetPacket poolingPacket;
             while (_receivedPacketQueue.TryReceive(out poolingPacket) == true &&
                 poolingPacket != null)
             {
@@ -158,6 +189,11 @@ namespace EuNet.Core
             }
         }
 
+        /// <summary>
+        /// 전송방법에 따른 채널을 가져온다
+        /// </summary>
+        /// <param name="deliveryMethod">전송 방법</param>
+        /// <returns>채널. 없다면 null</returns>
         private IChannel GetChannel(DeliveryMethod deliveryMethod)
         {
             if (deliveryMethod == DeliveryMethod.Tcp)
@@ -186,7 +222,7 @@ namespace EuNet.Core
 
             channel.SendAsync(packet);
         }
-
+        
         public void SendAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
             SendAsync(dataWriter.Data, 0, dataWriter.Length, deliveryMethod);

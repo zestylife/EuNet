@@ -2,7 +2,9 @@
 
 namespace EuNet.Core
 {
-    // tea + checksum
+    /// <summary>
+    /// TEA 암호화와 Checksum 으로 검증하는 패킷필터
+    /// </summary>
     public class TeaPacketFilter : IPacketFilter
     {
         private uint[] _keys;

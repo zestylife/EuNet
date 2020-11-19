@@ -13,6 +13,7 @@
     <Product>EuNet</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   
   <PropertyGroup>

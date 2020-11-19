@@ -6,52 +6,87 @@ using System.Text;
 [assembly: InternalsVisibleTo("EuNet.Unity")]
 namespace EuNet.Core
 {
+    /// <summary>
+    /// 데이터를 읽는 클래스
+    /// </summary>
     public class NetDataReader
     {
         protected byte[] _data;
         protected int _position;
-        protected int _dataSize;
         protected int _offset;
+        protected int _endOffset;
 
-        public byte[] RawData
+        /// <summary>
+        /// 총 버퍼 크기 (사용되는 양과 관계없음)
+        /// </summary>
+        public int Capacity
+        {
+            get { return _data.Length; }
+        }
+
+        /// <summary>
+        /// 버퍼 배열
+        /// </summary>
+        public byte[] Data
         {
             get { return _data; }
         }
 
-        public int RawDataSize
-        {
-            get { return _dataSize; }
-        }
-
-        public int UserDataOffset
+        /// <summary>
+        /// 데이터를 읽을 오프셋. 오프셋부터 데이터를 읽기 시작함.
+        /// </summary>
+        public int Offset
         {
             get { return _offset; }
         }
 
-        public int UserDataSize
+        /// <summary>
+        /// 버퍼에서 읽을 수 있는 마지막 오프셋
+        /// </summary>
+        public int EndOffset
         {
-            get { return _dataSize - _offset; }
+            get { return _endOffset; }
         }
 
+        /// <summary>
+        /// 읽을 수 있는 총 데이터 사이즈
+        /// </summary>
+        public int DataSize
+        {
+            get { return _endOffset - _offset; }
+        }
+
+        /// <summary>
+        /// 버퍼가 NULL인지 여부
+        /// </summary>
         public bool IsNull
         {
             get { return _data == null; }
         }
 
+        /// <summary>
+        /// 현재 읽고 있는 Position (offset)
+        /// </summary>
         public int Position
         {
             get { return _position; }
             internal set { _position = value; }
         }
 
+        /// <summary>
+        /// 읽을 수 있는 마지막 부분에 도달여부
+        /// </summary>
         public bool EndOfData
         {
-            get { return _position == _dataSize; }
+            get { return _position == _endOffset; }
         }
 
+        /// <summary>
+        /// 읽을 수 있는 남은 총 바이트
+        /// </summary>
         public int AvailableBytes
         {
-            get { return _dataSize - _position; }
+            get { return _endOffset - _position; }
         }
 
         public NetDataReader()
@@ -74,9 +109,9 @@ namespace EuNet.Core
             SetSource(source, offset);
         }
 
-        public NetDataReader(byte[] source, int offset, int maxSize)
+        public NetDataReader(byte[] source, int offset, int endOffset)
         {
-            SetSource(source, offset, maxSize);
+            SetSource(source, offset, endOffset);
         }
 
         public NetDataReader(NetPacket packet)
@@ -94,7 +129,7 @@ namespace EuNet.Core
             _data = dataWriter.Data;
             _position = 0;
             _offset = 0;
-            _dataSize = dataWriter.Length;
+            _endOffset = dataWriter.Length;
         }
 
         public void SetSource(byte[] source)
@@ -102,7 +137,7 @@ namespace EuNet.Core
             _data = source;
             _position = 0;
             _offset = 0;
-            _dataSize = source.Length;
+            _endOffset = source.Length;
         }
 
         public void SetSource(byte[] source, int offset)
@@ -110,7 +145,7 @@ namespace EuNet.Core
             _data = source;
             _position = offset;
             _offset = offset;
-            _dataSize = source.Length;
+            _endOffset = source.Length;
         }
 
         public void SetSource(byte[] source, int offset, int maxSize)
@@ -118,7 +153,7 @@ namespace EuNet.Core
             _data = source;
             _position = offset;
             _offset = offset;
-            _dataSize = maxSize;
+            _endOffset = maxSize;
         }
 
         #region ReadMethods
@@ -546,7 +581,7 @@ namespace EuNet.Core
         public void Clear()
         {
             _position = 0;
-            _dataSize = 0;
+            _endOffset = 0;
             _data = null;
         }
     }
