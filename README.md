@@ -127,12 +127,15 @@ Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Commo
 
 After Unity 2019.3.4f1, Unity 2020.1a21, that support path query parameter of git package.
 You can add package from UPM (Unity Package Manager)
-
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/AddPackageFromUPM.png?raw=true)
-
 ```
 https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
 ``` 
+If you want to add a specific release version, add `#version` after the url. ex) version 1.1.11
+```
+https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet#1.1.11
+``` 
+
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/AddPackageFromUPM.png?raw=true)
 
 ### Install via package file
 * Install the unity-package. [Download here](https://github.com/zestylife/EuNet/releases)
