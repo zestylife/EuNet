@@ -6,14 +6,24 @@ using System.Threading;
 
 namespace EuNet.Core
 {
+    /// <summary>
+    /// UDP 채널. 다양한 UDP 채널들을 관리한다.
+    /// </summary>
     public class UdpChannel : ChannelBase
     {
+        /// <summary>
+        /// 보내기 모드
+        /// </summary>
         public enum SendMode
         {
-            // 즉시 보내기 (릴레이 지원 안됨)
+            /// <summary>
+            /// 즉시 보내기 (릴레이 지원 안됨)
+            /// </summary>
             Immediately,
 
-            // 버퍼를 통해서 보내기 (30ms 정도 지연이 생김) (릴레이는 버퍼만 지원됨)
+            /// <summary>
+            /// 버퍼를 통해서 보내기 (30ms 정도 지연이 생김) (릴레이는 버퍼만 지원됨) 
+            /// </summary>
             Buffered,
         }
 
@@ -21,26 +31,52 @@ namespace EuNet.Core
         public UdpSocket Socket => _socket;
         private ChannelBase[] _udpChannels;
 
+        /// <summary>
+        /// 세션이 해당하는 로컬의 주소 (NAT의 경우 NAT할당 주소)
+        /// </summary>
         public IPEndPoint LocalEndPoint;
+
+        /// <summary>
+        /// 세션의 원격주소 (서버에서 획득한 외부주소)
+        /// </summary>
         public IPEndPoint RemoteEndPoint;
+
+        /// <summary>
+        /// 홀펀칭이나 기타 기능에서 임시로 받은 주소
+        /// </summary>
         public IPEndPoint TempEndPoint;
 
-        // 릴레이할 주소
+        /// <summary>
+        /// 릴레이 서버 주소. 홀펀칭에 실패하면 릴레이됨.
+        /// </summary>
         public IPEndPoint RelayEndPoint;
 
-        // 최종적으로 홀펀칭된 원격주소 (홀펀칭중에는 UDP로 내가 받은 상대방주소)
+        /// <summary>
+        /// 최종적으로 홀펀칭된 원격주소 (홀펀칭중에는 UDP로 내가 받은 상대방주소)
+        /// </summary>
         private IPEndPoint _punchedEndPoint;
         public IPEndPoint PunchedEndPoint => _punchedEndPoint;
 
         private int _mtu;
+
+        /// <summary>
+        /// Maximum Transmission Unit
+        /// </summary>
         public int Mtu => _mtu;
 
-        // 다시 전송하는 시간 (ms)
         private long _resendDelay;
+
+        /// <summary>
+        /// RUDP에서 ACK를 받지 못하여 다시 데이터를 전송하는 시간 (ms)
+        /// </summary>
         public long ResendDelay => _resendDelay;
 
         private byte[] _sendBuffer;
         private int _sendBufferOffset;
+
+        /// <summary>
+        /// 현재 MTU를 체크중인지 여부
+        /// </summary>
         public volatile bool IsRunMtu;
         private volatile int _mtuId;
         private int _mtuElapsedTime;
@@ -53,22 +89,38 @@ namespace EuNet.Core
         private NetPacket _pingPacket;
         private NetPacket _pongPacket;
         private Stopwatch _pingTimer;
+
+        /// <summary>
+        /// 현재 PING을 체크중인지 여부
+        /// </summary>
         public volatile bool IsRunPing;
         private int _pingElapsedTime;
         private int _ping;
+
+        /// <summary>
+        /// PING (ms)
+        /// </summary>
         public int Ping => _ping;
         private int _rtt;
         private int _rttCount;
         private int _avgRtt;
 
-        // 원격지의 현재과 로컬의 현지시간과의 tick차이
+        /// <summary>
+        /// 원격지의 현재과 로컬의 현지시간과의 tick차이
+        /// </summary>
         private long _remoteTickDelta;
+
+        /// <summary>
+        /// 계산하여 추측된 원격지의 현재 시간. 동기화를 위해 필요
+        /// </summary>
         public DateTime RemoteUtcTime
         {
             get { return new DateTime(DateTime.UtcNow.Ticks + _remoteTickDelta); }
         }
 
-        // 릴레이되어야 할 세션아이디 (서버의 경우 0이어야 함)
+        /// <summary>
+        /// 릴레이되어야 할 세션아이디 (서버의 경우 0이어야 함)
+        /// </summary>
         private ushort _relaySessionId;
 
         public UdpChannel(IChannelOption channelOption, ILogger logger, NetStatistic statistic, ushort relaySessionId)
