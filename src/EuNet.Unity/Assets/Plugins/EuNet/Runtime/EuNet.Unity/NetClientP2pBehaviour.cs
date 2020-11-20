@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
+    /// <summary>
+    /// P2P를 포함한 CS 전용 클라이언트 컴포넌트
+    /// </summary>
     [ExecutionOrder(-1000)]
     [AddComponentMenu("EuNet/NetClientP2pBehaviour")]
     public class NetClientP2pBehaviour : NetClientBehaviour

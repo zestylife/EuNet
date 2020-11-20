@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
+    /// <summary>
+    /// CS 전용 클라이언트 컴포넌트
+    /// </summary>
     [ExecutionOrder(-1000)]
     [AddComponentMenu("EuNet/NetClientBehaviour")]
     public class NetClientBehaviour : MonoBehaviour

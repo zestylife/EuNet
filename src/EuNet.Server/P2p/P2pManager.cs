@@ -3,12 +3,16 @@ using System.Collections.Generic;
 
 namespace EuNet.Server
 {
+    /// <summary>
+    /// P2P 그룹을 관리하는 매니저
+    /// </summary>
     public class P2pManager
     {
-        //! P2P 그룹 맵
         private Dictionary<ushort, P2pGroup> _p2pGroupMap;
 
-        //! 마지막으로 발급된 그룹 아이디
+        /// <summary>
+        /// 마지막으로 발급된 그룹 아이디
+        /// </summary>
         private ushort _lastGenerateId = 0x8000;
 
         public P2pManager()
@@ -16,12 +20,18 @@ namespace EuNet.Server
             _p2pGroupMap = new Dictionary<ushort, P2pGroup>();
         }
 
+        /// <summary>
+        /// 모든 그룹을 제거함
+        /// </summary>
         public void Clear()
         {
             _p2pGroupMap.Clear();
         }
 
-        //! 새로운 P2P그룹을 생성한다
+        /// <summary>
+        /// 새로운 P2P 그룹을 생성함
+        /// </summary>
+        /// <returns>생성된 P2P 그룹</returns>
         public P2pGroup CreateP2pGroup()
         {
             lock (_p2pGroupMap)
@@ -38,10 +48,14 @@ namespace EuNet.Server
             }
         }
 
-        //! P2P 그룹을 파괴한다
-        public bool DestroyP2pGroup(ushort groupSessionKey)
+        /// <summary>
+        /// P2P 그룹을 파괴함
+        /// </summary>
+        /// <param name="groupId">P2P 그룹 아이디</param>
+        /// <returns>성공여부</returns>
+        public bool DestroyP2pGroup(ushort groupId)
         {
-            P2pGroup p2pGroup = Find(groupSessionKey);
+            P2pGroup p2pGroup = Find(groupId);
             if (p2pGroup == null)
                 return false;
 
@@ -50,18 +64,23 @@ namespace EuNet.Server
 
             lock (_p2pGroupMap)
             {
-                _p2pGroupMap.Remove(groupSessionKey);
+                _p2pGroupMap.Remove(groupId);
             }
 
             return true;
         }
 
-        public P2pGroup Find(ushort groupSessionKey)
+        /// <summary>
+        /// P2P 그룹 아이디로 P2P 그룹을 찾음
+        /// </summary>
+        /// <param name="groupId">찾을 P2P 그룹 아이디</param>
+        /// <returns>찾은 P2P 그룹. 없다면 null</returns>
+        public P2pGroup Find(ushort groupId)
         {
             lock (_p2pGroupMap)
             {
                 P2pGroup p2pGroup = null;
-                if (_p2pGroupMap.TryGetValue(groupSessionKey, out p2pGroup) == true)
+                if (_p2pGroupMap.TryGetValue(groupId, out p2pGroup) == true)
                     return p2pGroup;
             }
 

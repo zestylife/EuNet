@@ -73,12 +73,12 @@ namespace EuNet.Client
         public Action<Exception> OnErrored;
 
         /// <summary>
-        /// P2P 그룹에 가입됨 콜백. <c>Action<세션아이디, 본인여부></c>
+        /// P2P 그룹에 가입됨 콜백. <c>Action(세션아이디, 본인여부)</c>
         /// </summary>
         public Action<ushort, bool> OnP2pGroupJoined;
 
         /// <summary>
-        /// P2P 그룹에서 떠남 콜백. <c>Action<세션아이디, 본인여부></c>
+        /// P2P 그룹에서 떠남 콜백. <c>Action(세션아이디, 본인여부)</c>
         /// </summary>
         public Action<ushort, bool> OnP2pGroupLeaved;
 
@@ -152,11 +152,19 @@ namespace EuNet.Client
             _rpcHandlers = new List<IRpcInvokable>();
         }
 
+        /// <summary>
+        /// 사용되지 않음
+        /// </summary>
+        /// <param name="info"></param>
         public void Init(SessionInitializeInfo info)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// RPC Service를 등록합니다.
+        /// </summary>
+        /// <param name="service"></param>
         public void AddRpcService(IRpcInvokable service)
         {
             if (State != SessionState.Closed)
@@ -168,6 +176,11 @@ namespace EuNet.Client
             _rpcHandlers.Add(service);
         }
 
+        /// <summary>
+        /// 서버로 연결을 시도합니다
+        /// </summary>
+        /// <param name="timeout">타임아웃</param>
+        /// <returns>성공여부</returns>
         public async Task<bool> ConnectAsync(TimeSpan? timeout = null)
         {
             if (_socket != null || State != SessionState.Closed)
@@ -257,6 +270,11 @@ namespace EuNet.Client
             return false;
         }
 
+        /// <summary>
+        /// 주기적인 업데이트 호출
+        /// 외부에서 주기적으로 (ex.30ms) 호출하여 내부로직을 처리해야 함
+        /// </summary>
+        /// <param name="elapsedTime">기존 업데이트로부터 지난 시간. 밀리세컨드(ms)</param>
         public void Update(int elapsedTime)
         {
             if (_isPossibleUpdate == false)
@@ -332,7 +350,7 @@ namespace EuNet.Client
             {
                 await Task.Delay(-1, _cts.Token);
             }
-            catch (Exception ex)
+            catch
             {
 
             }
@@ -355,16 +373,26 @@ namespace EuNet.Client
 
         }
 
-        public void OnError(Exception e)
+        /// <summary>
+        /// 에러가 발생되었음
+        /// </summary>
+        /// <param name="exception">예외</param>
+        public void OnError(Exception exception)
         {
-            OnErrored?.Invoke(e);
+            OnErrored?.Invoke(exception);
         }
 
+        /// <summary>
+        /// 서버와 접속을 해제하고 리소스를 해제한다
+        /// </summary>
         public void Disconnect()
         {
             Close();
         }
 
+        /// <summary>
+        /// 서버와 접속을 해제하고 리소스를 해제한다
+        /// </summary>
         public void Close()
         {
             OnSessionClosed();
@@ -410,13 +438,13 @@ namespace EuNet.Client
             _isUdpConnected = false;
         }
 
-        public void OnSessionConnected()
+        internal void OnSessionConnected()
         {
             State = SessionState.Connected;
             OnConnected?.Invoke();
         }
 
-        public bool OnSessionClosed()
+        internal bool OnSessionClosed()
         {
             if (State != SessionState.Connected)
                 return false;
@@ -434,6 +462,13 @@ namespace EuNet.Client
             return _udpChannel;
         }
 
+        /// <summary>
+        /// 데이터를 전송함
+        /// </summary>
+        /// <param name="data">보낼 데이터 버퍼</param>
+        /// <param name="offset">보낼 데이터 버퍼 오프셋</param>
+        /// <param name="length">보낼 데이터 길이</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod)
         {
             IChannel channel = GetChannel(deliveryMethod);
@@ -452,21 +487,47 @@ namespace EuNet.Client
             channel.SendAsync(packet);
         }
 
+        /// <summary>
+        /// 데이터를 전송함
+        /// </summary>
+        /// <param name="dataWriter">보낼 데이터를 가지고 있는 NetDataWriter</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
             SendAsync(dataWriter.Data, 0, dataWriter.Length, deliveryMethod);
         }
 
+        /// <summary>
+        /// 요청을 보내고 답을 기다립니다.
+        /// </summary>
+        /// <param name="data">보낼 데이터 버퍼</param>
+        /// <param name="offset">보낼 데이터 버퍼 오프셋</param>
+        /// <param name="length">보낼 데이터 길이</param>
+        /// <param name="deliveryMethod">전송 방법</param>
+        /// <param name="timeout">답을 기다리는 시간</param>
+        /// <returns>요청에 대한 답 (데이터)</returns>
         public Task<NetDataBufferReader> RequestAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
             return _request.RequestAsync(data, offset, length, deliveryMethod, timeout);
         }
 
+        /// <summary>
+        /// 요청을 보내고 답을 기다립니다.
+        /// </summary>
+        /// <param name="dataWriter">보낼 데이터를 가지고 있는 NetDataWriter</param>
+        /// <param name="deliveryMethod">전송 방법</param>
+        /// <param name="timeout">답을 기다리는 시간</param>
+        /// <returns>요청에 대한 답 (데이터)</returns>
         public Task<NetDataBufferReader> RequestAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
             return RequestAsync(dataWriter.Data, 0, dataWriter.Length, deliveryMethod, timeout);
         }
 
+        /// <summary>
+        /// 패킷을 저수준에서 그대로 전송. 내부에서만 사용.
+        /// </summary>
+        /// <param name="poolingPacket">보낼패킷. NetPool.PacketPool.Alloc 으로 할당하여 사용하세요</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendRawAsync(NetPacket poolingPacket, DeliveryMethod deliveryMethod)
         {
             IChannel channel = GetChannel(deliveryMethod);
@@ -636,6 +697,10 @@ namespace EuNet.Client
             return OnViewRequestReceived(session, reader, writer);
         }
 
+        /// <summary>
+        /// 데이터를 받음. 데이터 처리가 끝날때까지 기다릴 수 있는 비동기 메서드
+        /// </summary>
+        /// <param name="dataReader">받은 데이터</param>
         public Task OnReceive(NetDataReader dataReader)
         {
             return OnReceived(dataReader);

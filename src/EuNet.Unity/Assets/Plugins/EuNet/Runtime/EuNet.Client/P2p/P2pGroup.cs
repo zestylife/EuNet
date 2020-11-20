@@ -95,6 +95,13 @@ namespace EuNet.Client
             return member;
         }
 
+        /// <summary>
+        /// 모든 멤버에게 데이터를 전송함
+        /// </summary>
+        /// <param name="data">보낼 데이터 버퍼</param>
+        /// <param name="offset">보낼 데이터 버퍼 오프셋</param>
+        /// <param name="length">보낼 데이터 길이</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAll(byte[] data, int offset, int length, DeliveryMethod deliveryMethod)
         {
             if (deliveryMethod == DeliveryMethod.Tcp)
@@ -109,6 +116,11 @@ namespace EuNet.Client
             }
         }
 
+        /// <summary>
+        /// 모든 멤버에게 데이터를 전송함
+        /// </summary>
+        /// <param name="dataWriter">보낼 데이터를 가지고 있는 NetDataWriter</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAll(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
             SendAll(dataWriter.Data, 0, dataWriter.Length, deliveryMethod);
@@ -186,6 +198,10 @@ namespace EuNet.Client
             return null;
         }
 
+        /// <summary>
+        /// 모든 멤버를 리스트로 가져옵니다
+        /// </summary>
+        /// <returns>모든 멤버 리스트</returns>
         public List<P2pMember> GetList()
         {
             return new List<P2pMember>(_memberList);

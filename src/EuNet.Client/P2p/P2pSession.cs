@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace EuNet.Client
 {
+    /// <summary>
+    /// P2P 멤버에 사용되는 다른 유저에게 데이터를 전송하기 위한 세션
+    /// </summary>
     public class P2pSession : ISession
     {
         private readonly NetClient _netClient;

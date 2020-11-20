@@ -5,7 +5,7 @@ namespace EuNet.Server
 {
     public class P2pMember : P2pMemberBase
     {
-        public void SendJoinP2pGroup(ushort groupId, ushort sessionId, ushort masterSessionId, IPEndPoint remoteEndPoint, IPEndPoint localEndPoint)
+        internal void SendJoinP2pGroup(ushort groupId, ushort sessionId, ushort masterSessionId, IPEndPoint remoteEndPoint, IPEndPoint localEndPoint)
         {
             var writer = NetPool.DataWriterPool.Alloc();
             try
@@ -27,7 +27,7 @@ namespace EuNet.Server
             }
         }
 
-        public void SendLeaveP2pGroup(ushort groupId, ushort sessionId, ushort masterSessionId)
+        internal void SendLeaveP2pGroup(ushort groupId, ushort sessionId, ushort masterSessionId)
         {
             var writer = NetPool.DataWriterPool.Alloc();
             try
@@ -47,7 +47,7 @@ namespace EuNet.Server
             }
         }
 
-        public void SendChangeMasterP2pGroup(ushort groupId, ushort masterSessionId)
+        internal void SendChangeMasterP2pGroup(ushort groupId, ushort masterSessionId)
         {
             var writer = NetPool.DataWriterPool.Alloc();
             try

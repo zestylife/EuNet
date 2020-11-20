@@ -9,21 +9,13 @@ using System.Threading.Tasks;
 
 namespace EuNet.Server
 {
+    /// <summary>
+    /// 하나의 서버를 기동하기 위한 클래스
+    /// 인스턴스 하나당 한개 서버의 모든 기능을 담당함
+    /// 데이터전송, RPC, 세션관리 등을 담당
+    /// </summary>
     public class NetServer : IServer
     {
-        public string Name { get; }
-        public SessionManager SessionManager => _sessionManager;
-        public P2pManager P2pManager => _p2pManager;
-        public int SessionCount => _sessionManager.SessionCount;
-        public ServerState State => _state;
-
-        public event Action<ISession> OnSessionConnected;
-        public event Action<ISession> OnSessionClosed;
-        public Func<ISession, NetDataReader, Task> OnSessionReceived { get; set; }
-        public Func<ISession, NetDataReader, NetDataWriter, Task> OnSessionRequestReceived { get; set; }
-        public Action<ISession, Exception> OnSessionErrored { get; set; }
-        public Action<Exception> OnErrored { get; set; }
-
         private readonly ServerOption _serverOption;
         private ServerState _state = ServerState.None;
         private readonly ILoggerFactory _loggerFactory;
@@ -35,8 +27,66 @@ namespace EuNet.Server
         private UdpSocketEx _udpSocket;
         private Thread _updateThread;
         private List<IRpcInvokable> _rpcHandlers;
-
         private readonly NetStatistic _statistic;
+
+        /// <summary>
+        /// 서버 이름
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// 세션 매니저
+        /// </summary>
+        public SessionManager SessionManager => _sessionManager;
+
+        /// <summary>
+        /// P2P 매니저
+        /// </summary>
+        public P2pManager P2pManager => _p2pManager;
+
+        /// <summary>
+        /// 현재 접속중인 세션의 개수
+        /// </summary>
+        public int SessionCount => _sessionManager.SessionCount;
+
+        /// <summary>
+        /// 현재 서버 상태
+        /// </summary>
+        public ServerState State => _state;
+
+        /// <summary>
+        /// 세션이 연결되었음
+        /// </summary>
+        public event Action<ISession> OnSessionConnected;
+
+        /// <summary>
+        /// 세션 연결이 종료되었음
+        /// </summary>
+        public event Action<ISession> OnSessionClosed;
+
+        /// <summary>
+        /// 세션이 데이터를 받음
+        /// </summary>
+        public Func<ISession, NetDataReader, Task> OnSessionReceived { get; set; }
+
+        /// <summary>
+        /// 세션이 요청을 받음
+        /// </summary>
+        public Func<ISession, NetDataReader, NetDataWriter, Task> OnSessionRequestReceived { get; set; }
+
+        /// <summary>
+        /// 세션에서 에러가 발생함
+        /// </summary>
+        public Action<ISession, Exception> OnSessionErrored { get; set; }
+
+        /// <summary>
+        /// 서버 전반적으로 에러가 발생함
+        /// </summary>
+        public Action<Exception> OnErrored { get; set; }
+
+        /// <summary>
+        /// 네트워크 통계
+        /// </summary>
         public NetStatistic Statistic => _statistic;
 
         public NetServer(
@@ -68,6 +118,10 @@ namespace EuNet.Server
             _rpcHandlers = new List<IRpcInvokable>();
         }
 
+        /// <summary>
+        /// RPC 서비스를 등록함.
+        /// </summary>
+        /// <param name="service"></param>
         public void AddRpcService(IRpcInvokable service)
         {
             if(_state != ServerState.None &&
@@ -80,7 +134,10 @@ namespace EuNet.Server
             _rpcHandlers.Add(service);
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// 서버를 시작
+        /// </summary>
+        public async Task StartAsync()
         {
             var state = _state;
 
@@ -91,7 +148,7 @@ namespace EuNet.Server
 
             _state = ServerState.Starting;
 
-            await StartListenAsync(cancellationToken);
+            await StartListenAsync();
 
             _updateThread = new Thread(UpdateLoopThread);
             _updateThread.IsBackground = true;
@@ -105,7 +162,10 @@ namespace EuNet.Server
             _logger.LogInformation("Server started!");
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        /// <summary>
+        /// 서버를 정지
+        /// </summary>
+        public async Task StopAsync()
         {
             var state = _state;
 
@@ -142,18 +202,7 @@ namespace EuNet.Server
             _state = ServerState.Stopped;
         }
 
-        public async Task<bool> StartAsync()
-        {
-            await StartAsync(CancellationToken.None);
-            return true;
-        }
-
-        public async Task StopAsync()
-        {
-            await StopAsync(CancellationToken.None);
-        }
-
-        private Task<bool> StartListenAsync(CancellationToken cancellationToken)
+        private Task<bool> StartListenAsync()
         {
             if (_serverOption.IsServiceUdp == true)
             {
@@ -490,7 +539,7 @@ namespace EuNet.Server
                     {
                         if (_state != ServerState.Started)
                         {
-                            StopAsync(CancellationToken.None).Wait();
+                            StopAsync().Wait();
                         }
                     }
                     catch

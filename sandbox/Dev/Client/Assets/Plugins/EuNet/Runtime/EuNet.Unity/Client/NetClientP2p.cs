@@ -7,26 +7,32 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
-    public enum PeriodicSyncType
-    {
-        None = 0,
-        Always = 1,
-        Changed = 2
-    }
-
+    /// <summary>
+    /// P2P 기능이 추가된 NetClient
+    /// </summary>
     public class NetClientP2p : NetClient
     {
         private NetViews _views;
-        public NetViews Views => _views;
-
         private NetDataWriter _zeroDataWriter;
         private NetDataReader _readerForSendInternal;
         private int _recoveryId;
         private TaskCompletionSource<bool> _recoveryTcs;
-
-        public PeriodicSyncType SyncType = PeriodicSyncType.None;
-        public float SyncInterval = 0.05f;
         private float _syncElapsedTime;
+
+        /// <summary>
+        /// NetView들을 관리하는 NetViews
+        /// </summary>
+        public NetViews Views => _views;
+
+        /// <summary>
+        /// 주기적인 동기화 타입
+        /// </summary>
+        public PeriodicSyncType SyncType = PeriodicSyncType.None;
+
+        /// <summary>
+        /// 주기적인 동기화 간격 (seconds)
+        /// </summary>
+        public float SyncInterval = 0.05f;
 
         public NetClientP2p(ClientOption clientOption, ILoggerFactory loggerFactory = null)
             : base(clientOption, loggerFactory)
@@ -42,13 +48,17 @@ namespace EuNet.Unity
             _readerForSendInternal = new NetDataReader();
         }
 
-        public void FixedUpdate(float deltaTime)
+        /// <summary>
+        /// 네트워크를 처리함. 유니티의 FixedUpdate 에서 반드시 호출해주세요.
+        /// </summary>
+        /// <param name="unscaledDeltaTime">유니티의 Time.unscaledDeltaTime</param>
+        public void FixedUpdate(float unscaledDeltaTime)
         {
-            Update((int)(deltaTime * 1000f));
+            Update((int)(unscaledDeltaTime * 1000f));
 
-            _views.Update(deltaTime);
+            _views.Update(unscaledDeltaTime);
 
-            _syncElapsedTime += deltaTime;
+            _syncElapsedTime += unscaledDeltaTime;
             if (_syncElapsedTime >= SyncInterval)
             {
                 _syncElapsedTime = 0f;
@@ -56,21 +66,41 @@ namespace EuNet.Unity
             }
         }
 
+        /// <summary>
+        /// NetView 를 등록함
+        /// </summary>
+        /// <param name="view">등록할 NetView</param>
+        /// <returns>성공여부</returns>
         public bool RegisterView(NetView view)
         {
             return _views.RegisterView(view);
         }
 
+        /// <summary>
+        /// NetView 의 등록을 해제
+        /// </summary>
+        /// <param name="view">등록해제할 NetView</param>
+        /// <returns>성공여부</returns>
         public bool UnregisterView(NetView view)
         {
             return _views.UnregisterView(view);
         }
 
+        /// <summary>
+        /// 소유자가 있는 ViewId 를 생성함. 예를들어 플레이어 캐릭터.
+        /// ViewId는 고유해야하며 다른 P2P멤버들과 동일한 객체에 동일한 ViewId를 가지고 동기화함.
+        /// </summary>
+        /// <returns>생성된 ViewId</returns>
         public int GenerateViewId()
         {
             return _views.GenerateViewId(SessionId);
         }
 
+        /// <summary>
+        /// 소유자가 없는 SceneViewId를 생성함. 예를들어 몬스터나 미니언. 마스터만 호출할 수 있음.
+        /// ViewId는 고유해야하며 다른 P2P멤버들과 동일한 객체에 동일한 ViewId를 가지고 동기화함.
+        /// </summary>
+        /// <returns>생성된 ViewId. 0보다 작으면 실패</returns>
         public int GenerateSceneViewId()
         {
             if (MasterIsMine() == false)
@@ -82,11 +112,19 @@ namespace EuNet.Unity
             return _views.GenerateViewId(0);
         }
 
+        /// <summary>
+        /// ViewId를 삭제함. 해당 NetView는 더이상 동기화나 통신이 불가함.
+        /// </summary>
+        /// <param name="viewId">제거할 ViewId</param>
         public void RemoveViewId(int viewId)
         {
             _views.RemoveViewId(viewId);
         }
 
+        /// <summary>
+        /// 나 자산이 마스터인지 여부
+        /// </summary>
+        /// <returns>마스터 여부</returns>
         public bool MasterIsMine()
         {
             if (P2pGroup == null)
@@ -219,11 +257,27 @@ namespace EuNet.Unity
             }
         }
 
+        /// <summary>
+        /// 네트워크를 통해 모든 유저에게 게임오브젝트를 생성한다. (소유자가 있음. 예를들어 플레이어 캐릭터)
+        /// </summary>
+        /// <param name="name">생성할 Resources 프리팹 이름</param>
+        /// <param name="pos">위치</param>
+        /// <param name="rot">회전</param>
+        /// <param name="writer">생성시 전달할 추가 데이터</param>
+        /// <returns>생성된 게임오브젝트</returns>
         public GameObject Instantiate(string name, Vector3 pos, Quaternion rot, NetDataWriter writer = null)
         {
             return Instantiate(name, pos, rot, false, writer);
         }
 
+        /// <summary>
+        /// 네트워크를 통해 모든 유저에게 게임오브젝트를 생성한다. (소유자가 없음. 예를들어 몬스터, 미니언)
+        /// </summary>
+        /// <param name="name">생성할 Resources 프리팹 이름</param>
+        /// <param name="pos">위치</param>
+        /// <param name="rot">회전</param>
+        /// <param name="writer">생성시 전달할 추가 데이터</param>
+        /// <returns>생성된 게임오브젝트</returns>
         public GameObject InstantiateSceneObject(string name, Vector3 pos, Quaternion rot, NetDataWriter writer = null)
         {
             return Instantiate(name, pos, rot, true, writer);
@@ -275,6 +329,11 @@ namespace EuNet.Unity
             ExecuteInstantiate(name, pos, rot, ownerSessionId, isSceneObject, viewIds, reader);
         }
 
+        /// <summary>
+        /// 네트워크를 통해 모든 유저에게 게임오브젝트를 제거함
+        /// </summary>
+        /// <param name="viewId">제거할 오브젝트에 속한 ViewId</param>
+        /// <param name="writer">제거시 전달할 추가 데이터</param>
         public void Destroy(int viewId, NetDataWriter writer = null)
         {
             writer = writer ?? _zeroDataWriter;
@@ -314,6 +373,13 @@ namespace EuNet.Unity
             UnityEngine.Object.Destroy(view.gameObject);
         }
 
+        /// <summary>
+        /// P2P 메시지를 다른유저들이 같은 ViewId를 가진 NetView에게 전달함.
+        /// </summary>
+        /// <param name="view">메시지를 전달할 NetView</param>
+        /// <param name="writer">메시지 데이터</param>
+        /// <param name="deliveryTarget">전송 타겟</param>
+        /// <param name="deliveryMethod">전송 방식</param>
         public void SendP2pMessage(INetView view, NetDataWriter writer, DeliveryTarget deliveryTarget, DeliveryMethod deliveryMethod)
         {
             NetPool.DataWriterPool.Use((NetDataWriter w) =>
@@ -326,6 +392,9 @@ namespace EuNet.Unity
             });
         }
 
+        /// <summary>
+        /// 마스터에게 복구를 요청함. 현재 NetView 게임오브젝트를 생성하고 상태를 복구함
+        /// </summary>
         public async Task RequestRecovery()
         {
             if (MasterIsMine() == true)
@@ -456,7 +525,7 @@ namespace EuNet.Unity
                         if (view == null)
                             return Task.CompletedTask;
 
-                        view.OnMessage(reader);
+                        view.OnNetMessage(reader);
                     }
                     break;
                 case NetProtocol.P2pRequestRecovery:
@@ -490,9 +559,14 @@ namespace EuNet.Unity
             return Task.CompletedTask;
         }
 
-        public void SendAll(NetDataWriter writer, DeliveryMethod deliveryMethod)
+        /// <summary>
+        /// P2P 그룹의 모든 유저에게 데이터를 전송함
+        /// </summary>
+        /// <param name="dataWriter">전송할 데이터</param>
+        /// <param name="deliveryMethod">전송 방식</param>
+        public void SendAll(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
-            P2pGroup?.SendAll(writer, deliveryMethod);
+            P2pGroup?.SendAll(dataWriter, deliveryMethod);
         }
 
         internal Task OnViewRequestReceiveEx(ISession session, NetDataReader reader, NetDataWriter writer)

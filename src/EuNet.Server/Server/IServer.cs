@@ -12,7 +12,7 @@ namespace EuNet.Server
         /// 서버를 비동기적으로 시작
         /// </summary>
         /// <returns>성공여부</returns>
-        Task<bool> StartAsync();
+        Task StartAsync();
 
         /// <summary>
         /// 서버를 비동기적으로 정지

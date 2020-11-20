@@ -23,6 +23,9 @@ namespace EuNet.Core
         private UdpChannel _udpChannel;
         public UdpChannel UdpChannel => _udpChannel;
 
+        /// <summary>
+        /// 현재 채널 상태
+        /// </summary>
         public SessionState State { get; private set; } = SessionState.Initialized;
 
         /// <summary>
@@ -48,10 +51,10 @@ namespace EuNet.Core
         private BufferBlock<NetPacket> _receivedPacketQueue;
         private CancellationTokenSource _cts;
 
+        private long _connectId;
         /// <summary>
         /// 연결 인증키. 새롭게 연결될때마다 랜덤한 값이 생성됨. 이를 통해 세션인증가능
         /// </summary>
-        private long _connectId;
         public long ConnectId => _connectId;
 
         /// <summary>
@@ -76,6 +79,11 @@ namespace EuNet.Core
             _request = new SessionRequest(this, createInfo.Statistic);
         }
 
+        /// <summary>
+        /// 세션을 초기화 한다
+        /// 세션은 재활용될 수 있으므로 재활용을 고려하여야 한다
+        /// </summary>
+        /// <param name="info">초기화시 정보</param>
         public void Init(SessionInitializeInfo info)
         {
             _receivedPacketQueue = new BufferBlock<NetPacket>();
@@ -101,7 +109,8 @@ namespace EuNet.Core
         }
 
         /// <summary>
-        /// 세션을 닫음
+        /// 세션을 닫는다
+        /// 세션은 재활용될 수 있으므로 재활용을 고려하여야 한다
         /// </summary>
         public virtual void Close()
         {
@@ -168,6 +177,11 @@ namespace EuNet.Core
             State = SessionState.Closed;
         }
 
+        /// <summary>
+        /// 주기적인 업데이트 호출
+        /// 외부에서 주기적으로 (ex.30ms) 호출하여 내부로직을 처리해야 함
+        /// </summary>
+        /// <param name="elapsedTime">기존 업데이트로부터 지난 시간. 밀리세컨드(ms)</param>
         public void Update(int elapsedTime)
         {
             if (_isPossibleUpdate == false)
@@ -202,6 +216,13 @@ namespace EuNet.Core
             return _udpChannel;
         }
 
+        /// <summary>
+        /// 데이터를 전송함
+        /// </summary>
+        /// <param name="data">보낼 데이터 버퍼</param>
+        /// <param name="offset">보낼 데이터 버퍼 오프셋</param>
+        /// <param name="length">보낼 데이터 길이</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod)
         {
             if (State != SessionState.Connected)
@@ -222,22 +243,48 @@ namespace EuNet.Core
 
             channel.SendAsync(packet);
         }
-        
+
+        /// <summary>
+        /// 데이터를 전송함
+        /// </summary>
+        /// <param name="dataWriter">보낼 데이터를 가지고 있는 NetDataWriter</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod)
         {
             SendAsync(dataWriter.Data, 0, dataWriter.Length, deliveryMethod);
         }
 
+        /// <summary>
+        /// 요청을 보내고 답을 기다립니다.
+        /// </summary>
+        /// <param name="data">보낼 데이터 버퍼</param>
+        /// <param name="offset">보낼 데이터 버퍼 오프셋</param>
+        /// <param name="length">보낼 데이터 길이</param>
+        /// <param name="deliveryMethod">전송 방법</param>
+        /// <param name="timeout">답을 기다리는 시간</param>
+        /// <returns>요청에 대한 답 (데이터)</returns>
         public Task<NetDataBufferReader> RequestAsync(byte[] data, int offset, int length, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
             return _request.RequestAsync(data, offset, length, deliveryMethod, timeout);
         }
 
+        /// <summary>
+        /// 요청을 보내고 답을 기다립니다.
+        /// </summary>
+        /// <param name="dataWriter">보낼 데이터를 가지고 있는 NetDataWriter</param>
+        /// <param name="deliveryMethod">전송 방법</param>
+        /// <param name="timeout">답을 기다리는 시간</param>
+        /// <returns>요청에 대한 답 (데이터)</returns>
         public Task<NetDataBufferReader> RequestAsync(NetDataWriter dataWriter, DeliveryMethod deliveryMethod, TimeSpan? timeout)
         {
             return RequestAsync(dataWriter.Data, 0, dataWriter.Length, deliveryMethod, timeout);
         }
 
+        /// <summary>
+        /// 패킷을 저수준에서 그대로 전송. 내부에서만 사용.
+        /// </summary>
+        /// <param name="poolingPacket">보낼패킷. NetPool.PacketPool.Alloc 으로 할당하여 사용하세요</param>
+        /// <param name="deliveryMethod">전송 방법</param>
         public void SendRawAsync(NetPacket poolingPacket, DeliveryMethod deliveryMethod)
         {
             IChannel channel = GetChannel(deliveryMethod);
@@ -261,11 +308,19 @@ namespace EuNet.Core
             _receivedPacketQueue.Post(poolingPacket);
         }
 
+        /// <summary>
+        /// 데이터를 받음. 데이터 처리가 끝날때까지 기다릴 수 있는 비동기 메서드
+        /// </summary>
+        /// <param name="dataReader">받은 데이터</param>
         public virtual async Task OnReceive(NetDataReader dataReader)
         {
             await OnReceived?.Invoke(this, dataReader);
         }
 
+        /// <summary>
+        /// 에러가 발생되었음
+        /// </summary>
+        /// <param name="exception">예외</param>
         public virtual void OnError(Exception exception)
         {
             OnErrored?.Invoke(this, exception);
@@ -308,7 +363,6 @@ namespace EuNet.Core
                                 {
                                     throw new Exception("Not support ViewRequest");
                                 }
-                                break;
                             default:
                                 {
                                     await OnReceive(reader);

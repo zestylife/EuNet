@@ -199,7 +199,7 @@ namespace EuNet.Server.Tests
                     Assert.Fail();
                 }
             }
-            catch(Exception ex)
+            catch
             {
                 
             }

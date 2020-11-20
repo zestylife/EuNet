@@ -6,17 +6,29 @@ using UnityEngine;
 
 namespace EuNet.Unity
 {
+    /// <summary>
+    /// NetView 를 관리하는 클래스
+    /// </summary>
     public class NetViews : INetSerializable
     {
         private Dictionary<int, NetView> _viewMap;
-        public Dictionary<int, NetView> Views => _viewMap;
-
         private HashSet<int> _generatedViewIds;
-
         private int _lastGenerateViewId = 0;
         private int _lastGenerateSceneViewId = 0;
 
+        /// <summary>
+        /// ViewId 별로 NetView를 담고 있는 Dictionary
+        /// </summary>
+        public Dictionary<int, NetView> Views => _viewMap;
+
+        /// <summary>
+        /// 현재 NetView의 개수
+        /// </summary>
         public int ViewCount => _viewMap.Count;
+
+        /// <summary>
+        /// 세션별로 가질 수 있는 최대 ViewId 개수
+        /// </summary>
         public const int MaxGenerateViewIdPerSession = 1000;
 
         public NetViews()
@@ -25,12 +37,20 @@ namespace EuNet.Unity
             _generatedViewIds = new HashSet<int>();
         }
 
+        /// <summary>
+        /// 모든 데이터를 제거함
+        /// </summary>
         public void Clear()
         {
             _viewMap.Clear();
             _generatedViewIds.Clear();
         }
 
+        /// <summary>
+        /// NetView 를 등록
+        /// </summary>
+        /// <param name="view">등록할 NetView</param>
+        /// <returns>성공여부</returns>
         public bool RegisterView(NetView view)
         {
             if (view.ViewId == 0)
@@ -51,6 +71,11 @@ namespace EuNet.Unity
             return true;
         }
 
+        /// <summary>
+        /// NetView 의 등록을 해제
+        /// </summary>
+        /// <param name="view">등록해제할 NetView</param>
+        /// <returns>성공여부</returns>
         public bool UnregisterView(NetView view)
         {
             if (view.ViewId == 0)
@@ -62,6 +87,11 @@ namespace EuNet.Unity
             return _viewMap.Remove(view.ViewId);
         }
 
+        /// <summary>
+        /// ViewId를 가지고 NetView를 찾음
+        /// </summary>
+        /// <param name="viewId">찾을 ViewId</param>
+        /// <returns>찾은 NetView. 없으면 null</returns>
         public NetView Find(int viewId)
         {
             NetView view;
@@ -123,6 +153,10 @@ namespace EuNet.Unity
             }
         }
 
+        /// <summary>
+        /// ViewId를 삭제함. 해당 NetView는 더이상 동기화나 통신이 불가함.
+        /// </summary>
+        /// <param name="viewId">제거할 ViewId</param>
         public void RemoveViewId(int viewId)
         {
             _generatedViewIds.Remove(viewId);
@@ -138,7 +172,7 @@ namespace EuNet.Unity
             //Debug.Log($"RemoveViewId {viewId} HashMap Size {_generatedViewIds.Count}");
         }
 
-        public void Update(float elapsedTime)
+        internal void Update(float elapsedTime)
         {
             foreach (var kvp in _viewMap)
             {

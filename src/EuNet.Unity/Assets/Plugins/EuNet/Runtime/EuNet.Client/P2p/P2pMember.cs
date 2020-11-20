@@ -15,15 +15,21 @@ namespace EuNet.Client
     public class P2pMember : P2pMemberBase
     {
         private readonly P2pGroup _p2pGroup;
-        public P2pGroup P2pGroup => _p2pGroup;
-
         private P2pConnectState _state;
-        public P2pConnectState State => _state;
-
         private int _holePunchingElapsedTime;
         private int _holePunchingStartCount;
 
         protected ILogger Logger { get; }
+
+        /// <summary>
+        /// 소속된 P2P 그룹
+        /// </summary>
+        public P2pGroup P2pGroup => _p2pGroup;
+
+        /// <summary>
+        /// 현재 연결 상태
+        /// </summary>
+        public P2pConnectState State => _state;
 
         public P2pMember(P2pGroup p2pGroup)
         {

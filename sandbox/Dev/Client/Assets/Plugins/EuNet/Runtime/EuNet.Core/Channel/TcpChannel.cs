@@ -18,7 +18,6 @@ namespace EuNet.Core
         private byte[] _receivedBuffer;
         private int _receivedSize;
 
-        private bool _isCheckAlive;
         private long _lastReceivedTicks;
         private long _lastSendAliveTicks;
 
