@@ -1,11 +1,10 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using EuNet.Core;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-[assembly: InternalsVisibleTo("EuNet.Rpc")]
-namespace EuNet.Core
+namespace EuNet.Server
 {
     /// <summary>
     /// 서버 세션. 이 클래스를 상속받아서 유저 클래스를 사용하면 편리함.
