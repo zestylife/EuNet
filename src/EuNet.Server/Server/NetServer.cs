@@ -397,23 +397,25 @@ namespace EuNet.Server
                                 Interlocked.Add(ref _statistic.RelayServBytes, size);
 
                                 var targetSession = _sessionManager.FindSession(sessionId) as ServerSession;
+                                if (targetSession == null)
+                                    return true;
+
+                                var targetEp = targetSession.UdpChannel.PunchedEndPoint;
+                                if (targetEp == null)
+                                    return true;
 
                                 ISession senderSession;
                                 _udpSocket.TryGetSession(endPoint, out senderSession);
+                                if (senderSession == null)
+                                    return true;
 
-                                if (senderSession != null &&
-                                    targetSession != null &&
-                                    targetSession.UdpChannel != null &&
-                                    targetSession.UdpChannel.PunchedEndPoint != null)
-                                {
-                                    //_logger.LogInformation($"Relay to {sessionId}  {targetSession.UdpChannel.PunchedEndPoint} from {senderSession.SessionId}");
+                                //_logger.LogInformation($"Relay to {sessionId}  {targetSession.UdpChannel.PunchedEndPoint} from {senderSession.SessionId}");
 
-                                    // 보낸이를 수정해서 보내주자
-                                    cachedPacket.P2pSessionId = senderSession.SessionId;
+                                // 보낸이를 수정해서 보내주자
+                                cachedPacket.P2pSessionId = senderSession.SessionId;
 
-                                    SocketError error = SocketError.Success;
-                                    _udpSocket.SendTo(data, 0, size, targetSession.UdpChannel.PunchedEndPoint, ref error);
-                                }
+                                SocketError error = SocketError.Success;
+                                _udpSocket.SendTo(data, 0, size, targetEp, ref error);
                             }
                             catch
                             {

@@ -56,7 +56,7 @@ namespace EuNet.Core
             byte checksum = GetChecksum(data, headerSize, size - headerSize);
 
             if (InitChecksumValue != checksum)
-                throw new Exception("not match packet checksum");
+                throw new Exception($"Not match packet checksum [{packet.Property}]");
 
             return packet;
         }

@@ -20,7 +20,16 @@ public class GameClient : Singleton<GameClient>
         base.Awake();
 
         _client = GetComponent<NetClientP2pBehaviour>();
+        _client.SetClientOptionFunc = (clientOption) =>
+        {
+            clientOption.PacketFilter = new XorPacketFilter(1);
+        };
 
+        CustomResolver.Register(GeneratedResolver.Instance);
+    }
+
+    private void Start()
+    {
         Client.OnConnected = OnConnected;
         Client.OnClosed = OnClosed;
         Client.OnReceived = OnReceive;
@@ -32,8 +41,6 @@ public class GameClient : Singleton<GameClient>
         // 자동으로 생성된 Rpc 서비스를 사용하기 위해 등록함
         Client.AddRpcService(new ActorViewRpcServiceView());
         Client.AddRpcService(new ActorScaleRpcServiceView());
-
-        CustomResolver.Register(GeneratedResolver.Instance);
     }
 
     private void OnConnected()

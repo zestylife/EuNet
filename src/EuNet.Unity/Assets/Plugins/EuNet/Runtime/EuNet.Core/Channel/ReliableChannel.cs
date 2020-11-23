@@ -147,7 +147,31 @@ namespace EuNet.Core
                     if (_sendAcks == true)
                     {
                         _sendAcks = false;
-                        _udpChannel.SendTo(_ackPacket.RawData, 0, _ackPacket.Size, UdpChannel.SendMode.Buffered);
+
+                        IPacketFilter filter = _channelOption.PacketFilter;
+                        if(filter != null)
+                        {
+                            var poolingPacket = NetPool.PacketPool.Alloc(_ackPacket, 0);
+                            try
+                            {
+
+                                while (filter != null)
+                                {
+                                    poolingPacket = filter.Encode(poolingPacket);
+                                    filter = filter.NextFilter;
+                                }
+
+                                _udpChannel.SendTo(poolingPacket.RawData, 0, poolingPacket.Size, UdpChannel.SendMode.Buffered);
+                            }
+                            finally
+                            {
+                                NetPool.PacketPool.Free(poolingPacket);
+                            }
+                        }
+                        else
+                        {
+                            _udpChannel.SendTo(_ackPacket.RawData, 0, _ackPacket.Size, UdpChannel.SendMode.Buffered);
+                        }
                     }
                 }
             }

@@ -37,8 +37,6 @@ namespace EuNet.Unity
 
         protected override void Start()
         {
-            base.Start();
-
             _clientOption.IsServiceUdp = true;
             _clientOption.UdpServerAddress = ServerAddress;
             _clientOption.UdpServerPort = UdpServerPort;

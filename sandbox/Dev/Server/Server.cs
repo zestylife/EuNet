@@ -37,6 +37,7 @@ namespace StarterServer
                 IsCheckAlive = true,
                 CheckAliveInterval = 50000,
                 CheckAliveTimeout = 60000,
+                PacketFilter = new XorPacketFilter(1)
             };
 
             // 로거 팩토리를 생성
