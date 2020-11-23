@@ -29,6 +29,9 @@ namespace EuNet.Unity
         protected NetClient _client;
         public NetClient Client => _client;
 
+        [NonSerialized]
+        public Action<ClientOption> SetClientOptionFunc;
+
         protected virtual void Awake()
         {
             _clientOption.TcpServerAddress = ServerAddress;
@@ -85,7 +88,7 @@ namespace EuNet.Unity
         /// <param name="clientOption"></param>
         protected virtual void SetClientOption(ClientOption clientOption)
         {
-
+            SetClientOptionFunc?.Invoke(clientOption);
         }
     }
 }
