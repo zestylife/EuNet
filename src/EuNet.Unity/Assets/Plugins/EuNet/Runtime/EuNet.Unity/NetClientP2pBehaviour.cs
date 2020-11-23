@@ -65,8 +65,6 @@ namespace EuNet.Unity
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            NetClientGlobal.Instance.SetClient(null);
         }
 
         protected override void FixedUpdate()

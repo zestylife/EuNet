@@ -58,7 +58,7 @@ namespace EuNet.Unity
 
         protected virtual void OnDestroy()
         {
-            _client.Disconnect();
+            _client?.Disconnect();
         }
 
         protected virtual void FixedUpdate()
