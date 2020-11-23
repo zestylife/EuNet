@@ -43,6 +43,8 @@ namespace EuNet.Unity
             _clientOption.CheckAliveInterval = CheckAliveInterval;
             _clientOption.CheckAliveTimeout = CheckAliveTimeout;
 
+            SetClientOption(_clientOption);
+
             _client = new NetClientP2p(
                 _clientOption,
                 DefaultLoggerFactory.Create(builder =>

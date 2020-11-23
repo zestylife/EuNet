@@ -37,6 +37,8 @@ namespace EuNet.Unity
             _clientOption.CheckAliveInterval = CheckAliveInterval;
             _clientOption.CheckAliveTimeout = CheckAliveTimeout;
 
+            SetClientOption(_clientOption);
+
             _client = new NetClient(
                 _clientOption,
                 DefaultLoggerFactory.Create(builder =>
@@ -75,6 +77,15 @@ namespace EuNet.Unity
         protected void OnError(Exception ex)
         {
             Debug.LogError(ex.ToString());
+        }
+
+        /// <summary>
+        /// 이 함수를 오버라이딩하여 옵션을 수정할 수 있음.
+        /// </summary>
+        /// <param name="clientOption"></param>
+        protected virtual void SetClientOption(ClientOption clientOption)
+        {
+
         }
     }
 }
