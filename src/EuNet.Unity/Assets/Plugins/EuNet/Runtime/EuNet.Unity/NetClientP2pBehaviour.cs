@@ -31,6 +31,14 @@ namespace EuNet.Unity
 
             s_instance = this;
 
+            _isDontDestroyOnLoad = true;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
             _clientOption.IsServiceUdp = true;
             _clientOption.UdpServerAddress = ServerAddress;
             _clientOption.UdpServerPort = UdpServerPort;
@@ -57,9 +65,6 @@ namespace EuNet.Unity
             ClientP2p.SyncInterval = SyncInterval;
 
             _client.OnErrored += OnError;
-
-            _isDontDestroyOnLoad = true;
-            DontDestroyOnLoad(gameObject);
 
             NetClientGlobal.Instance.SetClient(ClientP2p);
         }

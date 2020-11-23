@@ -34,6 +34,12 @@ namespace EuNet.Unity
 
         protected virtual void Awake()
         {
+            if (_isDontDestroyOnLoad)
+                DontDestroyOnLoad(gameObject);
+        }
+
+        protected virtual void Start()
+        {
             _clientOption.TcpServerAddress = ServerAddress;
             _clientOption.TcpServerPort = TcpServerPort;
             _clientOption.IsCheckAlive = IsCheckAlive;
@@ -51,14 +57,6 @@ namespace EuNet.Unity
                 }));
 
             _client.OnErrored += OnError;
-
-            if (_isDontDestroyOnLoad)
-                DontDestroyOnLoad(gameObject);
-        }
-
-        protected virtual void Start()
-        {
-
         }
 
         protected virtual void OnDestroy()
