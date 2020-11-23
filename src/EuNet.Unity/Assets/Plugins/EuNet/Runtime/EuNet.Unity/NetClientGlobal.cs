@@ -72,7 +72,10 @@ namespace EuNet.Unity
         public void SetClient(NetClientP2p client)
         {
             if (client != null && _client != null)
+            {
                 Debug.LogError("[NetClientP2p] should have only one instance.");
+                return;
+            }
 
             _client = client;
         }

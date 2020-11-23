@@ -19,8 +19,18 @@ namespace EuNet.Unity
         
         public NetClientP2p ClientP2p => _client as NetClientP2p;
 
+        private static NetClientP2pBehaviour s_instance;
+
         protected override void Awake()
         {
+            if(s_instance != null)
+            {
+                Destroy(this);
+                return;
+            }
+
+            s_instance = this;
+
             _clientOption.IsServiceUdp = true;
             _clientOption.UdpServerAddress = ServerAddress;
             _clientOption.UdpServerPort = UdpServerPort;

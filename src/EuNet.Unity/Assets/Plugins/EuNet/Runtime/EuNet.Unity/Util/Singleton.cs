@@ -26,6 +26,8 @@ namespace EuNet.Unity
         private static bool s_inited = false;
         private static bool s_quitted = false;
 
+        protected bool IsDestroyed = false;
+
         protected virtual void Awake()
         {
             if (s_instance == null)
@@ -36,7 +38,9 @@ namespace EuNet.Unity
             }
             else
             {
-                Debug.LogErrorFormat(gameObject, "Already created singleton object {0}", typeof(T));
+                Debug.LogWarningFormat(gameObject, "Already created singleton object {0}", typeof(T));
+                Destroy(this);
+                IsDestroyed = true;
             }
         }
 

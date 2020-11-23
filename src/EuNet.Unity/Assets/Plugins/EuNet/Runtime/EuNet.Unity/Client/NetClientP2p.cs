@@ -144,6 +144,12 @@ namespace EuNet.Unity
                 return;
             }
 
+            if(P2pGroup == null)
+            {
+                _logger.LogWarning("No joined any P2pGroup");
+                return;
+            }
+
             if (deliveryTarget == DeliveryTarget.All)
             {
                 P2pGroup.SendAll(writer, deliveryMethod);
@@ -464,6 +470,9 @@ namespace EuNet.Unity
         private void OnViewPeriodicSyncSerialize()
         {
             if (SyncType == PeriodicSyncType.None)
+                return;
+
+            if (P2pGroup == null)
                 return;
 
             var writer = NetPool.DataWriterPool.Alloc();
