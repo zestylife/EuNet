@@ -33,6 +33,9 @@ namespace EuNet.Unity
         [SerializeField] private float _limitForRotationSync = 90f;
         public float LimitForRotationSync => _limitForRotationSync;
 
+        [SerializeField] private float _defaultSyncTime = 0.1f;
+        public float DefaultSyncTime => _defaultSyncTime;
+
         private NetClientP2p _client;
 
         /// <summary>
