@@ -5,7 +5,7 @@ using UnityEngine;
 namespace EuNet.Unity
 {
     [Serializable]
-    public struct SyncFloat : IEquatable<SyncFloat>, IEquatable<float>, IComparable<SyncFloat>, IComparable<float>, IComparable
+    public struct SyncFloat : IEquatable<SyncFloat>, IEquatable<float>
     {
         [SerializeField]
         private float _startValue;
@@ -14,24 +14,52 @@ namespace EuNet.Unity
         private float _endValue;
 
         [SerializeField]
+        private float _value;
+
+        [SerializeField]
+        private float _netValue;
+
+        [SerializeField]
+        private float _velocity;
+
+        [SerializeField]
         private float _elapsedTime;
 
         [SerializeField]
         private float _syncTime;
 
-        public float CurrentValue
-        {
-            get
-            {
-                return Mathf.Lerp(_startValue, _endValue, _elapsedTime / SyncTime);
-            }
-        }
-
         public float SyncTime
         {
             get
             {
-                return _syncTime >= 0f ? _syncTime : NetClientGlobal.Instance.DefaultSyncTime;
+                return _syncTime > 0f ? _syncTime : _syncTime = NetClientGlobal.Instance.DefaultSyncTime;
+            }
+            set
+            {
+                _syncTime = value;
+                UpdateEndValue();
+                UpdateValue();
+            }
+        }
+
+        public float Velocity
+        {
+            get { return _velocity; }
+            set
+            {
+                _velocity = value;
+                UpdateEndValue();
+                UpdateValue();
+            }
+        }
+
+        public float ElapsedTime
+        {
+            get { return _elapsedTime; }
+            set
+            {
+                _elapsedTime = value;
+                UpdateValue();
             }
         }
 
@@ -39,6 +67,9 @@ namespace EuNet.Unity
         {
             _startValue = value;
             _endValue = value;
+            _value = value;
+            _netValue = value;
+            _velocity = 0f;
             _elapsedTime = 0f;
             _syncTime = syncTime;
         }
@@ -46,14 +77,29 @@ namespace EuNet.Unity
         public void Set(float currentValue, float netValue, float netVelocity)
         {
             _startValue = currentValue;
-            _endValue = netValue + netVelocity * SyncTime;
+            _netValue = netValue;
+            _velocity = netVelocity;
+            _value = currentValue;
             _elapsedTime = 0f;
+
+            UpdateEndValue();
+        }
+
+        private void UpdateEndValue()
+        {
+            _endValue = _netValue + _velocity * SyncTime;
+        }
+
+        private float UpdateValue()
+        {
+            _value = Mathf.LerpUnclamped(_startValue, _endValue, _elapsedTime / SyncTime);
+            return _value;
         }
 
         public float Update(float elapsedTime)
         {
             _elapsedTime += elapsedTime;
-            return CurrentValue;
+            return UpdateValue();
         }
 
         public static implicit operator SyncFloat(float value)
@@ -63,45 +109,33 @@ namespace EuNet.Unity
 
         public static implicit operator float(SyncFloat value)
         {
-            return value.CurrentValue;
+            return value._value;
         }
 
         public override int GetHashCode()
         {
-            return CurrentValue.GetHashCode();
+            return _value.GetHashCode();
         }
 
         public override string ToString()
         {
-            return CurrentValue.ToString();
-        }
-
-        public int CompareTo(SyncFloat other)
-        {
-            return CurrentValue.CompareTo(other.CurrentValue);
-        }
-
-        public int CompareTo(float other)
-        {
-            return CurrentValue.CompareTo(other);
-        }
-
-        public int CompareTo(object obj)
-        {
-            return CurrentValue.CompareTo(obj);
+            return _value.ToString();
         }
 
         public bool Equals(SyncFloat other)
         {
             return _startValue.Equals(other._startValue) &&
                 _endValue.Equals(other._endValue) &&
+                _value.Equals(other._value) &&
+                _netValue.Equals(other._netValue) &&
+                _velocity.Equals(other._velocity) &&
                 _elapsedTime.Equals(other._elapsedTime) &&
                 _syncTime.Equals(other._syncTime);
         }
 
         public bool Equals(float other)
         {
-            return CurrentValue.Equals(other);
+            return _value.Equals(other);
         }
     }
 }
