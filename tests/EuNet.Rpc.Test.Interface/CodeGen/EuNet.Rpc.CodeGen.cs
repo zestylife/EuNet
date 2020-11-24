@@ -27,7 +27,11 @@ namespace Rpc.Test.Interface
     {
         void Greet(string name);
         void GreetClass(Rpc.Test.Interface.DataClass dataClass);
+        void GreetDictionary(System.Collections.Generic.Dictionary<string, string> value);
+        void GreetEnum(Rpc.Test.Interface.DataEnum dataEnum);
+        void GreetEnumReturn();
         void GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass);
+        void GreetTuple(System.Tuple<string, string> value);
         void SessionParameter(EuNet.Core.ISession session);
     }
 
@@ -35,7 +39,11 @@ namespace Rpc.Test.Interface
     {
         Greet = -567773818,
         GreetClass = -1772909904,
+        GreetDictionary = -942699280,
+        GreetEnum = -2136207631,
+        GreetEnumReturn = -1310362511,
         GreetInterfaceSerializeClass = -258043401,
+        GreetTuple = -1793410084,
         SessionParameter = -1629016744,
     }
 
@@ -109,6 +117,56 @@ namespace Rpc.Test.Interface
             }
         }
 
+        public async Task<System.Collections.Generic.Dictionary<int, int>> GreetDictionary(System.Collections.Generic.Dictionary<string, string> value)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetDictionary);
+                NetDataSerializer.Serialize<System.Collections.Generic.Dictionary<string, string>>(_writer_, value);
+                using(var _reader_ = await SendRequestAndReceive(_writer_))
+                {
+                    return NetDataSerializer.Deserialize<System.Collections.Generic.Dictionary<int, int>>(_reader_);
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        public async Task GreetEnum(Rpc.Test.Interface.DataEnum dataEnum)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnum);
+                NetDataSerializer.Serialize<Rpc.Test.Interface.DataEnum>(_writer_, dataEnum);
+                await SendRequestAndWait(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        public async Task<Rpc.Test.Interface.DataEnumForReturn> GreetEnumReturn()
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnumReturn);
+                using(var _reader_ = await SendRequestAndReceive(_writer_))
+                {
+                    return NetDataSerializer.Deserialize<Rpc.Test.Interface.DataEnumForReturn>(_reader_);
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         public async Task<Rpc.Test.Interface.InterfaceSerializeClass> GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -119,6 +177,24 @@ namespace Rpc.Test.Interface
                 using(var _reader_ = await SendRequestAndReceive(_writer_))
                 {
                     return _reader_.Read<Rpc.Test.Interface.InterfaceSerializeClass>();
+                }
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        public async Task<System.Tuple<int, int>> GreetTuple(System.Tuple<string, string> value)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetTuple);
+                NetDataSerializer.Serialize<System.Tuple<string, string>>(_writer_, value);
+                using(var _reader_ = await SendRequestAndReceive(_writer_))
+                {
+                    return NetDataSerializer.Deserialize<System.Tuple<int, int>>(_reader_);
                 }
             }
             finally
@@ -175,6 +251,50 @@ namespace Rpc.Test.Interface
             }
         }
 
+        void IGreeterRpc_NoReply.GreetDictionary(System.Collections.Generic.Dictionary<string, string> value)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetDictionary);
+                NetDataSerializer.Serialize<System.Collections.Generic.Dictionary<string, string>>(_writer_, value);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        void IGreeterRpc_NoReply.GreetEnum(Rpc.Test.Interface.DataEnum dataEnum)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnum);
+                NetDataSerializer.Serialize<Rpc.Test.Interface.DataEnum>(_writer_, dataEnum);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        void IGreeterRpc_NoReply.GreetEnumReturn()
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnumReturn);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         void IGreeterRpc_NoReply.GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -182,6 +302,21 @@ namespace Rpc.Test.Interface
             {
                 _writer_.Write((int)IGreeterRpc_Enum.GreetInterfaceSerializeClass);
                 _writer_.Write<Rpc.Test.Interface.InterfaceSerializeClass>(dataClass);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
+        void IGreeterRpc_NoReply.GreetTuple(System.Tuple<string, string> value)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetTuple);
+                NetDataSerializer.Serialize<System.Tuple<string, string>>(_writer_, value);
                 SendRequest(_writer_);
             }
             finally
@@ -210,7 +345,11 @@ namespace Rpc.Test.Interface
     {
         public abstract Task<string> Greet(string name);
         public abstract Task<Rpc.Test.Interface.DataClass> GreetClass(Rpc.Test.Interface.DataClass dataClass);
+        public abstract Task<System.Collections.Generic.Dictionary<int, int>> GreetDictionary(System.Collections.Generic.Dictionary<string, string> value);
+        public abstract Task GreetEnum(Rpc.Test.Interface.DataEnum dataEnum);
+        public abstract Task<Rpc.Test.Interface.DataEnumForReturn> GreetEnumReturn();
         public abstract Task<Rpc.Test.Interface.InterfaceSerializeClass> GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass);
+        public abstract Task<System.Tuple<int, int>> GreetTuple(System.Tuple<string, string> value);
         public abstract Task<string> SessionParameter(EuNet.Core.ISession session);
         public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
         {
@@ -232,11 +371,37 @@ namespace Rpc.Test.Interface
                         NetDataSerializer.Serialize<Rpc.Test.Interface.DataClass>(_writer_, _result_);
                     }
                     break;
+                case IGreeterRpc_Enum.GreetDictionary:
+                    {
+                        var value = NetDataSerializer.Deserialize<System.Collections.Generic.Dictionary<string, string>>(_reader_);
+                        var _result_ = await GreetDictionary(value);
+                        NetDataSerializer.Serialize<System.Collections.Generic.Dictionary<int, int>>(_writer_, _result_);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetEnum:
+                    {
+                        var dataEnum = NetDataSerializer.Deserialize<Rpc.Test.Interface.DataEnum>(_reader_);
+                        await GreetEnum(dataEnum);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetEnumReturn:
+                    {
+                        var _result_ = await GreetEnumReturn();
+                        NetDataSerializer.Serialize<Rpc.Test.Interface.DataEnumForReturn>(_writer_, _result_);
+                    }
+                    break;
                 case IGreeterRpc_Enum.GreetInterfaceSerializeClass:
                     {
                         var dataClass = _reader_.Read<Rpc.Test.Interface.InterfaceSerializeClass>();
                         var _result_ = await GreetInterfaceSerializeClass(dataClass);
                         _writer_.Write<Rpc.Test.Interface.InterfaceSerializeClass>(_result_);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetTuple:
+                    {
+                        var value = NetDataSerializer.Deserialize<System.Tuple<string, string>>(_reader_);
+                        var _result_ = await GreetTuple(value);
+                        NetDataSerializer.Serialize<System.Tuple<int, int>>(_writer_, _result_);
                     }
                     break;
                 case IGreeterRpc_Enum.SessionParameter:
@@ -275,11 +440,37 @@ namespace Rpc.Test.Interface
                         NetDataSerializer.Serialize<Rpc.Test.Interface.DataClass>(_writer_, _result_);
                     }
                     break;
+                case IGreeterRpc_Enum.GreetDictionary:
+                    {
+                        var value = NetDataSerializer.Deserialize<System.Collections.Generic.Dictionary<string, string>>(_reader_);
+                        var _result_ = await (session as IGreeterRpc).GreetDictionary(value);
+                        NetDataSerializer.Serialize<System.Collections.Generic.Dictionary<int, int>>(_writer_, _result_);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetEnum:
+                    {
+                        var dataEnum = NetDataSerializer.Deserialize<Rpc.Test.Interface.DataEnum>(_reader_);
+                        await (session as IGreeterRpc).GreetEnum(dataEnum);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetEnumReturn:
+                    {
+                        var _result_ = await (session as IGreeterRpc).GreetEnumReturn();
+                        NetDataSerializer.Serialize<Rpc.Test.Interface.DataEnumForReturn>(_writer_, _result_);
+                    }
+                    break;
                 case IGreeterRpc_Enum.GreetInterfaceSerializeClass:
                     {
                         var dataClass = _reader_.Read<Rpc.Test.Interface.InterfaceSerializeClass>();
                         var _result_ = await (session as IGreeterRpc).GreetInterfaceSerializeClass(dataClass);
                         _writer_.Write<Rpc.Test.Interface.InterfaceSerializeClass>(_result_);
+                    }
+                    break;
+                case IGreeterRpc_Enum.GreetTuple:
+                    {
+                        var value = NetDataSerializer.Deserialize<System.Tuple<string, string>>(_reader_);
+                        var _result_ = await (session as IGreeterRpc).GreetTuple(value);
+                        NetDataSerializer.Serialize<System.Tuple<int, int>>(_writer_, _result_);
                     }
                     break;
                 case IGreeterRpc_Enum.SessionParameter:
@@ -523,13 +714,38 @@ namespace EuNet.Rpc.Test.Interface
             {
                 case -567773818: return "IGreeterRpc.Greet";
                 case -1772909904: return "IGreeterRpc.GreetClass";
+                case -942699280: return "IGreeterRpc.GreetDictionary";
+                case -2136207631: return "IGreeterRpc.GreetEnum";
+                case -1310362511: return "IGreeterRpc.GreetEnumReturn";
                 case -258043401: return "IGreeterRpc.GreetInterfaceSerializeClass";
+                case -1793410084: return "IGreeterRpc.GreetTuple";
                 case -1629016744: return "IGreeterRpc.SessionParameter";
                 case -1153730677: return "IGreeterViewRpc.Greet";
                 case -826639833: return "IGreeterViewRpc.UnityType";
             }
 
             return string.Empty;
+        }
+    }
+}
+
+#endregion
+#region EuNet.Rpc.Test.Interface.AOT
+
+namespace EuNet.Rpc.Test.Interface.AOT
+{
+    public sealed class AotCode
+    {
+        private void UsedOnlyForAOTCodeGeneration()
+        {
+            new GenericEnumFormatter<DataEnum>();
+            new GenericEnumFormatter<DataEnumForReturn>();
+            new TupleFormatter<int, int>();
+            new TupleFormatter<string, string>();
+            new DictionaryFormatter<int, int>();
+            new DictionaryFormatter<string, string>();
+            
+            throw new InvalidOperationException("This method is used for AOT code generation only.Do not call it at runtime.");
         }
     }
 }

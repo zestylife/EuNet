@@ -65,6 +65,9 @@ namespace CodeGenerator
             var rpcEnumCodeGen = new RpcEnumCodeGenerator() { Options = Options };
             rpcEnumCodeGen.GenerateCode(rpcEnumMap, CodeWriter);
 
+            var aotCodeGen = new AotCodeGenerator() { Options = Options };
+            aotCodeGen.GenerateCode(rpcTypes.Concat(netViewRpcTypes).ToArray(), CodeWriter);
+
             Dictionary<string, string> formatterMap = new Dictionary<string, string>();
 
             var netDataObjectTypes = types.Where(t => Utility.IsNetDataObjectAttribute(t)).ToArray();
