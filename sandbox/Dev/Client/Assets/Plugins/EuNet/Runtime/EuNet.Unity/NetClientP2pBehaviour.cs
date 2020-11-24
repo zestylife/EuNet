@@ -15,7 +15,7 @@ namespace EuNet.Unity
         public int MtuInterval = 1100;
         public int RudpDisconnectTimeout = 5000;
         public PeriodicSyncType SyncType = PeriodicSyncType.None;
-        public float SyncInterval = 0.5f;
+        public float SyncInterval = 0.1f;
         
         public NetClientP2p ClientP2p => _client as NetClientP2p;
 

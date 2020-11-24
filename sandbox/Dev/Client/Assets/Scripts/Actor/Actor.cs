@@ -13,14 +13,23 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
     private ActorViewRpc _actorRpc;
     private CharacterController _moveController;
     private Vector3 _moveDirection;
-    private Vector3? _netSyncPosition;
+    private SyncVector3 _netPosition;
     private float _moveSpeed = 10f;
+
+    public Vector3 MoveVelocity
+    {
+        get
+        {
+            return _moveDirection * _moveSpeed;
+        }
+    }
 
     private void Awake()
     {
         _view = GetComponent<NetView>();
         _actorRpc = new ActorViewRpc(_view);
         _moveController = GetComponent<CharacterController>();
+        _netPosition = transform.position;
     }
 
     private void Start()
@@ -35,32 +44,31 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
 
     private void Update()
     {
-        var moveDelta = _moveDirection * _moveSpeed * Time.deltaTime;
-
-        if (_netSyncPosition.HasValue)
+        if(_view.IsMine())
         {
-            // 네트워크 위치와 동기화를 하자
-            _netSyncPosition += moveDelta;
-
-            var dist = _netSyncPosition.Value - transform.localPosition;
-            moveDelta = dist * Mathf.Min(Time.deltaTime * 10f, 1f);
+            var moveDelta = MoveVelocity * Time.deltaTime;
+            _moveController.Move(moveDelta);
         }
-
-        _moveController.Move(moveDelta);
+        else
+        {
+            _netPosition.Update(Time.deltaTime);
+            _moveController.Move(_netPosition - transform.position);
+        }
     }
 
     public void SetMoveDirection(float x, float y)
     {
         _actorRpc
             .ToOthers(DeliveryMethod.Unreliable)
-            .OnSetMoveDirection(x, y);
+            .OnSetMoveDirection(x, y, transform.position);
 
-        OnSetMoveDirection(x, y);
+        OnSetMoveDirection(x, y, transform.position);
     }
 
-    public Task OnSetMoveDirection(float x, float y)
+    public Task OnSetMoveDirection(float moveX, float moveY, Vector3 position)
     {
-        _moveDirection = new Vector3(x, 0f, y).normalized;
+        _moveDirection = new Vector3(moveX, 0f, moveY).normalized;
+        _netPosition.Set(transform.position, position, MoveVelocity);
         return Task.CompletedTask;
     }
 
@@ -87,14 +95,15 @@ public class Actor : MonoBehaviour , INetViewHandler, INetSerializable , INetVie
     public bool OnViewPeriodicSyncSerialize(NetDataWriter writer)
     {
         writer.Write(_moveDirection);
-        writer.Write(transform.localPosition);
+        writer.Write(transform.position);
         return true;
     }
 
     public void OnViewPeriodicSyncDeserialize(NetDataReader reader)
     {
         _moveDirection = reader.ReadVector3();
-        _netSyncPosition = reader.ReadVector3();
+        var position = reader.ReadVector3();
+        _netPosition.Set(transform.position, position, MoveVelocity);
     }
 
     public void Serialize(NetDataWriter writer)

@@ -1,7 +1,8 @@
 ﻿using EuNet.Unity;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.Text;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,10 +12,14 @@ public class UiGame : MonoBehaviour
     
     private void Start()
     {
-        
+        gameObject
+            .AddComponent<ObservableUpdateTrigger>()
+            .UpdateAsObservable()
+            .Sample(TimeSpan.FromMilliseconds(500))
+            .Subscribe(OnUpdateUI);
     }
 
-    private void Update()
+    private void OnUpdateUI(Unit unit)
     {
         StringBuilder builder = new StringBuilder();
 

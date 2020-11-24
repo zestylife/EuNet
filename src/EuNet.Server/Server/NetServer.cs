@@ -443,7 +443,7 @@ namespace EuNet.Server
                                 if (session.UdpChannel.SetPunchedEndPoint(endPoint) == true)
                                 {
                                     _udpSocket.AddSession(session);
-                                    _logger.LogInformation($"Connect Udp {session.SessionId} {endPoint}");
+                                    //_logger.LogInformation($"Connect Udp {session.SessionId} {endPoint}");
                                 }
 
                                 // 응답을 보내자
@@ -456,7 +456,7 @@ namespace EuNet.Server
                                     SocketError error = SocketError.Success;
                                     _udpSocket.SendTo(sendPacket.RawData, 0, sendPacket.Size, endPoint, ref error);
 
-                                    _logger.LogInformation($"send ResponseConnection to {endPoint}");
+                                    //_logger.LogInformation($"send ResponseConnection to {endPoint}");
                                 }
                                 finally
                                 {

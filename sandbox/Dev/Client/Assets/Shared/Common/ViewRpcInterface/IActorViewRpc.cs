@@ -6,7 +6,7 @@ namespace Common
 {
     public interface IActorViewRpc : IViewRpc
     {
-        Task OnSetMoveDirection(float x, float y);
+        Task OnSetMoveDirection(float moveX, float moveY, Vector3 position);
         Task<Color> OnTest(Vector3 position, Quaternion rotation);
     }
 }

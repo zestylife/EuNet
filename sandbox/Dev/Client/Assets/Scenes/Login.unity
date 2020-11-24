@@ -477,6 +477,7 @@ MonoBehaviour:
   _precisionForQuaternionSync: 0.1
   _limitForPositionSqrtSync: 100
   _limitForRotationSync: 90
+  _defaultSyncTime: 0.1
 --- !u!4 &1164532249
 Transform:
   m_ObjectHideFlags: 0
@@ -547,7 +548,7 @@ MonoBehaviour:
   MtuInterval: 1100
   RudpDisconnectTimeout: 5000
   SyncType: 1
-  SyncInterval: 0.5
+  SyncInterval: 0.1
 --- !u!114 &1283901517
 MonoBehaviour:
   m_ObjectHideFlags: 0

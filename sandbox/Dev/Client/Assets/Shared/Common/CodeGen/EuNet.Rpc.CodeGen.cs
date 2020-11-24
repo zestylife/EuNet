@@ -530,7 +530,7 @@ namespace Common
 {
     public interface IActorViewRpc_NoReply
     {
-        void OnSetMoveDirection(float x, float y);
+        void OnSetMoveDirection(float moveX, float moveY, UnityEngine.Vector3 position);
         void OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
     }
 
@@ -601,14 +601,15 @@ namespace Common
             return new ActorViewRpc(Target, RequestWaiter, timeout);
         }
 
-        public async Task OnSetMoveDirection(float x, float y)
+        public async Task OnSetMoveDirection(float moveX, float moveY, UnityEngine.Vector3 position)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
             try
             {
                 _writer_.Write((int)IActorViewRpc_Enum.OnSetMoveDirection);
-                _writer_.Write(x);
-                _writer_.Write(y);
+                _writer_.Write(moveX);
+                _writer_.Write(moveY);
+                _writer_.Write(position);
                 await SendRequestAndWait(_writer_);
             }
             finally
@@ -636,14 +637,15 @@ namespace Common
             }
         }
 
-        void IActorViewRpc_NoReply.OnSetMoveDirection(float x, float y)
+        void IActorViewRpc_NoReply.OnSetMoveDirection(float moveX, float moveY, UnityEngine.Vector3 position)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
             try
             {
                 _writer_.Write((int)IActorViewRpc_Enum.OnSetMoveDirection);
-                _writer_.Write(x);
-                _writer_.Write(y);
+                _writer_.Write(moveX);
+                _writer_.Write(moveY);
+                _writer_.Write(position);
                 SendRequest(_writer_);
             }
             finally
@@ -672,7 +674,7 @@ namespace Common
     [RequireComponent(typeof(NetView))]
     public abstract class ActorViewRpcServiceBehaviour : MonoBehaviour, IRpcInvokable, IActorViewRpc
     {
-        public abstract Task OnSetMoveDirection(float x, float y);
+        public abstract Task OnSetMoveDirection(float moveX, float moveY, UnityEngine.Vector3 position);
         public abstract Task<UnityEngine.Color> OnTest(UnityEngine.Vector3 position, UnityEngine.Quaternion rotation);
         public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
         {
@@ -682,9 +684,10 @@ namespace Common
             {
                 case IActorViewRpc_Enum.OnSetMoveDirection:
                     {
-                        var x = _reader_.ReadSingle();
-                        var y = _reader_.ReadSingle();
-                        await OnSetMoveDirection(x, y);
+                        var moveX = _reader_.ReadSingle();
+                        var moveY = _reader_.ReadSingle();
+                        var position = _reader_.ReadVector3();
+                        await OnSetMoveDirection(moveX, moveY, position);
                     }
                     break;
                 case IActorViewRpc_Enum.OnTest:
@@ -712,9 +715,10 @@ namespace Common
             {
                 case IActorViewRpc_Enum.OnSetMoveDirection:
                     {
-                        var x = _reader_.ReadSingle();
-                        var y = _reader_.ReadSingle();
-                        await _view_.FindRpcHandler<IActorViewRpc>().OnSetMoveDirection(x, y);
+                        var moveX = _reader_.ReadSingle();
+                        var moveY = _reader_.ReadSingle();
+                        var position = _reader_.ReadVector3();
+                        await _view_.FindRpcHandler<IActorViewRpc>().OnSetMoveDirection(moveX, moveY, position);
                     }
                     break;
                 case IActorViewRpc_Enum.OnTest:
