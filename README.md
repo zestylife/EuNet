@@ -142,6 +142,8 @@ https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
 
 ## Rpc Sample
 
+![image](https://github.com/zestylife/EuNet/blob/main/doc/images/Rpc.png?raw=true)
+
 ### Common project
 ```csharp
 // Declaring login rpc interface
