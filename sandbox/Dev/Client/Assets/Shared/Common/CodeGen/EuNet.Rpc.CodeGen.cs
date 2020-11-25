@@ -764,6 +764,21 @@ namespace Common
 }
 
 #endregion
+#region Common.AOT
+
+namespace Common.AOT
+{
+    public sealed class AotCode
+    {
+        private void UsedOnlyForAOTCodeGeneration()
+        {
+            
+            throw new InvalidOperationException("This method is used for AOT code generation only.Do not call it at runtime.");
+        }
+    }
+}
+
+#endregion
 #region Common.UserInfo
 
 namespace Common

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -131,6 +132,8 @@ namespace EuNet.Server
             if (_rpcHandlers.Contains(service))
                 throw new Exception("Already exist IRpcInvokable in _rpcHandlers");
 
+            _logger.LogInformation($"Add Rpc Service : {service.GetType().Name}");
+
             _rpcHandlers.Add(service);
         }
 
@@ -139,6 +142,15 @@ namespace EuNet.Server
         /// </summary>
         public async Task StartAsync()
         {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.AppendLine($"----------\t[{_serverOption.Name}] powered by EuNet\t----------");
+            builder.AppendLine();
+            try { builder.AppendLine($"Public IP : {NetUtil.GetPublicIpAddress()}"); } catch { }
+            try { builder.AppendLine($"Private IP : {NetUtil.GetLocalIpAddress()}"); } catch { }
+            _logger.LogInformation(builder.ToString());
+
             var state = _state;
 
             if (state != ServerState.None && state != ServerState.Stopped)

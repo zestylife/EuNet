@@ -1,6 +1,6 @@
 EuNet C# (.NET, .NET Core, Unity)
 ===
-[![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Debug/badge.svg)](https://github.com/zestylife/EuNet/actions) [![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Release/badge.svg)](https://github.com/zestylife/EuNet/actions) [![Releases](https://img.shields.io/github/v/release/zestylife/EuNet)](https://github.com/zestylife/EuNet/releases)
+[![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Debug/badge.svg)](https://github.com/zestylife/EuNet/actions) [![GitHub Actions](https://github.com/zestylife/EuNet/workflows/Build-Release/badge.svg)](https://github.com/zestylife/EuNet/actions) [![nuget](https://img.shields.io/nuget/dt/EuNet.svg)](https://www.nuget.org/packages/EuNet/) [![Releases](https://img.shields.io/github/v/release/zestylife/EuNet)](https://github.com/zestylife/EuNet/releases)
 
 Easy Unity Network (EuNet) is a network solution for multiplayer games.
 
@@ -130,9 +130,9 @@ You can add package from UPM (Unity Package Manager)
 ```
 https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
 ``` 
-If you want to add a specific release version, add `#version` after the url. ex) version 1.1.11
+If you want to add a specific release version, add `#version` after the url. ex) version 1.1.13
 ```
-https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet#1.1.11
+https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet#1.1.13
 ``` 
 
 ![image](https://github.com/zestylife/EuNet/blob/main/doc/images/AddPackageFromUPM.png?raw=true)

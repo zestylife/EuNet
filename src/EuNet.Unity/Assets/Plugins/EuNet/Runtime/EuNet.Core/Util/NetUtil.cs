@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace EuNet.Core
 {
@@ -34,6 +35,29 @@ namespace EuNet.Core
             }
 
             return null;
+        }
+
+        public static string GetPublicIpAddress(int timeoutMilliseconds = 5000)
+        {
+            var client = new WebClient();
+            var task = client.DownloadStringTaskAsync("http://icanhazip.com");
+            if (task.Wait(timeoutMilliseconds) == false)
+                return string.Empty;
+
+            return task.Result.Trim();
+        }
+
+        public static string GetLocalIpAddress()
+        {
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            for (int i = 0; i < host.AddressList.Length; i++)
+            {
+                if (host.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return host.AddressList[i].ToString();
+                }
+            }
+            return string.Empty;
         }
 
         internal static int RelativeSequenceNumber(int number, int expected)
