@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>zestylife</Authors>
-    <Company></Company>
-    <Version>1.1.15</Version>
-    <Copyright></Copyright>
+    <Company>
+    </Company>
+    <Version>1.1.16</Version>
+    <Copyright>
+    </Copyright>
     <PackageProjectUrl>https://github.com/zestylife/EuNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zestylife/EuNet</RepositoryUrl>
     <PackageTags>C#,TCP,P2P,UDP,Network,Unity,RPC,HolePunching,Relay</PackageTags>
@@ -15,21 +16,16 @@
     <PackageOutputPath>../../nupkg</PackageOutputPath>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <Exec Command="xcopy /s /e /y /exclude:$(ProjectDir)..\exclude.txt $(ProjectDir)*.cs $(ProjectDir)\..\EuNet.Unity\Assets\Plugins\EuNet\Runtime\EuNet.Unity\Extensions\" />
   </Target>
-
 </Project>

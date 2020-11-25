@@ -1,36 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>enc</ToolCommandName>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
-    <Version>1.1.15</Version>
+    <Version>1.1.16</Version>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath></OutputPath>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CodeWriter.Core" Version="1.0.2" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\EuNet.Core\EuNet.Core.csproj" />
     <ProjectReference Include="..\EuNet.UnityShims\EuNet.UnityShims.csproj" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <Exec Command="ping -n 3 127.0.0.1 &gt; nul" />
   </Target>
-
-  
 </Project>

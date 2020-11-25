@@ -1,18 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.1.15</Version>
+    <Version>1.1.16</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
     <NuspecFile>EuNet.CodeGenerator.Templates.nuspec</NuspecFile>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Templates\**" />
     <EmbeddedResource Remove="Templates\**" />
     <None Remove="Templates\**" />
   </ItemGroup>
-  
 </Project>
