@@ -2,6 +2,7 @@
 using EuNet.Rpc;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Rpc.Test.Interface
@@ -13,8 +14,9 @@ namespace Rpc.Test.Interface
         Task<InterfaceSerializeClass> GreetInterfaceSerializeClass(InterfaceSerializeClass dataClass);
         Task<string> SessionParameter(ISession session);
         Task GreetEnum(DataEnum dataEnum);
+        Task GreetEnumOther(SocketFlags flags);
         Task<DataEnumForReturn> GreetEnumReturn();
-        Task<Tuple<int, int>> GreetTuple(Tuple<string,string> value);
+        Task<Tuple<int, SocketFlags>> GreetTuple(Tuple<string,string> value);
         Task<Dictionary<int, int>> GreetDictionary(Dictionary<string, string> value);
     }
 }

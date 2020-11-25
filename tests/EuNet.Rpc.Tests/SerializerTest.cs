@@ -1,5 +1,5 @@
 ﻿using EuNet.Core;
-using EuNet.Rpc.Test.Interface.Resolvers;
+using EuNetRpcTestInterfaceResolvers;
 using NUnit.Framework;
 using Rpc.Test.Interface;
 

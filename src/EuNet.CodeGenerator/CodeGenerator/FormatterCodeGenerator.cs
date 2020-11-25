@@ -190,13 +190,20 @@ namespace CodeGenerator
                 }
             }
 
-            if(type.IsGenericType)
+            var ns = type.Namespace;
+            if (ns != null)
+                ns += ".";
+            else ns = string.Empty;
+
+            var fullFormatterClassName = ns + formatterClassName;
+
+            if (type.IsGenericType)
             {
-                formatterMap.Add($"typeof({className + type.GetGenericParameters(true)})", $"typeof({formatterClassName + type.GetGenericParameters(true)})");
+                formatterMap.Add($"typeof({type.GetSymbolDisplay(true, true)})", $"typeof({fullFormatterClassName + type.GetGenericParameters(true)})");
             }
             else
             {
-                formatterMap.Add($"typeof({className})", $"{formatterClassName}.Instance");
+                formatterMap.Add($"typeof({type.GetSymbolDisplay(true, true)})", $"{fullFormatterClassName}.Instance");
             }
         }
 

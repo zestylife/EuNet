@@ -1,5 +1,5 @@
 ﻿using Common;
-using Common.Resolvers;
+using CommonResolvers;
 using EuNet.Core;
 using EuNet.Unity;
 using System;

@@ -2,6 +2,7 @@
 using Rpc.Test.Interface;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace EuNet.Rpc.Tests
@@ -37,6 +38,11 @@ namespace EuNet.Rpc.Tests
             throw new NotImplementedException();
         }
 
+        public override Task GreetEnumOther(SocketFlags flags)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Task<DataEnumForReturn> GreetEnumReturn()
         {
             throw new NotImplementedException();
@@ -50,7 +56,7 @@ namespace EuNet.Rpc.Tests
             });
         }
 
-        public override Task<Tuple<int, int>> GreetTuple(Tuple<string, string> value)
+        public override Task<Tuple<int, SocketFlags>> GreetTuple(Tuple<string, string> value)
         {
             throw new NotImplementedException();
         }

@@ -17,7 +17,6 @@ using EuNet.Rpc;
 using EuNet.Unity;
 using UnityEngine;
 #endif
-using Common;
 
 #region Common.ILoginRpc
 
@@ -764,11 +763,11 @@ namespace Common
 }
 
 #endregion
-#region Common.AOT
+#region AOT
 
-namespace Common.AOT
+namespace AOT
 {
-    public sealed class AotCode
+    public sealed class AotCodeCommon
     {
         private void UsedOnlyForAOTCodeGeneration()
         {
@@ -813,9 +812,9 @@ namespace Common
 }
 
 #endregion
-#region Common.Resolvers
+#region CommonResolvers
 
-namespace Common.Resolvers
+namespace CommonResolvers
 {
     public sealed class GeneratedResolver : INetDataFormatterResolver
     {
@@ -844,7 +843,7 @@ namespace Common.Resolvers
     internal static class GeneratedResolverGetFormatterHelper
     {
         private static readonly Dictionary<Type, object> FormatterMap = new Dictionary<Type, object>() {
-            { typeof(UserInfo) , UserInfoFormatter.Instance },
+            { typeof(Common.UserInfo) , Common.UserInfoFormatter.Instance },
         };
         internal static object GetFormatter(Type t)
         {

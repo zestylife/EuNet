@@ -3,7 +3,7 @@ using EuNet.Server;
 using Common;
 using System;
 using System.Threading.Tasks;
-using Common.Resolvers;
+using CommonResolvers;
 
 namespace StarterServer
 {

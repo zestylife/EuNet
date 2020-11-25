@@ -12,7 +12,7 @@ namespace CodeGenerator
 
         public void GenerateCode(Dictionary<string, string> formatterMap, CodeWriter.CodeWriter w)
         {
-            var resolverNamespace = $"{Options.Namespace}.Resolvers";
+            var resolverNamespace = $"{Options.Namespace}.Resolvers".Replace(".","");
 
             w._($"#region {resolverNamespace}");
             w._();

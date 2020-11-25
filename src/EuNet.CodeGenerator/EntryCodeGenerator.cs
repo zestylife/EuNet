@@ -76,12 +76,12 @@ namespace CodeGenerator
             {
                 formatterCodeGen.GenerateCode(type, formatterMap, CodeWriter);
 
-                if(string.IsNullOrEmpty(type.Namespace) == false &&
+                /*if(string.IsNullOrEmpty(type.Namespace) == false &&
                     namespaceHashSet.Contains(type.Namespace) == false)
                 {
                     namespaceHashSet.Add(type.Namespace);
                     CodeWriter.HeadLines.Add($"using {type.Namespace};");
-                }
+                }*/
             }
 
             CodeWriter.HeadLines.Add("");

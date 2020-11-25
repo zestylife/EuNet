@@ -36,14 +36,14 @@ namespace CodeGenerator
                 }
             }
 
-            var resolverNamespace = $"{Options.Namespace}.AOT";
+            var resolverNamespace = "AOT";
 
             w._($"#region {resolverNamespace}");
             w._();
 
             using (w.B($"namespace {resolverNamespace}"))
             {
-                using (w.B($"public sealed class AotCode"))
+                using (w.B($"public sealed class AotCode{Options.Namespace.Replace(".","")}"))
                 {
                     using (w.B("private void UsedOnlyForAOTCodeGeneration()"))
                     {
@@ -66,7 +66,7 @@ namespace CodeGenerator
         {
             if (type.IsEnum)
             {
-                hashSet.Add($"new GenericEnumFormatter<{type.GetPureName()}>();");
+                hashSet.Add($"new GenericEnumFormatter<{type.GetSymbolDisplay(true)}>();");
             }
 
             if (type.IsGenericType)
@@ -90,7 +90,7 @@ namespace CodeGenerator
                 foreach (var t in type.GenericTypeArguments)
                 {
                     if(t.IsEnum)
-                        hashSet.Add($"new GenericEnumFormatter<{t.GetPureName()}>();");
+                        hashSet.Add($"new GenericEnumFormatter<{t.GetSymbolDisplay(true)}>();");
 
                     if (t.IsGenericType)
                         Add(t, hashSet);

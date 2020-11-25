@@ -17,7 +17,6 @@ using EuNet.Rpc;
 using EuNet.Unity;
 using UnityEngine;
 #endif
-using Rpc.Test.Interface;
 
 #region Rpc.Test.Interface.IGreeterRpc
 
@@ -29,6 +28,7 @@ namespace Rpc.Test.Interface
         void GreetClass(Rpc.Test.Interface.DataClass dataClass);
         void GreetDictionary(System.Collections.Generic.Dictionary<string, string> value);
         void GreetEnum(Rpc.Test.Interface.DataEnum dataEnum);
+        void GreetEnumOther(System.Net.Sockets.SocketFlags flags);
         void GreetEnumReturn();
         void GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass);
         void GreetTuple(System.Tuple<string, string> value);
@@ -41,6 +41,7 @@ namespace Rpc.Test.Interface
         GreetClass = -1772909904,
         GreetDictionary = -942699280,
         GreetEnum = -2136207631,
+        GreetEnumOther = -1598481937,
         GreetEnumReturn = -1310362511,
         GreetInterfaceSerializeClass = -258043401,
         GreetTuple = -1793410084,
@@ -150,6 +151,21 @@ namespace Rpc.Test.Interface
             }
         }
 
+        public async Task GreetEnumOther(System.Net.Sockets.SocketFlags flags)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnumOther);
+                NetDataSerializer.Serialize<System.Net.Sockets.SocketFlags>(_writer_, flags);
+                await SendRequestAndWait(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         public async Task<Rpc.Test.Interface.DataEnumForReturn> GreetEnumReturn()
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -185,7 +201,7 @@ namespace Rpc.Test.Interface
             }
         }
 
-        public async Task<System.Tuple<int, int>> GreetTuple(System.Tuple<string, string> value)
+        public async Task<System.Tuple<int, System.Net.Sockets.SocketFlags>> GreetTuple(System.Tuple<string, string> value)
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
             try
@@ -194,7 +210,7 @@ namespace Rpc.Test.Interface
                 NetDataSerializer.Serialize<System.Tuple<string, string>>(_writer_, value);
                 using(var _reader_ = await SendRequestAndReceive(_writer_))
                 {
-                    return NetDataSerializer.Deserialize<System.Tuple<int, int>>(_reader_);
+                    return NetDataSerializer.Deserialize<System.Tuple<int, System.Net.Sockets.SocketFlags>>(_reader_);
                 }
             }
             finally
@@ -281,6 +297,21 @@ namespace Rpc.Test.Interface
             }
         }
 
+        void IGreeterRpc_NoReply.GreetEnumOther(System.Net.Sockets.SocketFlags flags)
+        {
+            var _writer_ = NetPool.DataWriterPool.Alloc();
+            try
+            {
+                _writer_.Write((int)IGreeterRpc_Enum.GreetEnumOther);
+                NetDataSerializer.Serialize<System.Net.Sockets.SocketFlags>(_writer_, flags);
+                SendRequest(_writer_);
+            }
+            finally
+            {
+                NetPool.DataWriterPool.Free(_writer_);
+            }
+        }
+
         void IGreeterRpc_NoReply.GreetEnumReturn()
         {
             var _writer_ = NetPool.DataWriterPool.Alloc();
@@ -347,9 +378,10 @@ namespace Rpc.Test.Interface
         public abstract Task<Rpc.Test.Interface.DataClass> GreetClass(Rpc.Test.Interface.DataClass dataClass);
         public abstract Task<System.Collections.Generic.Dictionary<int, int>> GreetDictionary(System.Collections.Generic.Dictionary<string, string> value);
         public abstract Task GreetEnum(Rpc.Test.Interface.DataEnum dataEnum);
+        public abstract Task GreetEnumOther(System.Net.Sockets.SocketFlags flags);
         public abstract Task<Rpc.Test.Interface.DataEnumForReturn> GreetEnumReturn();
         public abstract Task<Rpc.Test.Interface.InterfaceSerializeClass> GreetInterfaceSerializeClass(Rpc.Test.Interface.InterfaceSerializeClass dataClass);
-        public abstract Task<System.Tuple<int, int>> GreetTuple(System.Tuple<string, string> value);
+        public abstract Task<System.Tuple<int, System.Net.Sockets.SocketFlags>> GreetTuple(System.Tuple<string, string> value);
         public abstract Task<string> SessionParameter(EuNet.Core.ISession session);
         public async Task<bool> Invoke(object _target_, NetDataReader _reader_, NetDataWriter _writer_)
         {
@@ -384,6 +416,12 @@ namespace Rpc.Test.Interface
                         await GreetEnum(dataEnum);
                     }
                     break;
+                case IGreeterRpc_Enum.GreetEnumOther:
+                    {
+                        var flags = NetDataSerializer.Deserialize<System.Net.Sockets.SocketFlags>(_reader_);
+                        await GreetEnumOther(flags);
+                    }
+                    break;
                 case IGreeterRpc_Enum.GreetEnumReturn:
                     {
                         var _result_ = await GreetEnumReturn();
@@ -401,7 +439,7 @@ namespace Rpc.Test.Interface
                     {
                         var value = NetDataSerializer.Deserialize<System.Tuple<string, string>>(_reader_);
                         var _result_ = await GreetTuple(value);
-                        NetDataSerializer.Serialize<System.Tuple<int, int>>(_writer_, _result_);
+                        NetDataSerializer.Serialize<System.Tuple<int, System.Net.Sockets.SocketFlags>>(_writer_, _result_);
                     }
                     break;
                 case IGreeterRpc_Enum.SessionParameter:
@@ -453,6 +491,12 @@ namespace Rpc.Test.Interface
                         await (session as IGreeterRpc).GreetEnum(dataEnum);
                     }
                     break;
+                case IGreeterRpc_Enum.GreetEnumOther:
+                    {
+                        var flags = NetDataSerializer.Deserialize<System.Net.Sockets.SocketFlags>(_reader_);
+                        await (session as IGreeterRpc).GreetEnumOther(flags);
+                    }
+                    break;
                 case IGreeterRpc_Enum.GreetEnumReturn:
                     {
                         var _result_ = await (session as IGreeterRpc).GreetEnumReturn();
@@ -470,7 +514,7 @@ namespace Rpc.Test.Interface
                     {
                         var value = NetDataSerializer.Deserialize<System.Tuple<string, string>>(_reader_);
                         var _result_ = await (session as IGreeterRpc).GreetTuple(value);
-                        NetDataSerializer.Serialize<System.Tuple<int, int>>(_writer_, _result_);
+                        NetDataSerializer.Serialize<System.Tuple<int, System.Net.Sockets.SocketFlags>>(_writer_, _result_);
                     }
                     break;
                 case IGreeterRpc_Enum.SessionParameter:
@@ -716,6 +760,7 @@ namespace EuNet.Rpc.Test.Interface
                 case -1772909904: return "IGreeterRpc.GreetClass";
                 case -942699280: return "IGreeterRpc.GreetDictionary";
                 case -2136207631: return "IGreeterRpc.GreetEnum";
+                case -1598481937: return "IGreeterRpc.GreetEnumOther";
                 case -1310362511: return "IGreeterRpc.GreetEnumReturn";
                 case -258043401: return "IGreeterRpc.GreetInterfaceSerializeClass";
                 case -1793410084: return "IGreeterRpc.GreetTuple";
@@ -730,17 +775,18 @@ namespace EuNet.Rpc.Test.Interface
 }
 
 #endregion
-#region EuNet.Rpc.Test.Interface.AOT
+#region AOT
 
-namespace EuNet.Rpc.Test.Interface.AOT
+namespace AOT
 {
-    public sealed class AotCode
+    public sealed class AotCodeEuNetRpcTestInterface
     {
         private void UsedOnlyForAOTCodeGeneration()
         {
-            new GenericEnumFormatter<DataEnum>();
-            new GenericEnumFormatter<DataEnumForReturn>();
-            new TupleFormatter<int, int>();
+            new GenericEnumFormatter<Rpc.Test.Interface.DataEnum>();
+            new GenericEnumFormatter<System.Net.Sockets.SocketFlags>();
+            new GenericEnumFormatter<Rpc.Test.Interface.DataEnumForReturn>();
+            new TupleFormatter<int, System.Net.Sockets.SocketFlags>();
             new TupleFormatter<string, string>();
             new DictionaryFormatter<int, int>();
             new DictionaryFormatter<string, string>();
@@ -859,9 +905,9 @@ namespace Rpc.Test.Interface
 }
 
 #endregion
-#region EuNet.Rpc.Test.Interface.Resolvers
+#region EuNetRpcTestInterfaceResolvers
 
-namespace EuNet.Rpc.Test.Interface.Resolvers
+namespace EuNetRpcTestInterfaceResolvers
 {
     public sealed class GeneratedResolver : INetDataFormatterResolver
     {
@@ -890,10 +936,10 @@ namespace EuNet.Rpc.Test.Interface.Resolvers
     internal static class GeneratedResolverGetFormatterHelper
     {
         private static readonly Dictionary<Type, object> FormatterMap = new Dictionary<Type, object>() {
-            { typeof(DataClass) , DataClassFormatter.Instance },
-            { typeof(DataStruct) , DataStructFormatter.Instance },
-            { typeof(GenericDataClass<>) , typeof(GenericDataClassFormatter<>) },
-            { typeof(GenericDataStruct<>) , typeof(GenericDataStructFormatter<>) },
+            { typeof(Rpc.Test.Interface.DataClass) , Rpc.Test.Interface.DataClassFormatter.Instance },
+            { typeof(Rpc.Test.Interface.DataStruct) , Rpc.Test.Interface.DataStructFormatter.Instance },
+            { typeof(Rpc.Test.Interface.GenericDataClass<>) , typeof(Rpc.Test.Interface.GenericDataClassFormatter<>) },
+            { typeof(Rpc.Test.Interface.GenericDataStruct<>) , typeof(Rpc.Test.Interface.GenericDataStructFormatter<>) },
         };
         internal static object GetFormatter(Type t)
         {
