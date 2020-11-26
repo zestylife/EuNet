@@ -12,6 +12,10 @@ Great for developing Action MORPG, MOBA, Channel Based MMORPG, Casual Multiplaye
 
 Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, Android, iOS, etc.), and is optimized for .Net Core-based servers and Unity3D-based clients.
 
+RPC(Remote procedure call) can be used to call remote functions and receive return values.  
+There is no overhead as it serializes at high speed and calls remote functions.  
+Work efficiency increases as there is no work to create a message every time.  
+
 ## See [EuNet-Starter](https://github.com/zestylife/EuNet-Starter) for an example
 
 ![image](https://github.com/zestylife/EuNet/blob/main/doc/images/Network.png?raw=true)
@@ -29,7 +33,7 @@ Produced based on .Net Standard 2.0, multiplatform supported(Windows, Linux, And
     - [Client project (Unity3D)](#client-project-unity3d)
     - [Install via git URL](#install-via-git-url)
     - [Install via package file](#install-via-package-file)
-  - [Rpc Sample](#rpc-sample)
+  - [RPC (Remote procedure call)](#rpc-remote-procedure-call)
     - [Common project](#common-project-1)
     - [Server project (.Net Core)](#server-project-net-core-1)
     - [Client project (Unity3D)](#client-project-unity3d-1)
@@ -140,7 +144,11 @@ https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet
 ### Install via package file
 * Install the unity-package. [Download here](https://github.com/zestylife/EuNet/releases)
 
-## Rpc Sample
+## RPC (Remote procedure call)
+
+RPC(Remote procedure call) can be used to call remote functions and receive return values.  
+There is no overhead as it serializes at high speed and calls remote functions.  
+Work efficiency increases as there is no work to create a message every time.  
 
 ![image](https://github.com/zestylife/EuNet/blob/main/doc/images/Rpc.png?raw=true)
 
