@@ -18,7 +18,7 @@ Work efficiency increases as there is no work to create a message every time.
 
 ## See [EuNet-Starter](https://github.com/zestylife/EuNet-Starter) for an example
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/Network.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/Network.png?raw=true)
 
 ## Table of Contents
 
@@ -139,7 +139,7 @@ If you want to add a specific release version, add `#version` after the url. ex)
 https://github.com/zestylife/EuNet.git?path=src/EuNet.Unity/Assets/Plugins/EuNet#1.1.13
 ``` 
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/AddPackageFromUPM.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/AddPackageFromUPM.png?raw=true)
 
 ### Install via package file
 * Install the unity-package. [Download here](https://github.com/zestylife/EuNet/releases)
@@ -150,7 +150,7 @@ RPC(Remote procedure call) can be used to call remote functions and receive retu
 There is no overhead as it serializes at high speed and calls remote functions.  
 Work efficiency increases as there is no work to create a message every time.  
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/Rpc.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/Rpc.png?raw=true)
 
 ### Common project
 ```csharp
@@ -304,16 +304,16 @@ public class InterfaceSerializeClass : INetSerializable
 * Add an empty GameObject to the first run Scene and add a NetClientGlobal component.   
 Only one should be made globally.
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/NetClientGlobal.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/NetClientGlobal.png?raw=true)
 
 * Add NetClientP2pBehaviour component for communicate to one server (including P2p).  
 Modify the options as needed.
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/NetClientP2pBehaviour.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/NetClientP2pBehaviour.png?raw=true)
 
 * Add user component to receive and process events.
 
-![image](https://github.com/zestylife/EuNet/blob/main/doc/images/GameClient.png?raw=true)
+![image](https://github.com/zestylife/EuNet/blob/main/docs/images/GameClient.png?raw=true)
 
 * `GameClient.cs` file
 ```csharp
