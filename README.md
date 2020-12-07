@@ -16,14 +16,20 @@ RPC(Remote procedure call) can be used to call remote functions and receive retu
 There is no overhead as it serializes at high speed and calls remote functions.  
 Work efficiency increases as there is no work to create a message every time.  
 
-## See [EuNet-Starter](https://github.com/zestylife/EuNet-Starter) for an example
+## Example
+| EuNet-Starter | EuNet-Tanks |  
+| :---: | :---: |
+| https://github.com/zestylife/EuNet-Starter | https://github.com/zestylife/EuNet-Tanks |
+| ![image](https://github.com/zestylife/EuNet-Starter/raw/master/Starter.gif) | ![image](https://github.com/zestylife/EuNet-Tanks/raw/main/docs/images/screenshot.gif?raw=true)
 
+## Diagram
 ![image](https://github.com/zestylife/EuNet/blob/main/docs/images/Network.png?raw=true)
 
 ## Table of Contents
 
 - [EuNet C# (.NET, .NET Core, Unity)](#eunet-c-net-net-core-unity)
-  - [See EuNet-Starter for an example](#see-eunet-starter-for-an-example)
+  - [Example](#example)
+  - [Diagram](#diagram)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Channels](#channels)
@@ -122,8 +128,8 @@ PM> Install-Package EuNet
 ```
 Solution Explorer -> [User Project] -> References -> Add Reference -> [Add Common project]
 ```
-* Write server code. [Server Code Sample]()
-* Write session code. [Session Code Sample]()
+* Write server code. [Server Code Sample](https://github.com/zestylife/EuNet/tree/main/sandbox/Dev/Server)
+* Write session code. [Session Code Sample](https://github.com/zestylife/EuNet/tree/main/sandbox/Dev/Server/Session)
 
 ### Client project (Unity3D)
 
