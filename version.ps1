@@ -1,4 +1,4 @@
-$set_version = "1.1.17"
+$set_version = "1.1.18"
 
 $files = "\src\EuNet\EuNet.csproj",
 "\src\EuNet.Client\EuNet.Client.csproj",
