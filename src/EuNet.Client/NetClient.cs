@@ -440,17 +440,33 @@ namespace EuNet.Client
 
         internal void OnSessionConnected()
         {
-            State = SessionState.Connected;
-            OnConnected?.Invoke();
+            try
+            {
+                State = SessionState.Connected;
+                OnConnected?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
         }
 
         internal bool OnSessionClosed()
         {
-            if (State != SessionState.Connected)
-                return false;
+            try
+            {
+                if (State != SessionState.Connected)
+                    return false;
 
-            State = SessionState.Closed;
-            OnClosed?.Invoke();
+                State = SessionState.Closed;
+
+                OnClosed?.Invoke();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+            
             return true;
         }
 

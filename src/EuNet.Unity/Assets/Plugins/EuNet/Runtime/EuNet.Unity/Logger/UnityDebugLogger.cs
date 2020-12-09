@@ -13,7 +13,7 @@ namespace EuNet.Unity
 
         public void LogError(Exception e, string msg)
         {
-            Debug.LogError(msg);
+            Debug.LogException(e);
         }
 
         public void LogError(string msg)
