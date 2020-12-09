@@ -29,6 +29,31 @@ namespace EuNet.Unity
         protected NetClient _client;
         public NetClient Client => _client;
 
+        /// <summary>
+        /// 현재 세션아이디
+        /// </summary>
+        public ushort SessionId => _client.SessionId;
+
+        /// <summary>
+        /// TCP 채널
+        /// </summary>
+        public TcpChannel TcpChannel => _client.TcpChannel;
+
+        /// <summary>
+        /// UDP 채널
+        /// </summary>
+        public UdpChannel UdpChannel => _client.UdpChannel;
+
+        /// <summary>
+        /// P2P 그룹
+        /// </summary>
+        public P2pGroup P2pGroup => _client.P2pGroup;
+
+        /// <summary>
+        /// 현재 세션상태
+        /// </summary>
+        public SessionState State => _client.State;
+
         [NonSerialized]
         public Action<ClientOption> SetClientOptionFunc;
 

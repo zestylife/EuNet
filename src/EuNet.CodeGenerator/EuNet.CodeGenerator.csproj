@@ -5,7 +5,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>enc</ToolCommandName>
     <PackageOutputPath>../../nupkg</PackageOutputPath>
-    <Version>1.1.16</Version>
+    <Version>1.1.17</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
