@@ -16,7 +16,7 @@ namespace EuNet.Core
 
             _data = NetPool.BufferPool.Alloc(size);
 
-            reader.ReadBytesOnlyData(_data, size);
+            reader.ReadByteArrayOnlyData(_data, size);
 
             _endOffset = size;
             _offset = 0;

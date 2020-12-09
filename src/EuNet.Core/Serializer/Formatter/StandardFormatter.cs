@@ -18,7 +18,7 @@ namespace EuNet.Core
 
         public byte[] Deserialize(NetDataReader reader, NetDataSerializerOptions options)
         {
-            return reader.ReadBytes();
+            return reader.ReadByteArray();
         }
     }
 

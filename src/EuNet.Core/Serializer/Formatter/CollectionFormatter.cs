@@ -82,7 +82,7 @@ namespace EuNet.Core
 
         public ArraySegment<byte> Deserialize(NetDataReader reader, NetDataSerializerOptions options)
         {
-            return new ArraySegment<byte>(reader.ReadBytes().ToArray());
+            return new ArraySegment<byte>(reader.ReadByteArray().ToArray());
         }
     }
 

@@ -246,7 +246,7 @@ namespace EuNet.Core
         {
             var addressLen = ReadByte();
             byte[] addressBytes = new byte[addressLen];
-            ReadBytesOnlyData(addressBytes, addressLen);
+            ReadByteArrayOnlyData(addressBytes, addressLen);
             var port = ReadInt32();
             return new IPEndPoint(new IPAddress(addressBytes), port);
         }
@@ -266,7 +266,7 @@ namespace EuNet.Core
         public Guid ReadGuid()
         {
             byte count = ReadByte();
-            var bytes = ReadBytes(count);
+            var bytes = ReadByteArray(count);
             return new Guid(bytes);
         }
 
@@ -438,7 +438,7 @@ namespace EuNet.Core
             return outgoingData;
         }
 
-        public byte[] ReadBytes(int count)
+        public byte[] ReadByteArray(int count)
         {
             var value = new byte[count];
             Buffer.BlockCopy(_data, _position, value, 0, count);
@@ -447,7 +447,7 @@ namespace EuNet.Core
             return value;
         }
 
-        public byte[] ReadBytes()
+        public byte[] ReadByteArray()
         {
             int length = ReadInt32();
             byte[] outgoingData = new byte[length];
@@ -456,19 +456,19 @@ namespace EuNet.Core
             return outgoingData;
         }
 
-        public void ReadBytesOnlyData(byte[] destination, int start, int count)
+        public void ReadByteArrayOnlyData(byte[] destination, int start, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, start, count);
             _position += count;
         }
 
-        public void ReadBytesOnlyData(byte[] destination, int count)
+        public void ReadByteArrayOnlyData(byte[] destination, int count)
         {
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
 
-        public sbyte[] ReadSBytes()
+        public sbyte[] ReadSByteArray()
         {
             int length = ReadInt32();
             sbyte[] outgoingData = new sbyte[length];
