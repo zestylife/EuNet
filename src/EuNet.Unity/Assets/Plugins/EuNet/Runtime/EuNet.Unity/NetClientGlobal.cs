@@ -90,6 +90,12 @@ namespace EuNet.Unity
         /// <returns>성공여부</returns>
         public bool RegisterView(NetView view)
         {
+            if (IsLocalMode == true)
+                return true;
+
+            if (Client == null)
+                return false;
+
             return Client.RegisterView(view);
         }
 
@@ -100,6 +106,9 @@ namespace EuNet.Unity
         /// <returns>성공여부</returns>
         public bool UnregisterView(NetView view)
         {
+            if (IsLocalMode == true)
+                return true;
+
             if (Client == null)
                 return false;
 
