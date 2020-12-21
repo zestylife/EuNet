@@ -251,6 +251,10 @@ namespace EuNet.Core
                 {
                     return;
                 }
+                catch (ThreadAbortException)
+                {
+                    return;
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "ReceiveFrom error");
