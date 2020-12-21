@@ -102,7 +102,7 @@ namespace EuNet.Unity
 
         protected void OnError(Exception ex)
         {
-            Debug.LogError(ex.ToString());
+            Debug.LogException(ex);
         }
 
         /// <summary>

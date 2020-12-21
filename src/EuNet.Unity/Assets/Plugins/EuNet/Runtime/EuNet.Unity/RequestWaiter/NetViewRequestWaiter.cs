@@ -95,13 +95,15 @@ namespace EuNet.Unity
 
         private void CallSelfNotification(NetClient client, NetDataWriter writer, DeliveryMethod deliveryMethod)
         {
-            NetPool.DataWriterPool.Use(w =>
+            NetPool.DataWriterPool.Use(viewWriter =>
             {
-                w.Write(View.ViewId);
-                w.WriteOnlyData(writer.Data, 0, writer.Length);
+                viewWriter.Write(View.ViewId);
+                viewWriter.WriteOnlyData(writer.Data, 0, writer.Length);
 
-                NetDataReader r = new NetDataReader(w);
-                client.OnViewRequestReceive(client, r, new NetDataWriter());
+                NetPool.DataWriterPool.Use(tempWriter =>
+                {
+                    client.OnViewRequestReceive(client, new NetDataReader(viewWriter), tempWriter);
+                });
             });
         }
 
