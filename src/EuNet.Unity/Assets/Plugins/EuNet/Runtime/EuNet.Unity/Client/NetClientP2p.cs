@@ -28,6 +28,7 @@ namespace EuNet.Unity
         /// 주기적인 동기화 타입
         /// </summary>
         public PeriodicSyncType SyncType = PeriodicSyncType.None;
+        public DeliveryMethod SyncSendMethod = DeliveryMethod.Unreliable;
 
         /// <summary>
         /// 주기적인 동기화 간격 (seconds)
@@ -489,7 +490,7 @@ namespace EuNet.Unity
 
                     if (kvp.Value.OnViewPeriodicSyncSerialize(writer, SyncType))
                     {
-                        SendP2pInternal(writer, DeliveryTarget.Others, DeliveryMethod.Unreliable);
+                        SendP2pInternal(writer, DeliveryTarget.Others, SyncSendMethod);
                     }
                 }
             }

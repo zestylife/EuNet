@@ -28,6 +28,9 @@ namespace EuNet.Unity
         [SerializeField]
         private float _syncTime;
 
+        [SerializeField]
+        private float _lastTime;
+
         public float SyncTime
         {
             get
@@ -72,10 +75,26 @@ namespace EuNet.Unity
             _velocity = Vector3.zero;
             _elapsedTime = 0f;
             _syncTime = syncTime;
+            _lastTime = 0f;
         }
 
         public void Set(Vector3 currentValue, Vector3 netValue, Vector3 netVelocity)
         {
+            _startValue = currentValue;
+            _netValue = netValue;
+            _velocity = netVelocity;
+            _value = currentValue;
+            _elapsedTime = 0f;
+
+            UpdateEndValue();
+        }
+
+        public void Set(Vector3 currentValue, Vector3 netValue, Vector3 netVelocity, float currentTime)
+        {
+            if (_lastTime > 0f && _lastTime >= currentTime)
+                return;
+
+            _lastTime = currentTime;
             _startValue = currentValue;
             _netValue = netValue;
             _velocity = netVelocity;
@@ -92,7 +111,7 @@ namespace EuNet.Unity
 
         private Vector3 UpdateValue()
         {
-            _value = Vector3.LerpUnclamped(_startValue, _endValue, _elapsedTime / SyncTime);
+            _value = Vector3.Lerp(_startValue, _endValue, _elapsedTime / SyncTime);
             return _value;
         }
 
