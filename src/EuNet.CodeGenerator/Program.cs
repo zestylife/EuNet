@@ -71,7 +71,7 @@ namespace CodeGenerator
 
                 // Build source and load assembly
                 Console.WriteLine("- Build sources");
-
+                
                 var assembly = AssemblyLoader.BuildAndLoad(sources, references, defines);
                 if (assembly == null)
                 {
@@ -119,6 +119,9 @@ namespace CodeGenerator
         private static bool FilterSource(Options options, string path)
         {
             if (path.ToLower().IndexOf("eunet.rpc.codegen") != -1)
+                return false;
+
+            if (path.ToLower().IndexOf("globalusings.g.cs") != -1)
                 return false;
 
             foreach (var exclude in options.Excludes)

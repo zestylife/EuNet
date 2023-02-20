@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EuNet.Benchmark
 {
-    [SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 1)]
+    [SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 1)]
     [MemoryDiagnoser]
     [RPlotExporter]
     public class Program

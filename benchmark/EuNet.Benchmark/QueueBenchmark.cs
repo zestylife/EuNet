@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace EuNet.Benchmark
 {
-    [SimpleJob(warmupCount: 3, targetCount: 10)]
-    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp31, warmupCount: 3, targetCount: 10)]
-    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp50, warmupCount: 3, targetCount: 10)]
+    [SimpleJob(warmupCount: 3, iterationCount: 10)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp31, warmupCount: 3, iterationCount: 10)]
+    [SimpleJob(runtimeMoniker: RuntimeMoniker.NetCoreApp50, warmupCount: 3, iterationCount: 10)]
     [MemoryDiagnoser]
     [RPlotExporter]
     public class QueueBenchmark

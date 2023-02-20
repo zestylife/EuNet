@@ -1,7 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	  <TargetFramework>net7.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('$(SolutionDir)src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets') And '$(BuildingInsideVisualStudio)' == 'true'" />
@@ -10,6 +12,10 @@
     <ProjectReference Include="..\..\src\EuNet.Core\EuNet.Core.csproj" />
     <ProjectReference Include="..\..\src\EuNet.Rpc\EuNet.Rpc.csproj" />
     <ProjectReference Include="..\..\src\EuNet.UnityShims\EuNet.UnityShims.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CodeGen\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
