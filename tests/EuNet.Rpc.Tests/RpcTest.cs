@@ -98,7 +98,7 @@ namespace EuNet.Rpc.Tests
                 TcpServerAddress = "127.0.0.1",
                 TcpServerPort = 9000,
                 IsServiceUdp = isServiceUdp,
-                UdpServerAddress = "127.0.0.1",
+                UdpServerAddress = isServiceUdp == true ? "127.0.0.1" : null,
                 UdpServerPort = 9001
             });
 
@@ -170,5 +170,6 @@ namespace EuNet.Rpc.Tests
 
             return client;
         }
+
     }
 }

@@ -194,10 +194,11 @@ namespace EuNet.Client
                 _cts = new CancellationTokenSource();
 
                 _serverEndPoint = NetUtil.GetEndPoint(_clientOption.TcpServerAddress, _clientOption.TcpServerPort);
-                _serverUdpEndPoint = NetUtil.GetEndPoint(_clientOption.UdpServerAddress, _clientOption.UdpServerPort);
 
                 if (_clientOption.IsServiceUdp)
                 {
+                    _serverUdpEndPoint = NetUtil.GetEndPoint(_clientOption.UdpServerAddress, _clientOption.UdpServerPort);
+
                     _udpSocket = new UdpSocketEx(
                         _loggerFactory.CreateLogger("ClientUdpSocket"),
                         OnPreProcessUdpRawData,
