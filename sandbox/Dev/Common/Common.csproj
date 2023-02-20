@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <Import Project="..\..\..\src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets" Condition="Exists('..\..\..\src\EuNet.CodeGenerator.Templates\EuNet.CodeGenerator.Templates.Common.targets')" />
