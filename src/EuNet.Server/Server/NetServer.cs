@@ -117,6 +117,24 @@ namespace EuNet.Server
             }
 
             _rpcHandlers = new List<IRpcInvokable>();
+
+            // 옵션 체크
+            if(_serverOption.IsServiceUdp)
+            {
+                // UDP 를 사용한다면 서버 세션 업데이트 주기가 짧아야 함
+                if (_serverOption.SessionUpdateInternval > 100)
+                {
+                    _logger.LogWarning("ServerOption.SessionUpdateInternval is too long. It is recommended to set it to 30");
+                }
+            }
+            else
+            {
+                if (_serverOption.SessionUpdateInternval < 1000)
+                {
+                    _logger.LogWarning("ServerOption.SessionUpdateInternval is too short. It is recommended to set it to 1000 or more");
+                }
+            }
+            
         }
 
         /// <summary>
